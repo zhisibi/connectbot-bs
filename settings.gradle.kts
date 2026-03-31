@@ -2,12 +2,10 @@
 
 pluginManagement {
     repositories {
-        maven("https://maven.aliyun.com/repository/gradle-plugin")
         maven("https://mirrors.huaweicloud.com/repository/maven")
         maven("https://maven.aliyun.com/repository/google")
         maven("https://maven.aliyun.com/repository/public")
         gradlePluginPortal()
-        mavenCentral()
     }
     plugins {
         id("org.jetbrains.kotlin.plugin.compose") version "2.3.20"
