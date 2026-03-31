@@ -106,13 +106,12 @@ class TerminalFontProvider(
                     }
                 }
 
+                val handler = android.os.Handler(android.os.Looper.getMainLooper())
                 FontsContractCompat.requestFont(
                     context,
                     request,
-                    Typeface.NORMAL,
-                    ioExecutor,
-                    ioExecutor,
-                    fontCallback
+                    fontCallback,
+                    handler
                 )
             }
 

@@ -15,6 +15,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+
 package com.sbssh.ui.screens.pubkeylist
 
 import android.net.Uri

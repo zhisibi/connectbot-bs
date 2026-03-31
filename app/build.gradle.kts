@@ -62,24 +62,19 @@ android {
 configurations.all {
     resolutionStrategy.eachDependency {
         if (requested.group == "androidx.core") {
-            useVersion("1.16.0")
-        }
-    }
-}
-
-configurations.all {
-    resolutionStrategy.eachDependency {
-        if (requested.group == "androidx.core" && requested.name == "core-viewtree") {
-            useVersion("1.0.0")
+            useVersion("1.13.1")
+            if (requested.name == "core-viewtree") {
+                useVersion("1.0.0")
+            }
         }
     }
 }
 
 dependencies {
     // Core
-    implementation("androidx.core:core-ktx:1.18.0")
-    implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("com.google.android.material:material:1.13.0")
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.10.0")
 
     // Compose
     implementation(platform("androidx.compose:compose-bom:2026.01.00"))
@@ -87,10 +82,10 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.activity:activity-compose:1.8.2")
+    implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.navigation:navigation-compose:2.7.6")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.4")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
 
     // Room
     implementation("androidx.room:room-runtime:2.8.4")
@@ -100,10 +95,13 @@ dependencies {
     // Hilt
     implementation("com.google.dagger:hilt-android:2.57")
     kapt("com.google.dagger:hilt-android-compiler:2.57")
-    implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
 
     // Biometric
     implementation("androidx.biometric:biometric:1.1.0")
+
+    // Preferences
+    implementation("androidx.preference:preference-ktx:1.2.1")
 
     // SSH/Terminal (ConnectBot)
     implementation("org.connectbot:sshlib:2.2.44")
