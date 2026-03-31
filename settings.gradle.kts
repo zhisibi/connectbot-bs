@@ -1,3 +1,5 @@
+@file:Suppress("ktlint:standard:property-naming")
+
 pluginManagement {
     repositories {
         maven("https://maven.aliyun.com/repository/gradle-plugin")
@@ -21,10 +23,8 @@ dependencyResolutionManagement {
     }
 }
 
-@file:Suppress("ktlint:standard:property-naming")
 val TRANSLATIONS_ONLY: String? by settings
 
 if (TRANSLATIONS_ONLY.isNullOrBlank()) {
     include(":app")
 }
-include(":translations")
