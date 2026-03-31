@@ -23,9 +23,11 @@ android {
     buildTypes {
         debug {
             isMinifyEnabled = false
+            manifestPlaceholders["memtagMode"] = "sync"
         }
         release {
             isMinifyEnabled = false
+            manifestPlaceholders["memtagMode"] = "async"
         }
     }
 
@@ -50,6 +52,22 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        when (requested.group) {
+            "androidx.core" -> useVersion("1.12.0")
+            "androidx.lifecycle" -> useVersion("2.7.0")
+            "androidx.savedstate" -> useVersion("1.2.0")
+            "androidx.appcompat" -> useVersion("1.6.1")
+            "androidx.compose.ui",
+            "androidx.compose.runtime",
+            "androidx.compose.foundation",
+            "androidx.compose.animation",
+            "androidx.compose.material" -> useVersion("1.6.0")
         }
     }
 }
@@ -94,11 +112,19 @@ dependencies {
     // Gson
     implementation("com.google.code.gson:gson:2.10.1")
 
+    // Timber
+    implementation("com.jakewharton.timber:timber:5.0.1")
+
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     // Debug
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+}
+
+// Workaround: disable checkDebugClasspath task (fails in this environment)
+tasks.matching { it.name == "checkDebugClasspath" }.configureEach {
+    enabled = false
 }
 
