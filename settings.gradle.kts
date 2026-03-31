@@ -17,11 +17,9 @@ pluginManagement {
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
-        maven("https://repo.maven.apache.org/maven2")
         maven("https://maven.aliyun.com/repository/google")
         maven("https://maven.aliyun.com/repository/public")
         maven("https://mirrors.huaweicloud.com/repository/maven")
-        mavenCentral()
     }
 }
 
