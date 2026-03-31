@@ -9,7 +9,8 @@ buildscript {
     }
     dependencies {
         classpath("com.android.tools.build:gradle:8.6.0")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.20")
+        classpath("com.google.devtools.ksp:symbol-processing-gradle-plugin:2.1.20-1.0.32")
         classpath("com.google.dagger:hilt-android-gradle-plugin:2.48")
     }
 }
