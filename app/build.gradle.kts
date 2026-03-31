@@ -59,6 +59,22 @@ android {
 }
 
 
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "androidx.core") {
+            useVersion("1.16.0")
+        }
+    }
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "androidx.core" && requested.name == "core-viewtree") {
+            useVersion("1.0.0")
+        }
+    }
+}
+
 dependencies {
     // Core
     implementation("androidx.core:core-ktx:1.18.0")
