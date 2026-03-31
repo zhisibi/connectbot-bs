@@ -26,9 +26,16 @@ class VpsListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            dao.getAllVps().collect { list ->
-                _uiState.value = _uiState.value.copy(vpsList = list, isLoading = false)
-            }
+            dao.getAllVps()
+                .catch { e ->
+                    _uiState.value = _uiState.value.copy(
+                        isLoading = false,
+                        error = e.message ?: "Failed to load servers"
+                    )
+                }
+                .collect { list ->
+                    _uiState.value = _uiState.value.copy(vpsList = list, isLoading = false, error = null)
+                }
         }
     }
 

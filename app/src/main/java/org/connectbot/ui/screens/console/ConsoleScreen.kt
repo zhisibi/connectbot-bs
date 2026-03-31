@@ -156,6 +156,20 @@ fun ConsoleScreen(
     val terminalManager = LocalTerminalManager.current
     val uiState by viewModel.uiState.collectAsState()
 
+    if (terminalManager == null) {
+        AlertDialog(
+            onDismissRequest = { onNavigateBack() },
+            title = { Text("Error") },
+            text = { Text("Terminal service not ready") },
+            confirmButton = {
+                TextButton(onClick = { onNavigateBack() }) {
+                    Text(stringResource(R.string.button_back))
+                }
+            }
+        )
+        return
+    }
+
     // Capture latest callback for use in effects
     val currentOnNavigateBack by rememberUpdatedState(onNavigateBack)
 

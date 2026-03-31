@@ -56,6 +56,17 @@ fun VpsListScreen(
             ) {
                 Text(stringResource(R.string.loading_servers))
             }
+        } else if (uiState.error != null) {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(padding),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text("加载失败", style = MaterialTheme.typography.titleMedium)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(uiState.error ?: "Unknown error")
+                }
+            }
         } else if (uiState.vpsList.isEmpty()) {
             Box(
                 modifier = Modifier.fillMaxSize().padding(padding),
