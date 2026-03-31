@@ -103,6 +103,9 @@ dependencies {
     // Preferences
     implementation("androidx.preference:preference-ktx:1.2.1")
 
+    // Preferences
+    implementation("androidx.preference:preference-ktx:1.2.1")
+
     // SSH/Terminal (ConnectBot)
     implementation("org.connectbot:sshlib:2.2.44")
     implementation("org.connectbot:termlib:0.0.23")

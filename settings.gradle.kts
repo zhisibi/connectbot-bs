@@ -5,6 +5,8 @@ pluginManagement {
         maven("https://mirrors.huaweicloud.com/repository/maven")
         maven("https://maven.aliyun.com/repository/google")
         maven("https://maven.aliyun.com/repository/public")
+        google()
+        mavenCentral()
         gradlePluginPortal()
     }
     plugins {
@@ -18,6 +20,8 @@ dependencyResolutionManagement {
         maven("https://maven.aliyun.com/repository/google")
         maven("https://maven.aliyun.com/repository/public")
         maven("https://mirrors.huaweicloud.com/repository/maven")
+        google()
+        mavenCentral()
     }
 }
 

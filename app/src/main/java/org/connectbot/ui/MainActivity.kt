@@ -56,7 +56,7 @@ import com.sbssh.R
 import com.sbssh.connectbot.data.entity.Host
 import com.sbssh.service.TerminalManager
 import com.sbssh.ui.components.DisconnectAllDialog
-import com.sbssh.ui.navigation.NavDestinations
+import com.sbssh.ui.navigation.Routes
 import com.sbssh.ui.theme.ConnectBotTheme
 import com.sbssh.connectbot.util.IconStyle
 import com.sbssh.connectbot.util.NotificationPermissionHelper
@@ -232,7 +232,7 @@ class MainActivity : AppCompatActivity() {
                     pendingHostConnection?.let { host ->
                         Timber.d("Navigating to console for pending host: ${host.nickname}")
                         pendingHostConnection = null
-                        navController.navigate("${NavDestinations.CONSOLE}/${host.id}")
+                        navController.navigate("${Routes.CONSOLE}/${host.id}")
                     }
                 }
             }
@@ -250,7 +250,7 @@ class MainActivity : AppCompatActivity() {
                             }
                             // Also handle pending host connection
                             pendingHostConnection?.let { host ->
-                                navController.navigate("${NavDestinations.CONSOLE}/${host.id}")
+                                navController.navigate("${Routes.CONSOLE}/${host.id}")
                                 pendingHostConnection = null
                             }
                         },
@@ -275,7 +275,7 @@ class MainActivity : AppCompatActivity() {
 
                 if (!persistConnections || NotificationPermissionHelper.isNotificationPermissionGranted(context)) {
                     // Either persistence is disabled (no permission needed) or permission granted, navigate immediately
-                    navController.navigate("${NavDestinations.CONSOLE}/${host.id}")
+                    navController.navigate("${Routes.CONSOLE}/${host.id}")
                 } else {
                     // Persistence is enabled but no permission - need to request permission
                     Timber.d("Requesting notification permission before connection")
@@ -351,7 +351,7 @@ class MainActivity : AppCompatActivity() {
                     bridge = manager.openConnection(uri)
                 }
 
-                controller.navigate("${NavDestinations.CONSOLE}/${bridge.host.id}") {
+                controller.navigate("${Routes.CONSOLE}/${bridge.host.id}") {
                     launchSingleTop = true
                 }
             } catch (e: Exception) {

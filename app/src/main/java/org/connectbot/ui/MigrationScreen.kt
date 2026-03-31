@@ -360,11 +360,12 @@ private fun MigrationFailedContent(
         val annotatedString = buildAnnotatedString {
             val url = "https://github.com/connectbot/connectbot/issues"
             val fullText = stringResource(id = R.string.migration_failed_help)
-            val startIndex = fullText.indexOf("%1$s")
+            val placeholder = "%1\$s"
+            val startIndex = fullText.indexOf(placeholder)
             if (startIndex != -1) {
                 append(fullText.take(startIndex))
                 withLink(LinkAnnotation.Url(url)) { append(url) }
-                append(fullText.substring(startIndex + "%1$s".length))
+                append(fullText.substring(startIndex + placeholder.length))
             } else {
                 append(fullText)
             }

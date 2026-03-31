@@ -112,7 +112,7 @@ import kotlinx.coroutines.launch
 import com.sbssh.R
 import com.sbssh.connectbot.data.entity.Host
 import com.sbssh.service.PromptRequest
-import com.sbssh.terminal.ProgressState
+import org.connectbot.terminal.ProgressState
 import com.sbssh.terminal.SelectionController
 import com.sbssh.terminal.Terminal
 import com.sbssh.ui.LoadingScreen

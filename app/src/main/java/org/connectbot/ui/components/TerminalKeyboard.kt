@@ -69,7 +69,7 @@ import com.sbssh.service.ModifierLevel
 import com.sbssh.service.ModifierState
 import com.sbssh.service.TerminalBridge
 import com.sbssh.service.TerminalKeyListener
-import com.sbssh.terminal.VTermKey
+import org.connectbot.terminal.VTermKey
 
 private const val UI_OPACITY = 0.5f
 

@@ -45,9 +45,9 @@ import com.sbssh.R
 import com.sbssh.connectbot.data.entity.Host
 import com.sbssh.connectbot.data.entity.PortForward
 import com.sbssh.di.CoroutineDispatchers
-import com.sbssh.terminal.ProgressState
-import com.sbssh.terminal.TerminalEmulator
-import com.sbssh.terminal.TerminalEmulatorFactory
+import org.connectbot.terminal.ProgressState
+import org.connectbot.terminal.TerminalEmulator
+import org.connectbot.terminal.TerminalEmulatorFactory
 import com.sbssh.transport.AbsTransport
 import com.sbssh.transport.SSH
 import com.sbssh.transport.TransportFactory

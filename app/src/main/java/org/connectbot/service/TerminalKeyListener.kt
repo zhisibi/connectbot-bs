@@ -28,8 +28,8 @@ import androidx.preference.PreferenceManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import com.sbssh.terminal.ModifierManager
-import com.sbssh.terminal.VTermKey
+import org.connectbot.terminal.ModifierManager
+import org.connectbot.terminal.VTermKey
 import com.sbssh.connectbot.util.PreferenceConstants
 import timber.log.Timber
 import java.io.IOException

@@ -38,8 +38,10 @@ fun ConnectBotApp(
     navController: NavHostController,
     modifier: Modifier = Modifier
 ) {
+    val terminalManager = (appUiState as? AppUiState.Ready)?.terminalManager
+
     SbsshTheme {
-        CompositionLocalProvider(LocalTerminalManager provides appUiState.terminalManager) {
+        CompositionLocalProvider(LocalTerminalManager provides terminalManager) {
             NavGraph(navController = navController)
         }
     }

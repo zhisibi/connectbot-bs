@@ -19,37 +19,6 @@ interface SelectionController {
     fun copySelection() {}
 }
 
-enum class ProgressState {
-    HIDDEN,
-    INDETERMINATE,
-    WARNING,
-    ERROR,
-    NORMAL
-}
-
-enum class VTermKey {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT,
-    HOME,
-    END,
-    PAGEUP,
-    PAGEDOWN,
-    FUNCTION_1,
-    FUNCTION_2,
-    FUNCTION_3,
-    FUNCTION_4,
-    FUNCTION_5,
-    FUNCTION_6,
-    FUNCTION_7,
-    FUNCTION_8,
-    FUNCTION_9,
-    FUNCTION_10,
-    FUNCTION_11,
-    FUNCTION_12
-}
-
 @Composable
 fun Terminal(
     terminalEmulator: TerminalEmulator,

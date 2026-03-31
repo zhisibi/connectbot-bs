@@ -33,7 +33,7 @@ import kotlinx.coroutines.withContext
 import com.sbssh.di.CoroutineDispatchers
 import com.sbssh.service.TerminalBridge
 import com.sbssh.service.TerminalManager
-import com.sbssh.terminal.ProgressState
+import org.connectbot.terminal.ProgressState
 import javax.inject.Inject
 
 data class ConsoleUiState(
