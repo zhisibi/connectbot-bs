@@ -5,11 +5,14 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -20,6 +23,7 @@ import com.sbssh.util.AppLogger
 @Composable
 fun LogScreen(onBack: () -> Unit) {
     var logText by remember { mutableStateOf("") }
+    val clipboardManager = LocalClipboardManager.current
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -38,6 +42,11 @@ fun LogScreen(onBack: () -> Unit) {
                     }
                 },
                 actions = {
+                    IconButton(onClick = {
+                        clipboardManager.setText(AnnotatedString(logText))
+                    }) {
+                        Icon(Icons.Default.ContentCopy, contentDescription = "Copy logs")
+                    }
                     IconButton(onClick = {
                         logText = AppLogger.getLog()
                     }) {
