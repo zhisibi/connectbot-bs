@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package org.connectbot.data
+package com.sbssh.data
 
 import android.content.Context
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
-import org.connectbot.data.dao.PubkeyDao
-import org.connectbot.data.entity.KeyStorageType
-import org.connectbot.data.entity.Pubkey
+import com.sbssh.data.dao.PubkeyDao
+import com.sbssh.data.entity.KeyStorageType
+import com.sbssh.data.entity.Pubkey
 import javax.inject.Inject
 import javax.inject.Singleton
 

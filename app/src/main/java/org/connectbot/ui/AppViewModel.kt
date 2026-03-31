@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui
+package com.sbssh.ui
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -34,12 +34,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import org.connectbot.data.migration.DatabaseMigrator
-import org.connectbot.data.migration.MigrationResult
-import org.connectbot.data.migration.MigrationState
-import org.connectbot.di.CoroutineDispatchers
-import org.connectbot.service.TerminalManager
-import org.connectbot.util.PreferenceConstants
+import com.sbssh.data.migration.DatabaseMigrator
+import com.sbssh.data.migration.MigrationResult
+import com.sbssh.data.migration.MigrationState
+import com.sbssh.di.CoroutineDispatchers
+import com.sbssh.service.TerminalManager
+import com.sbssh.util.PreferenceConstants
 import timber.log.Timber
 import javax.inject.Inject
 

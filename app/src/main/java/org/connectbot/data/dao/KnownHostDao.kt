@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package org.connectbot.data.dao
+package com.sbssh.data.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import org.connectbot.data.entity.KnownHost
+import com.sbssh.data.entity.KnownHost
 
 /**
  * Data Access Object for SSH known hosts (host key verification).

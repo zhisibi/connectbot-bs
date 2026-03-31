@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.hosteditor
+package com.sbssh.ui.screens.hosteditor
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -63,20 +63,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import org.connectbot.BuildConfig
-import org.connectbot.R
-import org.connectbot.data.entity.ColorScheme
-import org.connectbot.data.entity.Host
-import org.connectbot.data.entity.Profile
-import org.connectbot.data.entity.Pubkey
-import org.connectbot.ui.PreviewScreen
-import org.connectbot.ui.common.getIconColors
-import org.connectbot.ui.common.getLocalizedColorSchemeDescription
-import org.connectbot.ui.common.getLocalizedFontDisplayName
-import org.connectbot.ui.theme.ConnectBotTheme
-import org.connectbot.util.HostConstants
-import org.connectbot.util.LocalFontProvider
-import org.connectbot.util.TerminalFont
+import com.sbssh.BuildConfig
+import com.sbssh.R
+import com.sbssh.data.entity.ColorScheme
+import com.sbssh.data.entity.Host
+import com.sbssh.data.entity.Profile
+import com.sbssh.data.entity.Pubkey
+import com.sbssh.ui.PreviewScreen
+import com.sbssh.ui.common.getIconColors
+import com.sbssh.ui.common.getLocalizedColorSchemeDescription
+import com.sbssh.ui.common.getLocalizedFontDisplayName
+import com.sbssh.ui.theme.ConnectBotTheme
+import com.sbssh.util.HostConstants
+import com.sbssh.util.LocalFontProvider
+import com.sbssh.util.TerminalFont
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

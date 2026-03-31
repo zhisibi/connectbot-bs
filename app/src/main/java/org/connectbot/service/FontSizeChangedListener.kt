@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.service
+package com.sbssh.service
 
 /**
  * Listener for font size changes in the terminal.

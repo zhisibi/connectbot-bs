@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-package org.connectbot.service
+package com.sbssh.service
 
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.apache.harmony.niochar.charset.additional.IBM437
-import org.connectbot.di.CoroutineDispatchers
-import org.connectbot.transport.AbsTransport
+import com.sbssh.di.CoroutineDispatchers
+import com.sbssh.transport.AbsTransport
 import timber.log.Timber
 import java.io.IOException
 import java.nio.ByteBuffer

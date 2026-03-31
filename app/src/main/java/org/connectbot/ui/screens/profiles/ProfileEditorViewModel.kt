@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.profiles
+package com.sbssh.ui.screens.profiles
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -29,14 +29,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.connectbot.data.ColorSchemeRepository
-import org.connectbot.data.ProfileRepository
-import org.connectbot.data.entity.ColorScheme
-import org.connectbot.data.entity.Profile
-import org.connectbot.di.CoroutineDispatchers
-import org.connectbot.util.LocalFontProvider
-import org.connectbot.util.TerminalFont
-import org.connectbot.util.TerminalFontProvider
+import com.sbssh.data.ColorSchemeRepository
+import com.sbssh.data.ProfileRepository
+import com.sbssh.data.entity.ColorScheme
+import com.sbssh.data.entity.Profile
+import com.sbssh.di.CoroutineDispatchers
+import com.sbssh.util.LocalFontProvider
+import com.sbssh.util.TerminalFont
+import com.sbssh.util.TerminalFontProvider
 import javax.inject.Inject
 
 data class ProfileEditorUiState(

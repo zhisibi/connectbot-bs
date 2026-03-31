@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.di
+package com.sbssh.di
 
 import android.content.Context
 import android.content.SharedPreferences

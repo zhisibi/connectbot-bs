@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.connectbot.service
+package com.sbssh.service
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
@@ -28,9 +28,9 @@ import androidx.preference.PreferenceManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import org.connectbot.terminal.ModifierManager
-import org.connectbot.terminal.VTermKey
-import org.connectbot.util.PreferenceConstants
+import com.sbssh.terminal.ModifierManager
+import com.sbssh.terminal.VTermKey
+import com.sbssh.util.PreferenceConstants
 import timber.log.Timber
 import java.io.IOException
 

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui
+package com.sbssh.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -25,7 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import org.connectbot.util.NotificationPermissionHelper
+import com.sbssh.util.NotificationPermissionHelper
 
 /**
  * Observes lifecycle events and re-checks notification permission status when the screen resumes.

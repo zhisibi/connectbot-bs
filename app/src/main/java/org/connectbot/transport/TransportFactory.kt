@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-package org.connectbot.transport
+package com.sbssh.transport
 
 import android.content.Context
 import android.net.Uri
-import org.connectbot.data.HostRepository
-import org.connectbot.data.entity.Host
+import com.sbssh.data.HostRepository
+import com.sbssh.data.entity.Host
 import timber.log.Timber
 
 /**

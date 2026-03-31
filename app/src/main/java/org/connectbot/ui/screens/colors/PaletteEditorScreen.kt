@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.colors
+package com.sbssh.ui.screens.colors
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -72,10 +72,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import org.connectbot.R
-import org.connectbot.ui.PreviewScreen
-import org.connectbot.ui.components.ColorPickerDialog
-import org.connectbot.ui.components.RgbColorPickerDialog
+import com.sbssh.R
+import com.sbssh.ui.PreviewScreen
+import com.sbssh.ui.components.ColorPickerDialog
+import com.sbssh.ui.components.RgbColorPickerDialog
 
 /**
  * Screen for editing the full 256-color palette of a color scheme.

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.help
+package com.sbssh.ui.screens.help
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -59,10 +59,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import org.connectbot.BuildConfig
-import org.connectbot.R
-import org.connectbot.ui.PreviewScreen
-import org.connectbot.ui.theme.ConnectBotTheme
+import com.sbssh.BuildConfig
+import com.sbssh.R
+import com.sbssh.ui.PreviewScreen
+import com.sbssh.ui.theme.ConnectBotTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

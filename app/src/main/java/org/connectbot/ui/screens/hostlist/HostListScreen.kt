@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.hostlist
+package com.sbssh.ui.screens.hostlist
 
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -81,14 +81,14 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import kotlinx.coroutines.launch
-import org.connectbot.R
-import org.connectbot.data.entity.Host
-import org.connectbot.ui.LocalTerminalManager
-import org.connectbot.ui.PreviewScreen
-import org.connectbot.ui.components.DisconnectAllDialog
-import org.connectbot.ui.components.ShortcutCustomizationDialog
-import org.connectbot.ui.theme.ConnectBotTheme
-import org.connectbot.util.IconStyle
+import com.sbssh.R
+import com.sbssh.data.entity.Host
+import com.sbssh.ui.LocalTerminalManager
+import com.sbssh.ui.PreviewScreen
+import com.sbssh.ui.components.DisconnectAllDialog
+import com.sbssh.ui.components.ShortcutCustomizationDialog
+import com.sbssh.ui.theme.ConnectBotTheme
+import com.sbssh.util.IconStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

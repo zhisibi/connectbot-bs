@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.service
+package com.sbssh.service
 
 /**
  * Sealed class hierarchy representing errors that can occur in the TerminalManager service.

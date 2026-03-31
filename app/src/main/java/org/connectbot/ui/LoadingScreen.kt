@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui
+package com.sbssh.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,7 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import org.connectbot.R
+import com.sbssh.R
 
 /**
  * Loading screen shown during app initialization while migration check

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.components
+package com.sbssh.ui.components
 
 import android.content.Context
 import android.content.ContextWrapper
@@ -28,9 +28,9 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
-import org.connectbot.R
-import org.connectbot.service.PromptRequest
-import org.connectbot.service.PromptResponse
+import com.sbssh.R
+import com.sbssh.service.PromptRequest
+import com.sbssh.service.PromptResponse
 import timber.log.Timber
 
 /**

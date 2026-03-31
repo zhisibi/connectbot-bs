@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui
+package com.sbssh.ui
 
 import android.content.ClipData
 import androidx.compose.foundation.layout.Arrangement
@@ -56,10 +56,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import org.connectbot.R
-import org.connectbot.data.migration.MigrationState
-import org.connectbot.data.migration.MigrationStatus
-import org.connectbot.ui.theme.ConnectBotTheme
+import com.sbssh.R
+import com.sbssh.data.migration.MigrationState
+import com.sbssh.data.migration.MigrationStatus
+import com.sbssh.ui.theme.ConnectBotTheme
 
 /**
  * Full-screen UI shown during database migration.

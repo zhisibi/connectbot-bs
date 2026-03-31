@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.portforwardlist
+package com.sbssh.ui.screens.portforwardlist
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -28,12 +28,12 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.connectbot.data.HostRepository
-import org.connectbot.data.entity.PortForward
-import org.connectbot.di.CoroutineDispatchers
-import org.connectbot.service.TerminalBridge
-import org.connectbot.service.TerminalManager
-import org.connectbot.util.HostConstants
+import com.sbssh.data.HostRepository
+import com.sbssh.data.entity.PortForward
+import com.sbssh.di.CoroutineDispatchers
+import com.sbssh.service.TerminalBridge
+import com.sbssh.service.TerminalManager
+import com.sbssh.util.HostConstants
 import timber.log.Timber
 import javax.inject.Inject
 

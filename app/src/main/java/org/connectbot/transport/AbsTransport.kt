@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package org.connectbot.transport
+package com.sbssh.transport
 
 import android.content.Context
 import android.net.Uri
-import org.connectbot.data.entity.Host
-import org.connectbot.data.entity.PortForward
-import org.connectbot.service.TerminalBridge
-import org.connectbot.service.TerminalManager
+import com.sbssh.data.entity.Host
+import com.sbssh.data.entity.PortForward
+import com.sbssh.service.TerminalBridge
+import com.sbssh.service.TerminalManager
 import java.io.IOException
 
 /**

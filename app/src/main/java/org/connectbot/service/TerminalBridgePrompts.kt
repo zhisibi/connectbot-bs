@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.service
+package com.sbssh.service
 
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.runBlocking

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.pubkeylist
+package com.sbssh.ui.screens.pubkeylist
 
 import android.net.Uri
 import androidx.activity.compose.BackHandler
@@ -92,12 +92,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import org.connectbot.R
-import org.connectbot.data.entity.Pubkey
-import org.connectbot.ui.LocalTerminalManager
-import org.connectbot.ui.PreviewScreen
-import org.connectbot.ui.components.rememberBiometricPromptState
-import org.connectbot.ui.theme.ConnectBotTheme
+import com.sbssh.R
+import com.sbssh.data.entity.Pubkey
+import com.sbssh.ui.LocalTerminalManager
+import com.sbssh.ui.PreviewScreen
+import com.sbssh.ui.components.rememberBiometricPromptState
+import com.sbssh.ui.theme.ConnectBotTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

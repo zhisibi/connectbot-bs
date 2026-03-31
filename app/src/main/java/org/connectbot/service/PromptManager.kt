@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.service
+package com.sbssh.service
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableStateFlow

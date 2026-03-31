@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.colors
+package com.sbssh.ui.screens.colors
 
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -75,11 +75,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import kotlinx.coroutines.launch
-import org.connectbot.R
-import org.connectbot.data.entity.ColorScheme
-import org.connectbot.ui.PreviewScreen
-import org.connectbot.ui.common.getLocalizedColorSchemeDescription
-import org.connectbot.ui.theme.ConnectBotTheme
+import com.sbssh.R
+import com.sbssh.data.entity.ColorScheme
+import com.sbssh.ui.PreviewScreen
+import com.sbssh.ui.common.getLocalizedColorSchemeDescription
+import com.sbssh.ui.theme.ConnectBotTheme
 
 /**
  * Screen for managing color schemes (create, duplicate, delete).

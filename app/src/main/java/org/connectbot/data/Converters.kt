@@ -15,10 +15,10 @@
  * limitations under the License.
  */
 
-package org.connectbot.data
+package com.sbssh.data
 
 import androidx.room.TypeConverter
-import org.connectbot.data.entity.KeyStorageType
+import com.sbssh.data.entity.KeyStorageType
 
 /**
  * Room type converters for custom types used in database entities.

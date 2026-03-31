@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui
+package com.sbssh.ui
 
 import androidx.biometric.BiometricManager.Authenticators
 import androidx.biometric.BiometricPrompt
@@ -46,7 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
-import org.connectbot.R
+import com.sbssh.R
 import timber.log.Timber
 
 @Composable

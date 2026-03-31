@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.settings
+package com.sbssh.ui.screens.settings
 
 import android.Manifest
 import android.content.Intent
@@ -63,16 +63,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import org.connectbot.BuildConfig
-import org.connectbot.R
-import org.connectbot.ui.ObservePermissionOnResume
-import org.connectbot.ui.PreviewScreen
-import org.connectbot.ui.common.getLocalizedFontDisplayName
-import org.connectbot.ui.components.FontDownloadProgressDialog
-import org.connectbot.ui.theme.ConnectBotTheme
-import org.connectbot.util.LocalFontProvider
-import org.connectbot.util.NotificationPermissionHelper
-import org.connectbot.util.TerminalFont
+import com.sbssh.BuildConfig
+import com.sbssh.R
+import com.sbssh.ui.ObservePermissionOnResume
+import com.sbssh.ui.PreviewScreen
+import com.sbssh.ui.common.getLocalizedFontDisplayName
+import com.sbssh.ui.components.FontDownloadProgressDialog
+import com.sbssh.ui.theme.ConnectBotTheme
+import com.sbssh.util.LocalFontProvider
+import com.sbssh.util.NotificationPermissionHelper
+import com.sbssh.util.TerminalFont
 import org.xmlpull.v1.XmlPullParser
 import java.util.Locale
 

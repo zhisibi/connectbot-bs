@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.components
+package com.sbssh.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,8 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import org.connectbot.R
-import org.connectbot.service.TerminalBridge
+import com.sbssh.R
+import com.sbssh.service.TerminalBridge
 
 @Composable
 fun ResizeDialog(

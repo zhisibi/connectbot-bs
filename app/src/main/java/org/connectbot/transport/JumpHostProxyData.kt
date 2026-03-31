@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.transport
+package com.sbssh.transport
 
 import com.trilead.ssh2.Connection
 import com.trilead.ssh2.ProxyData

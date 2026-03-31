@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui
+package com.sbssh.ui
 
 import android.Manifest
 import android.app.Activity
@@ -52,16 +52,16 @@ import androidx.navigation.compose.rememberNavController
 import androidx.preference.PreferenceManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import org.connectbot.R
-import org.connectbot.data.entity.Host
-import org.connectbot.service.TerminalManager
-import org.connectbot.ui.components.DisconnectAllDialog
-import org.connectbot.ui.navigation.NavDestinations
-import org.connectbot.ui.theme.ConnectBotTheme
-import org.connectbot.util.IconStyle
-import org.connectbot.util.NotificationPermissionHelper
-import org.connectbot.util.PreferenceConstants
-import org.connectbot.util.ShortcutIconGenerator
+import com.sbssh.R
+import com.sbssh.data.entity.Host
+import com.sbssh.service.TerminalManager
+import com.sbssh.ui.components.DisconnectAllDialog
+import com.sbssh.ui.navigation.NavDestinations
+import com.sbssh.ui.theme.ConnectBotTheme
+import com.sbssh.util.IconStyle
+import com.sbssh.util.NotificationPermissionHelper
+import com.sbssh.util.PreferenceConstants
+import com.sbssh.util.ShortcutIconGenerator
 import timber.log.Timber
 
 // TODO: Move back to ComponentActivity when https://issuetracker.google.com/issues/178855209 is fixed.
@@ -71,7 +71,7 @@ import timber.log.Timber
 class MainActivity : AppCompatActivity() {
     companion object {
         private const val STATE_SELECTED_URI = "selectedUri"
-        const val DISCONNECT_ACTION = "org.connectbot.action.DISCONNECT"
+        const val DISCONNECT_ACTION = "com.sbssh.action.DISCONNECT"
     }
 
     internal lateinit var appViewModel: AppViewModel

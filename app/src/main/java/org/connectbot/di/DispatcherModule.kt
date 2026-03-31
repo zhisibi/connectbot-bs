@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.di
+package com.sbssh.di
 
 import dagger.Module
 import dagger.Provides

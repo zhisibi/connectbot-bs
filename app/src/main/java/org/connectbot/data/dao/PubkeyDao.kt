@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.data.dao
+package com.sbssh.data.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -23,8 +23,8 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
-import org.connectbot.data.entity.KeyStorageType
-import org.connectbot.data.entity.Pubkey
+import com.sbssh.data.entity.KeyStorageType
+import com.sbssh.data.entity.Pubkey
 
 /**
  * Data Access Object for SSH public/private key pairs.

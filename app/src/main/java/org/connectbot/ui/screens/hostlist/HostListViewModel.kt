@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.hostlist
+package com.sbssh.ui.screens.hostlist
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -33,13 +33,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.connectbot.R
-import org.connectbot.data.HostRepository
-import org.connectbot.data.entity.Host
-import org.connectbot.di.CoroutineDispatchers
-import org.connectbot.service.ServiceError
-import org.connectbot.service.TerminalManager
-import org.connectbot.util.PreferenceConstants
+import com.sbssh.R
+import com.sbssh.data.HostRepository
+import com.sbssh.data.entity.Host
+import com.sbssh.di.CoroutineDispatchers
+import com.sbssh.service.ServiceError
+import com.sbssh.service.TerminalManager
+import com.sbssh.util.PreferenceConstants
 import javax.inject.Inject
 
 enum class ConnectionState {

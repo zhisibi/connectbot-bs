@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.components
+package com.sbssh.ui.components
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
@@ -52,12 +52,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.connectbot.R
-import org.connectbot.data.entity.Host
-import org.connectbot.ui.common.ColorOption
-import org.connectbot.ui.common.getIconColors
-import org.connectbot.util.IconStyle
-import org.connectbot.util.ShortcutIconGenerator
+import com.sbssh.R
+import com.sbssh.data.entity.Host
+import com.sbssh.ui.common.ColorOption
+import com.sbssh.ui.common.getIconColors
+import com.sbssh.util.IconStyle
+import com.sbssh.util.ShortcutIconGenerator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

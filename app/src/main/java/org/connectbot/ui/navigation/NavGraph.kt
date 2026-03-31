@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.navigation
+package com.sbssh.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -28,24 +28,24 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import org.connectbot.data.entity.Host
-import org.connectbot.ui.screens.colors.ColorsScreen
-import org.connectbot.ui.screens.colors.PaletteEditorScreen
-import org.connectbot.ui.screens.console.ConsoleScreen
-import org.connectbot.ui.screens.contact.ContactScreen
-import org.connectbot.ui.screens.eula.EulaScreen
-import org.connectbot.ui.screens.generatepubkey.GeneratePubkeyScreen
-import org.connectbot.ui.screens.help.HelpScreen
-import org.connectbot.ui.screens.hints.HintsScreen
-import org.connectbot.ui.screens.hosteditor.HostEditorScreen
-import org.connectbot.ui.screens.hostlist.HostListScreen
-import org.connectbot.ui.screens.portforwardlist.PortForwardListScreen
-import org.connectbot.ui.screens.profiles.ProfileEditorScreen
-import org.connectbot.ui.screens.profiles.ProfileListScreen
-import org.connectbot.ui.screens.pubkeyeditor.PubkeyEditorScreen
-import org.connectbot.ui.screens.pubkeylist.PubkeyListScreen
-import org.connectbot.ui.screens.settings.SettingsScreen
-import org.connectbot.util.IconStyle
+import com.sbssh.data.entity.Host
+import com.sbssh.ui.screens.colors.ColorsScreen
+import com.sbssh.ui.screens.colors.PaletteEditorScreen
+import com.sbssh.ui.screens.console.ConsoleScreen
+import com.sbssh.ui.screens.contact.ContactScreen
+import com.sbssh.ui.screens.eula.EulaScreen
+import com.sbssh.ui.screens.generatepubkey.GeneratePubkeyScreen
+import com.sbssh.ui.screens.help.HelpScreen
+import com.sbssh.ui.screens.hints.HintsScreen
+import com.sbssh.ui.screens.hosteditor.HostEditorScreen
+import com.sbssh.ui.screens.hostlist.HostListScreen
+import com.sbssh.ui.screens.portforwardlist.PortForwardListScreen
+import com.sbssh.ui.screens.profiles.ProfileEditorScreen
+import com.sbssh.ui.screens.profiles.ProfileListScreen
+import com.sbssh.ui.screens.pubkeyeditor.PubkeyEditorScreen
+import com.sbssh.ui.screens.pubkeylist.PubkeyListScreen
+import com.sbssh.ui.screens.settings.SettingsScreen
+import com.sbssh.util.IconStyle
 import timber.log.Timber
 
 @Composable

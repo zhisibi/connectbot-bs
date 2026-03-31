@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.components
+package com.sbssh.ui.components
 
 import android.view.ViewConfiguration
 import androidx.compose.animation.core.tween
@@ -64,12 +64,12 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.connectbot.R
-import org.connectbot.service.ModifierLevel
-import org.connectbot.service.ModifierState
-import org.connectbot.service.TerminalBridge
-import org.connectbot.service.TerminalKeyListener
-import org.connectbot.terminal.VTermKey
+import com.sbssh.R
+import com.sbssh.service.ModifierLevel
+import com.sbssh.service.ModifierState
+import com.sbssh.service.TerminalBridge
+import com.sbssh.service.TerminalKeyListener
+import com.sbssh.terminal.VTermKey
 
 private const val UI_OPACITY = 0.5f
 

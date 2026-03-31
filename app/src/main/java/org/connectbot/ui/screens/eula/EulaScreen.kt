@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.eula
+package com.sbssh.ui.screens.eula
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -31,8 +31,8 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.connectbot.ui.PreviewScreen
-import org.connectbot.ui.theme.ConnectBotTheme
+import com.sbssh.ui.PreviewScreen
+import com.sbssh.ui.theme.ConnectBotTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

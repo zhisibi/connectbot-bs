@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.components
+package com.sbssh.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
@@ -72,10 +72,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.connectbot.R
-import org.connectbot.service.PromptRequest
-import org.connectbot.service.PromptResponse
-import org.connectbot.ui.theme.terminal
+import com.sbssh.R
+import com.sbssh.service.PromptRequest
+import com.sbssh.service.PromptResponse
+import com.sbssh.ui.theme.terminal
 
 /**
  * Non-modal inline prompt that appears at the bottom of the screen,

@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-package org.connectbot.transport
+package com.sbssh.transport
 
 import android.content.Context
 import android.net.Uri
 import androidx.annotation.VisibleForTesting
 import androidx.core.net.toUri
 import com.google.ase.Exec
-import org.connectbot.R
-import org.connectbot.data.entity.Host
+import com.sbssh.R
+import com.sbssh.data.entity.Host
 import timber.log.Timber
 import java.io.FileDescriptor
 import java.io.FileInputStream

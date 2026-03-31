@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.util
+package com.sbssh.util
 
 import android.graphics.Typeface
 import androidx.compose.runtime.Composable

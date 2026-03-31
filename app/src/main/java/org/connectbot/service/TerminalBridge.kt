@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.service
+package com.sbssh.service
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -41,17 +41,17 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import org.connectbot.R
-import org.connectbot.data.entity.Host
-import org.connectbot.data.entity.PortForward
-import org.connectbot.di.CoroutineDispatchers
-import org.connectbot.terminal.ProgressState
-import org.connectbot.terminal.TerminalEmulator
-import org.connectbot.terminal.TerminalEmulatorFactory
-import org.connectbot.transport.AbsTransport
-import org.connectbot.transport.SSH
-import org.connectbot.transport.TransportFactory
-import org.connectbot.util.HostConstants
+import com.sbssh.R
+import com.sbssh.data.entity.Host
+import com.sbssh.data.entity.PortForward
+import com.sbssh.di.CoroutineDispatchers
+import com.sbssh.terminal.ProgressState
+import com.sbssh.terminal.TerminalEmulator
+import com.sbssh.terminal.TerminalEmulatorFactory
+import com.sbssh.transport.AbsTransport
+import com.sbssh.transport.SSH
+import com.sbssh.transport.TransportFactory
+import com.sbssh.util.HostConstants
 import timber.log.Timber
 import java.io.IOException
 import java.nio.charset.Charset
@@ -371,7 +371,7 @@ class TerminalBridge {
     /**
      * Apply profile settings to the terminal.
      */
-    private fun applyProfileSettings(profile: org.connectbot.data.entity.Profile) {
+    private fun applyProfileSettings(profile: com.sbssh.data.entity.Profile) {
         // Apply font size
         val newFontSize = if (profile.fontSize > 0) profile.fontSize else DEFAULT_FONT_SIZE_SP
         if (newFontSize.toFloat() != fontSizeSp) {

@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package org.connectbot.di
+package com.sbssh.di
 
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import org.connectbot.BuildConfig
-import org.connectbot.logging.LocalTree
+import com.sbssh.BuildConfig
+import com.sbssh.logging.LocalTree
 import timber.log.Timber
 import javax.inject.Singleton
 

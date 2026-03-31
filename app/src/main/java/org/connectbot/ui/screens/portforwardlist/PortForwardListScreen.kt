@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.portforwardlist
+package com.sbssh.ui.screens.portforwardlist
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -62,10 +62,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import org.connectbot.R
-import org.connectbot.data.entity.PortForward
-import org.connectbot.ui.PreviewScreen
-import org.connectbot.ui.theme.ConnectBotTheme
+import com.sbssh.R
+import com.sbssh.data.entity.PortForward
+import com.sbssh.ui.PreviewScreen
+import com.sbssh.ui.theme.ConnectBotTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,7 +74,7 @@ fun PortForwardListScreen(
     modifier: Modifier = Modifier,
     viewModel: PortForwardListViewModel = hiltViewModel()
 ) {
-    val terminalManager = org.connectbot.ui.LocalTerminalManager.current
+    val terminalManager = com.sbssh.ui.LocalTerminalManager.current
 
     LaunchedEffect(terminalManager) {
         terminalManager?.let { viewModel.setTerminalManager(it) }

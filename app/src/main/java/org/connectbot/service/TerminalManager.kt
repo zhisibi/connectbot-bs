@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.service
+package com.sbssh.service
 
 import android.app.Service
 import android.content.Intent
@@ -49,19 +49,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import org.connectbot.R
-import org.connectbot.data.ColorSchemeRepository
-import org.connectbot.data.HostRepository
-import org.connectbot.data.ProfileRepository
-import org.connectbot.data.PubkeyRepository
-import org.connectbot.data.entity.Host
-import org.connectbot.data.entity.Pubkey
-import org.connectbot.di.CoroutineDispatchers
-import org.connectbot.transport.TransportFactory
-import org.connectbot.util.PreferenceConstants
-import org.connectbot.util.ProviderLoader
-import org.connectbot.util.ProviderLoaderListener
-import org.connectbot.util.PubkeyUtils
+import com.sbssh.R
+import com.sbssh.data.ColorSchemeRepository
+import com.sbssh.data.HostRepository
+import com.sbssh.data.ProfileRepository
+import com.sbssh.data.PubkeyRepository
+import com.sbssh.data.entity.Host
+import com.sbssh.data.entity.Pubkey
+import com.sbssh.di.CoroutineDispatchers
+import com.sbssh.transport.TransportFactory
+import com.sbssh.util.PreferenceConstants
+import com.sbssh.util.ProviderLoader
+import com.sbssh.util.ProviderLoaderListener
+import com.sbssh.util.PubkeyUtils
 import timber.log.Timber
 import java.io.IOException
 import java.lang.ref.WeakReference
@@ -144,7 +144,7 @@ class TerminalManager :
     internal lateinit var dispatchers: CoroutineDispatchers
 
     @Inject
-    internal lateinit var securePasswordStorage: org.connectbot.util.SecurePasswordStorage
+    internal lateinit var securePasswordStorage: com.sbssh.util.SecurePasswordStorage
 
     private val binder: IBinder = TerminalBinder()
 

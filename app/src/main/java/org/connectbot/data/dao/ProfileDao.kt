@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.data.dao
+package com.sbssh.data.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -24,7 +24,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
-import org.connectbot.data.entity.Profile
+import com.sbssh.data.entity.Profile
 
 /**
  * Data Access Object for terminal profiles.

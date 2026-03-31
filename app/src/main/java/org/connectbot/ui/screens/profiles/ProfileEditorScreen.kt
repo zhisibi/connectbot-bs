@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.profiles
+package com.sbssh.ui.screens.profiles
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -65,15 +65,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import org.connectbot.BuildConfig
-import org.connectbot.R
-import org.connectbot.data.entity.ColorScheme
-import org.connectbot.ui.common.getIconColors
-import org.connectbot.ui.common.getLocalizedColorSchemeDescription
-import org.connectbot.ui.common.getLocalizedFontDisplayName
-import org.connectbot.ui.components.FontDownloadProgressDialog
-import org.connectbot.util.LocalFontProvider
-import org.connectbot.util.TerminalFont
+import com.sbssh.BuildConfig
+import com.sbssh.R
+import com.sbssh.data.entity.ColorScheme
+import com.sbssh.ui.common.getIconColors
+import com.sbssh.ui.common.getLocalizedColorSchemeDescription
+import com.sbssh.ui.common.getLocalizedFontDisplayName
+import com.sbssh.ui.components.FontDownloadProgressDialog
+import com.sbssh.util.LocalFontProvider
+import com.sbssh.util.TerminalFont
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.service
+package com.sbssh.service
 
 fun interface BridgeDisconnectedListener {
     fun onDisconnected(bridge: TerminalBridge)

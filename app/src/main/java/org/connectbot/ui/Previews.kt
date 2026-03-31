@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui
+package com.sbssh.ui
 
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewLightDark

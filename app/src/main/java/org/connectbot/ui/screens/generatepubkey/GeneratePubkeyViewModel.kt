@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.generatepubkey
+package com.sbssh.ui.screens.generatepubkey
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -28,13 +28,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.connectbot.data.PubkeyRepository
-import org.connectbot.data.entity.KeyStorageType
-import org.connectbot.data.entity.Pubkey
-import org.connectbot.di.CoroutineDispatchers
-import org.connectbot.util.BiometricAvailability
-import org.connectbot.util.BiometricKeyManager
-import org.connectbot.util.PubkeyUtils
+import com.sbssh.data.PubkeyRepository
+import com.sbssh.data.entity.KeyStorageType
+import com.sbssh.data.entity.Pubkey
+import com.sbssh.di.CoroutineDispatchers
+import com.sbssh.util.BiometricAvailability
+import com.sbssh.util.BiometricKeyManager
+import com.sbssh.util.PubkeyUtils
 import timber.log.Timber
 import java.security.KeyPair
 import java.security.KeyPairGenerator

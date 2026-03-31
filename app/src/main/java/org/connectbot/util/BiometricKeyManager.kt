@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.util
+package com.sbssh.util
 
 import android.content.Context
 import android.os.Build
@@ -24,7 +24,7 @@ import android.security.keystore.KeyProperties
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import dagger.hilt.android.qualifiers.ApplicationContext
-import org.connectbot.ui.screens.generatepubkey.KeyType
+import com.sbssh.ui.screens.generatepubkey.KeyType
 import timber.log.Timber
 import java.security.KeyPairGenerator
 import java.security.KeyStore

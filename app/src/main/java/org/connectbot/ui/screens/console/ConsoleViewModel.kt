@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.console
+package com.sbssh.ui.screens.console
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -30,10 +30,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.connectbot.di.CoroutineDispatchers
-import org.connectbot.service.TerminalBridge
-import org.connectbot.service.TerminalManager
-import org.connectbot.terminal.ProgressState
+import com.sbssh.di.CoroutineDispatchers
+import com.sbssh.service.TerminalBridge
+import com.sbssh.service.TerminalManager
+import com.sbssh.terminal.ProgressState
 import javax.inject.Inject
 
 data class ConsoleUiState(

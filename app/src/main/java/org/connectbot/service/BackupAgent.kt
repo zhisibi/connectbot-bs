@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.service
+package com.sbssh.service
 
 import android.app.backup.BackupAgentHelper
 import android.app.backup.BackupDataInput
@@ -25,12 +25,12 @@ import android.os.ParcelFileDescriptor
 import androidx.preference.PreferenceManager
 import androidx.room.Room
 import kotlinx.coroutines.Dispatchers
-import org.connectbot.data.ColorSchemeRepository
-import org.connectbot.data.ConnectBotDatabase
-import org.connectbot.data.HostRepository
-import org.connectbot.data.PubkeyRepository
-import org.connectbot.di.CoroutineDispatchers
-import org.connectbot.util.PreferenceConstants
+import com.sbssh.data.ColorSchemeRepository
+import com.sbssh.data.ConnectBotDatabase
+import com.sbssh.data.HostRepository
+import com.sbssh.data.PubkeyRepository
+import com.sbssh.di.CoroutineDispatchers
+import com.sbssh.util.PreferenceConstants
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
@@ -113,7 +113,7 @@ class BackupAgent : BackupAgentHelper() {
             DATABASE_NAME
         ).build()
         val dispatchers = CoroutineDispatchers(default = Dispatchers.Default, io = Dispatchers.IO, main = Dispatchers.Main)
-        val securePasswordStorage = org.connectbot.util.SecurePasswordStorage(applicationContext)
+        val securePasswordStorage = com.sbssh.util.SecurePasswordStorage(applicationContext)
         val hostRepository = HostRepository(applicationContext, database, database.hostDao(), database.portForwardDao(), database.knownHostDao(), securePasswordStorage)
         val colorSchemeRepository = ColorSchemeRepository(database.colorSchemeDao(), dispatchers = dispatchers)
         val pubkeyRepository = PubkeyRepository(database.pubkeyDao())

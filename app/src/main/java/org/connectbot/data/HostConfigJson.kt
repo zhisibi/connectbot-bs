@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.data
+package com.sbssh.data
 
 import android.content.Context
 import androidx.room.RoomDatabase

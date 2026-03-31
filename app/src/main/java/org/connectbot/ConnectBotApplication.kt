@@ -1,8 +1,8 @@
-package org.connectbot
+package com.sbssh
 
 import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
-import org.connectbot.logging.TimberInitializer
+import com.sbssh.logging.TimberInitializer
 import javax.inject.Inject
 
 @HiltAndroidApp

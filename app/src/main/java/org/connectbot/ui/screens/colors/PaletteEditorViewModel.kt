@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.colors
+package com.sbssh.ui.screens.colors
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -29,10 +29,10 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.connectbot.data.ColorSchemePresets
-import org.connectbot.data.ColorSchemeRepository
-import org.connectbot.di.CoroutineDispatchers
-import org.connectbot.util.HostConstants
+import com.sbssh.data.ColorSchemePresets
+import com.sbssh.data.ColorSchemeRepository
+import com.sbssh.di.CoroutineDispatchers
+import com.sbssh.util.HostConstants
 import javax.inject.Inject
 
 data class PaletteEditorUiState(

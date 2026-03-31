@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.components
+package com.sbssh.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.data
+package com.sbssh.data
 
 import androidx.room.AutoMigration
 import androidx.room.Database
@@ -23,19 +23,19 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import org.connectbot.data.dao.ColorSchemeDao
-import org.connectbot.data.dao.HostDao
-import org.connectbot.data.dao.KnownHostDao
-import org.connectbot.data.dao.PortForwardDao
-import org.connectbot.data.dao.ProfileDao
-import org.connectbot.data.dao.PubkeyDao
-import org.connectbot.data.entity.ColorPalette
-import org.connectbot.data.entity.ColorScheme
-import org.connectbot.data.entity.Host
-import org.connectbot.data.entity.KnownHost
-import org.connectbot.data.entity.PortForward
-import org.connectbot.data.entity.Profile
-import org.connectbot.data.entity.Pubkey
+import com.sbssh.data.dao.ColorSchemeDao
+import com.sbssh.data.dao.HostDao
+import com.sbssh.data.dao.KnownHostDao
+import com.sbssh.data.dao.PortForwardDao
+import com.sbssh.data.dao.ProfileDao
+import com.sbssh.data.dao.PubkeyDao
+import com.sbssh.data.entity.ColorPalette
+import com.sbssh.data.entity.ColorScheme
+import com.sbssh.data.entity.Host
+import com.sbssh.data.entity.KnownHost
+import com.sbssh.data.entity.PortForward
+import com.sbssh.data.entity.Profile
+import com.sbssh.data.entity.Pubkey
 
 /**
  * ConnectBot Room database.

@@ -15,18 +15,18 @@
  * limitations under the License.
  */
 
-package org.connectbot.transport
+package com.sbssh.transport
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import androidx.core.net.toUri
 import de.mud.telnet.TelnetProtocolHandler
-import org.connectbot.R
-import org.connectbot.data.entity.Host
-import org.connectbot.service.TerminalBridge
-import org.connectbot.service.TerminalManager
-import org.connectbot.util.HostConstants
+import com.sbssh.R
+import com.sbssh.data.entity.Host
+import com.sbssh.service.TerminalBridge
+import com.sbssh.service.TerminalManager
+import com.sbssh.util.HostConstants
 import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream

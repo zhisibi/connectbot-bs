@@ -39,14 +39,14 @@ appVersioning {
 }
 
 android {
-    namespace = "org.connectbot"
+    namespace = "com.sbssh"
     compileSdk =
         libs.versions.compileSdk
             .get()
             .toInt()
 
     defaultConfig {
-        applicationId = "org.connectbot"
+        applicationId = "com.sbssh"
 
         minSdk =
             libs.versions.minSdk
@@ -64,8 +64,8 @@ android {
             debugSymbolLevel = "full"
         }
 
-        testApplicationId = "org.connectbot.tests"
-        testInstrumentationRunner = "org.connectbot.HiltTestRunner"
+        testApplicationId = "com.sbssh.tests"
+        testInstrumentationRunner = "com.sbssh.HiltTestRunner"
 
         // The following argument makes the Android Test Orchestrator run its
         // "pm clear" command after each test invocation. This command ensures

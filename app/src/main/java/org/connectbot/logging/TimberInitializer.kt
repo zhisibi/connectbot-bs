@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.logging
+package com.sbssh.logging
 
 import timber.log.Timber
 import javax.inject.Inject

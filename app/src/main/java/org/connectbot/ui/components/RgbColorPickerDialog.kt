@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.components
+package com.sbssh.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -46,7 +46,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.unit.dp
-import org.connectbot.R
+import com.sbssh.R
 
 /**
  * Dialog for selecting an RGB color with sliders.

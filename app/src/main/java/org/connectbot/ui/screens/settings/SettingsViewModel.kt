@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.settings
+package com.sbssh.ui.screens.settings
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -38,12 +38,12 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.connectbot.data.ProfileRepository
-import org.connectbot.data.entity.Profile
-import org.connectbot.di.CoroutineDispatchers
-import org.connectbot.util.LocalFontProvider
-import org.connectbot.util.PreferenceConstants
-import org.connectbot.util.TerminalFontProvider
+import com.sbssh.data.ProfileRepository
+import com.sbssh.data.entity.Profile
+import com.sbssh.di.CoroutineDispatchers
+import com.sbssh.util.LocalFontProvider
+import com.sbssh.util.PreferenceConstants
+import com.sbssh.util.TerminalFontProvider
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -364,7 +364,7 @@ class SettingsViewModel @Inject constructor(
 
     private fun preloadFont(storedValue: String) {
         if (LocalFontProvider.isLocalFont(storedValue)) return
-        val googleFontName = org.connectbot.util.TerminalFont.getGoogleFontName(storedValue)
+        val googleFontName = com.sbssh.util.TerminalFont.getGoogleFontName(storedValue)
         if (googleFontName.isBlank()) return
 
         viewModelScope.launch {

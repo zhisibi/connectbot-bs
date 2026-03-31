@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-package org.connectbot.data.migration
+package com.sbssh.data.migration
 
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import org.connectbot.data.entity.KeyStorageType
-import org.connectbot.data.entity.Pubkey
+import com.sbssh.data.entity.KeyStorageType
+import com.sbssh.data.entity.Pubkey
 import timber.log.Timber
 
 /**

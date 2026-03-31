@@ -15,19 +15,19 @@
  * limitations under the License.
  */
 
-package org.connectbot.data
+package com.sbssh.data
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
-import org.connectbot.data.dao.HostDao
-import org.connectbot.data.dao.KnownHostDao
-import org.connectbot.data.dao.PortForwardDao
-import org.connectbot.data.entity.Host
-import org.connectbot.data.entity.KnownHost
-import org.connectbot.data.entity.PortForward
-import org.connectbot.util.SecurePasswordStorage
+import com.sbssh.data.dao.HostDao
+import com.sbssh.data.dao.KnownHostDao
+import com.sbssh.data.dao.PortForwardDao
+import com.sbssh.data.entity.Host
+import com.sbssh.data.entity.KnownHost
+import com.sbssh.data.entity.PortForward
+import com.sbssh.util.SecurePasswordStorage
 import javax.inject.Inject
 import javax.inject.Singleton
 

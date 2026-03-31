@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.transport
+package com.sbssh.transport
 
 import android.content.Context
 import android.net.Uri
@@ -42,19 +42,19 @@ import com.trilead.ssh2.signature.DSASHA1Verify
 import com.trilead.ssh2.signature.ECDSASHA2Verify
 import com.trilead.ssh2.signature.Ed25519Verify
 import com.trilead.ssh2.signature.RSASHA1Verify
-import org.connectbot.R
-import org.connectbot.data.entity.Host
-import org.connectbot.data.entity.KeyStorageType
-import org.connectbot.data.entity.PortForward
-import org.connectbot.data.entity.Pubkey
-import org.connectbot.service.TerminalBridge
-import org.connectbot.service.TerminalManager
-import org.connectbot.service.requestBiometricAuth
-import org.connectbot.service.requestBooleanPrompt
-import org.connectbot.service.requestHostKeyFingerprintPrompt
-import org.connectbot.service.requestStringPrompt
-import org.connectbot.util.HostConstants
-import org.connectbot.util.PubkeyUtils
+import com.sbssh.R
+import com.sbssh.data.entity.Host
+import com.sbssh.data.entity.KeyStorageType
+import com.sbssh.data.entity.PortForward
+import com.sbssh.data.entity.Pubkey
+import com.sbssh.service.TerminalBridge
+import com.sbssh.service.TerminalManager
+import com.sbssh.service.requestBiometricAuth
+import com.sbssh.service.requestBooleanPrompt
+import com.sbssh.service.requestHostKeyFingerprintPrompt
+import com.sbssh.service.requestStringPrompt
+import com.sbssh.util.HostConstants
+import com.sbssh.util.PubkeyUtils
 import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream

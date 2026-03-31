@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.service
+package com.sbssh.service
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -29,10 +29,10 @@ import android.graphics.Color
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import org.connectbot.R
-import org.connectbot.data.entity.Host
-import org.connectbot.ui.MainActivity
-import org.connectbot.util.HostConstants
+import com.sbssh.R
+import com.sbssh.data.entity.Host
+import com.sbssh.ui.MainActivity
+import com.sbssh.util.HostConstants
 import javax.inject.Inject
 import javax.inject.Singleton
 

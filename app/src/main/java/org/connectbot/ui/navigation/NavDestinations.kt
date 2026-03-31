@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.navigation
+package com.sbssh.ui.navigation
 
 object NavDestinations {
     const val HOST_LIST = "host_list"

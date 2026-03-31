@@ -17,19 +17,19 @@
 
 @file:Suppress("ktlint:compose:compositionlocal-allowlist")
 
-package org.connectbot.ui
+package com.sbssh.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import org.connectbot.data.entity.Host
-import org.connectbot.service.TerminalManager
-import org.connectbot.ui.navigation.ConnectBotNavHost
-import org.connectbot.ui.navigation.NavDestinations
-import org.connectbot.ui.theme.ConnectBotTheme
-import org.connectbot.util.IconStyle
+import com.sbssh.data.entity.Host
+import com.sbssh.service.TerminalManager
+import com.sbssh.ui.navigation.ConnectBotNavHost
+import com.sbssh.ui.navigation.NavDestinations
+import com.sbssh.ui.theme.ConnectBotTheme
+import com.sbssh.util.IconStyle
 
 val LocalTerminalManager = compositionLocalOf<TerminalManager?> {
     null

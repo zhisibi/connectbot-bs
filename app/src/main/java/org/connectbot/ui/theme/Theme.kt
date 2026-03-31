@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.theme
+package com.sbssh.ui.theme
 
 import android.app.Activity
 import android.os.Build

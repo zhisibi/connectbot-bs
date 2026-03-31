@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.components
+package com.sbssh.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -39,8 +39,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import org.connectbot.R
-import org.connectbot.data.ColorSchemePresets
+import com.sbssh.R
+import com.sbssh.data.ColorSchemePresets
 
 /**
  * Dialog for selecting a color from the 256-color terminal palette.

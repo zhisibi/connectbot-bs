@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.hosteditor
+package com.sbssh.ui.screens.hosteditor
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -26,13 +26,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import org.connectbot.data.HostRepository
-import org.connectbot.data.ProfileRepository
-import org.connectbot.data.PubkeyRepository
-import org.connectbot.data.entity.Host
-import org.connectbot.data.entity.Profile
-import org.connectbot.data.entity.Pubkey
-import org.connectbot.util.SecurePasswordStorage
+import com.sbssh.data.HostRepository
+import com.sbssh.data.ProfileRepository
+import com.sbssh.data.PubkeyRepository
+import com.sbssh.data.entity.Host
+import com.sbssh.data.entity.Profile
+import com.sbssh.data.entity.Pubkey
+import com.sbssh.util.SecurePasswordStorage
 import javax.inject.Inject
 
 data class HostEditorUiState(

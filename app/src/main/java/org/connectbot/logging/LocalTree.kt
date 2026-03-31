@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.logging
+package com.sbssh.logging
 
 import android.util.Log
 import timber.log.Timber

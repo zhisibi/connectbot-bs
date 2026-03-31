@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.pubkeyeditor
+package com.sbssh.ui.screens.pubkeyeditor
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -28,10 +28,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import org.connectbot.data.PubkeyRepository
-import org.connectbot.data.entity.Pubkey
-import org.connectbot.di.CoroutineDispatchers
-import org.connectbot.util.PubkeyUtils
+import com.sbssh.data.PubkeyRepository
+import com.sbssh.data.entity.Pubkey
+import com.sbssh.di.CoroutineDispatchers
+import com.sbssh.util.PubkeyUtils
 import timber.log.Timber
 import javax.inject.Inject
 

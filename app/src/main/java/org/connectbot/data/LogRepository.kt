@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-package org.connectbot.data
+package com.sbssh.data
 
-import org.connectbot.logging.LocalTree
+import com.sbssh.logging.LocalTree
 import javax.inject.Inject
 import javax.inject.Singleton
 

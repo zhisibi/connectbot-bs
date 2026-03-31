@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.common
+package com.sbssh.ui.common
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import org.connectbot.R
+import com.sbssh.R
 
 /**
  * Color data for visual identification of hosts/profiles.

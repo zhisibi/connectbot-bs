@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.connectbot.ui.screens.console
+package com.sbssh.ui.screens.console
 
 import android.app.Activity
 import android.content.ClipboardManager
@@ -109,23 +109,23 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.connectbot.R
-import org.connectbot.data.entity.Host
-import org.connectbot.service.PromptRequest
-import org.connectbot.terminal.ProgressState
-import org.connectbot.terminal.SelectionController
-import org.connectbot.terminal.Terminal
-import org.connectbot.ui.LoadingScreen
-import org.connectbot.ui.LocalTerminalManager
-import org.connectbot.ui.components.FloatingTextInputDialog
-import org.connectbot.ui.components.InlinePrompt
-import org.connectbot.ui.components.ResizeDialog
-import org.connectbot.ui.components.TERMINAL_KEYBOARD_HEIGHT_DP
-import org.connectbot.ui.components.TerminalKeyboard
-import org.connectbot.ui.components.UrlScanDialog
-import org.connectbot.ui.theme.terminal
-import org.connectbot.util.PreferenceConstants
-import org.connectbot.util.rememberTerminalTypefaceResultFromStoredValue
+import com.sbssh.R
+import com.sbssh.data.entity.Host
+import com.sbssh.service.PromptRequest
+import com.sbssh.terminal.ProgressState
+import com.sbssh.terminal.SelectionController
+import com.sbssh.terminal.Terminal
+import com.sbssh.ui.LoadingScreen
+import com.sbssh.ui.LocalTerminalManager
+import com.sbssh.ui.components.FloatingTextInputDialog
+import com.sbssh.ui.components.InlinePrompt
+import com.sbssh.ui.components.ResizeDialog
+import com.sbssh.ui.components.TERMINAL_KEYBOARD_HEIGHT_DP
+import com.sbssh.ui.components.TerminalKeyboard
+import com.sbssh.ui.components.UrlScanDialog
+import com.sbssh.ui.theme.terminal
+import com.sbssh.util.PreferenceConstants
+import com.sbssh.util.rememberTerminalTypefaceResultFromStoredValue
 import timber.log.Timber
 
 /**

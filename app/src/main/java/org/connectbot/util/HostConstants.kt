@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.connectbot.util
+package com.sbssh.util
 
 import java.net.Inet4Address
 import java.net.Inet6Address
