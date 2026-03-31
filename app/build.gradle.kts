@@ -19,6 +19,8 @@ android {
 
         testInstrumentationRunner = "com.sbssh.HiltTestRunner"
         vectorDrawables.useSupportLibrary = true
+
+        buildConfigField("boolean", "HAS_DOWNLOADABLE_FONTS", "false")
     }
 
     buildTypes {
@@ -56,27 +58,12 @@ android {
     }
 }
 
-configurations.all {
-    resolutionStrategy.eachDependency {
-        when (requested.group) {
-            "androidx.core" -> useVersion("1.12.0")
-            "androidx.lifecycle" -> useVersion("2.7.0")
-            "androidx.savedstate" -> useVersion("1.2.0")
-            "androidx.appcompat" -> useVersion("1.6.1")
-            "androidx.compose.ui",
-            "androidx.compose.runtime",
-            "androidx.compose.foundation",
-            "androidx.compose.animation",
-            "androidx.compose.material" -> useVersion("1.6.0")
-        }
-    }
-}
 
 dependencies {
     // Core
-    implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.11.0")
+    implementation("androidx.core:core-ktx:1.18.0")
+    implementation("androidx.appcompat:appcompat:1.7.1")
+    implementation("com.google.android.material:material:1.13.0")
 
     // Compose
     implementation(platform("androidx.compose:compose-bom:2026.01.00"))
@@ -84,10 +71,10 @@ dependencies {
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
     implementation("androidx.compose.material:material-icons-extended")
-    implementation("androidx.activity:activity-compose:1.8.2")
-    implementation("androidx.navigation:navigation-compose:2.7.6")
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+    implementation("androidx.activity:activity-compose:1.13.0")
+    implementation("androidx.navigation:navigation-compose:2.9.7")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.4")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.9.4")
 
     // Room
     implementation("androidx.room:room-runtime:2.8.4")
@@ -95,9 +82,9 @@ dependencies {
     kapt("androidx.room:room-compiler:2.8.4")
 
     // Hilt
-    implementation("com.google.dagger:hilt-android:2.48")
-    kapt("com.google.dagger:hilt-android-compiler:2.48")
-    implementation("androidx.hilt:hilt-navigation-compose:1.1.0")
+    implementation("com.google.dagger:hilt-android:2.57")
+    kapt("com.google.dagger:hilt-android-compiler:2.57")
+    implementation("androidx.hilt:hilt-navigation-compose:1.3.0")
 
     // Biometric
     implementation("androidx.biometric:biometric:1.1.0")
