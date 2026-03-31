@@ -51,20 +51,78 @@ class TerminalScreenViewModel @Inject constructor(
                     .build()
 
                 val hostId = withContext(Dispatchers.IO) {
-                    if (vps.connectbotHostId != null) {
-                        vps.connectbotHostId
+                    val key = SessionKeyHolder.get()
+                    val crypto = FieldCryptoManager()
+
+                    var pubkeyId: Long? = null
+                    if (vps.authType == "KEY") {
+                        val keyContent = crypto.decrypt(vps.encryptedKeyContent, key)
+                            ?: throw IllegalStateException("Private key missing")
+                        val passphrase = crypto.decrypt(vps.encryptedKeyPassphrase, key)
+
+                        val keyPair = try {
+                            if (passphrase.isNullOrBlank()) {
+                                com.trilead.ssh2.crypto.PEMDecoder.decode(keyContent.toCharArray(), null)
+                            } else {
+                                com.trilead.ssh2.crypto.PEMDecoder.decode(keyContent.toCharArray(), passphrase)
+                            }
+                        } catch (e: Exception) {
+                            throw IllegalStateException("Failed to parse key: ${e.message}")
+                        }
+
+                        val algorithm = if (keyPair.private.algorithm == "EdDSA") "Ed25519" else keyPair.private.algorithm
+                        val nicknameBase = "${vps.alias}_key"
+                        val existing = cbDb.pubkeyDao().getByNickname(nicknameBase)
+                        val nickname = if (existing == null) nicknameBase else "${nicknameBase}_${System.currentTimeMillis()}"
+
+                        val pubkey = com.sbssh.connectbot.data.entity.Pubkey(
+                            id = 0,
+                            nickname = nickname,
+                            type = algorithm,
+                            encrypted = false,
+                            startup = false,
+                            confirmation = false,
+                            createdDate = System.currentTimeMillis(),
+                            privateKey = keyPair.private.encoded,
+                            publicKey = keyPair.public.encoded
+                        )
+                        pubkeyId = cbDb.pubkeyDao().insert(pubkey)
+                    }
+
+                    val existingHostId = vps.connectbotHostId
+                    if (existingHostId != null) {
+                        val existingHost = cbDb.hostDao().getById(existingHostId)
+                        if (existingHost != null) {
+                            val updatedHost = existingHost.copy(
+                                nickname = vps.alias,
+                                hostname = vps.host,
+                                port = vps.port,
+                                username = vps.username,
+                                pubkeyId = pubkeyId ?: existingHost.pubkeyId,
+                                useKeys = vps.authType == "KEY"
+                            )
+                            cbDb.hostDao().update(updatedHost)
+                            existingHostId
+                        } else {
+                            null
+                        }
                     } else {
+                        null
+                    } ?: run {
                         val host = Host.createSshHost(
                             nickname = vps.alias,
                             hostname = vps.host,
                             port = vps.port,
                             username = vps.username
+                        ).copy(
+                            pubkeyId = pubkeyId ?: -1L,
+                            useKeys = vps.authType == "KEY"
                         )
                         val newId = cbDb.hostDao().insert(host)
                         vpsDao.updateConnectbotHostId(vpsId, newId)
                         newId
                     }
-                } ?: throw IllegalStateException("Failed to create host")
+                }
 
                 if (vps.authType == "PASSWORD" && vps.encryptedPassword != null) {
                     val key = SessionKeyHolder.get()
