@@ -42,12 +42,20 @@ directly from its project creation screen by importing from the GitHub URL.
 
 ### Command line
 
-To compile ConnectBot using `gradlew`, you must first specify where your
+To compile using `gradlew`, you must first specify where your
 Android SDK is via the `ANDROID_SDK_HOME` environment variable. Then
 you can invoke the Gradle wrapper to build:
 
 ```sh
 ./gradlew build
+```
+
+#### Proxy for Google SDK downloads (CN networks)
+
+If Google SDK downloads are blocked, use proxy with `sdkmanager`:
+
+```sh
+sdkmanager --proxy=http --proxy_host=192.168.100.1 --proxy_port=7890 "platforms;android-36"
 ```
 
 ### Continuous Integration
