@@ -175,6 +175,18 @@ fun ConsoleScreen(
 
     BackHandler { onNavigateBack() }
 
+    // Always show a small back button overlay to ensure navigation works
+    Box(modifier = Modifier.fillMaxSize()) {
+        IconButton(
+            onClick = { onNavigateBack() },
+            modifier = Modifier
+                .align(Alignment.TopStart)
+                .padding(8.dp)
+        ) {
+            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+        }
+    }
+
     LaunchedEffect(terminalManager) {
         terminalManager?.let { viewModel.setTerminalManager(it) }
     }

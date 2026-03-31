@@ -87,6 +87,15 @@ class ConsoleViewModel @Inject constructor(
                 viewModelScope.launch {
                     ensureBridgeExists()
                 }
+                viewModelScope.launch {
+                    kotlinx.coroutines.delay(10000)
+                    val bridges = _uiState.value.bridges
+                    if (bridges.none { it.host.id == hostId }) {
+                        _uiState.update {
+                            it.copy(isLoading = false, error = "Connection timeout or failed to open session")
+                        }
+                    }
+                }
             }
         }
     }
