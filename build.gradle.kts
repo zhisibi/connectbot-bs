@@ -5,12 +5,10 @@ buildscript {
         maven("https://maven.aliyun.com/repository/google")
         maven("https://maven.aliyun.com/repository/public")
         maven("https://mirrors.huaweicloud.com/repository/maven")
-        mavenCentral()
     }
     dependencies {
         classpath("com.android.tools.build:gradle:8.6.0")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.1.20")
-        classpath("com.google.devtools.ksp:symbol-processing-gradle-plugin:2.1.20-1.0.32")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.3.20")
         classpath("com.google.dagger:hilt-android-gradle-plugin:2.48")
     }
 }
@@ -21,6 +19,5 @@ allprojects {
         maven("https://maven.aliyun.com/repository/google")
         maven("https://maven.aliyun.com/repository/public")
         maven("https://mirrors.huaweicloud.com/repository/maven")
-        mavenCentral()
     }
 }

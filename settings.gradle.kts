@@ -10,7 +10,7 @@ pluginManagement {
         mavenCentral()
     }
     plugins {
-        id("org.jetbrains.kotlin.plugin.compose") version "2.1.20"
+        id("org.jetbrains.kotlin.plugin.compose") version "2.3.20"
     }
 }
 
