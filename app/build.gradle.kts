@@ -62,7 +62,7 @@ android {
 configurations.all {
     resolutionStrategy.eachDependency {
         if (requested.group == "androidx.core") {
-            useVersion("1.13.1")
+            useVersion("1.15.0")
             if (requested.name == "core-viewtree") {
                 useVersion("1.0.0")
             }
@@ -72,7 +72,7 @@ configurations.all {
 
 dependencies {
     // Core
-    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.10.0")
 
