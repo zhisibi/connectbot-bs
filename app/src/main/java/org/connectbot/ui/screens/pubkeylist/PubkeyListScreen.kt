@@ -93,7 +93,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.sbssh.R
-import com.sbssh.data.entity.Pubkey
+import com.sbssh.connectbot.data.entity.Pubkey
 import com.sbssh.ui.LocalTerminalManager
 import com.sbssh.ui.PreviewScreen
 import com.sbssh.ui.components.rememberBiometricPromptState

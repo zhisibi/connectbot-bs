@@ -29,10 +29,10 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import com.sbssh.data.ColorSchemePresets
-import com.sbssh.data.ColorSchemeRepository
+import com.sbssh.connectbot.data.ColorSchemePresets
+import com.sbssh.connectbot.data.ColorSchemeRepository
 import com.sbssh.di.CoroutineDispatchers
-import com.sbssh.util.HostConstants
+import com.sbssh.connectbot.util.HostConstants
 import javax.inject.Inject
 
 data class PaletteEditorUiState(

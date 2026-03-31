@@ -19,8 +19,8 @@ package com.sbssh.transport
 
 import android.content.Context
 import android.net.Uri
-import com.sbssh.data.HostRepository
-import com.sbssh.data.entity.Host
+import com.sbssh.connectbot.data.HostRepository
+import com.sbssh.connectbot.data.entity.Host
 import timber.log.Timber
 
 /**

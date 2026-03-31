@@ -23,10 +23,10 @@ import android.net.Uri
 import androidx.core.net.toUri
 import de.mud.telnet.TelnetProtocolHandler
 import com.sbssh.R
-import com.sbssh.data.entity.Host
+import com.sbssh.connectbot.data.entity.Host
 import com.sbssh.service.TerminalBridge
 import com.sbssh.service.TerminalManager
-import com.sbssh.util.HostConstants
+import com.sbssh.connectbot.util.HostConstants
 import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream

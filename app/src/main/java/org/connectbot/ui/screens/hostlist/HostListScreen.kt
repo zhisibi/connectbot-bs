@@ -82,13 +82,13 @@ import androidx.core.graphics.toColorInt
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import kotlinx.coroutines.launch
 import com.sbssh.R
-import com.sbssh.data.entity.Host
+import com.sbssh.connectbot.data.entity.Host
 import com.sbssh.ui.LocalTerminalManager
 import com.sbssh.ui.PreviewScreen
 import com.sbssh.ui.components.DisconnectAllDialog
 import com.sbssh.ui.components.ShortcutCustomizationDialog
 import com.sbssh.ui.theme.ConnectBotTheme
-import com.sbssh.util.IconStyle
+import com.sbssh.connectbot.util.IconStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

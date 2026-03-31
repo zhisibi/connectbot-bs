@@ -37,12 +37,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.sbssh.data.PubkeyRepository
-import com.sbssh.data.entity.Pubkey
+import com.sbssh.connectbot.data.PubkeyRepository
+import com.sbssh.connectbot.data.entity.Pubkey
 import com.sbssh.di.CoroutineDispatchers
 import com.sbssh.service.TerminalManager
-import com.sbssh.util.BiometricKeyManager
-import com.sbssh.util.PubkeyUtils
+import com.sbssh.connectbot.util.BiometricKeyManager
+import com.sbssh.connectbot.util.PubkeyUtils
 import timber.log.Timber
 import java.io.BufferedReader
 import java.io.ByteArrayInputStream

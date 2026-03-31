@@ -67,13 +67,13 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.sbssh.BuildConfig
 import com.sbssh.R
-import com.sbssh.data.entity.ColorScheme
+import com.sbssh.connectbot.data.entity.ColorScheme
 import com.sbssh.ui.common.getIconColors
 import com.sbssh.ui.common.getLocalizedColorSchemeDescription
 import com.sbssh.ui.common.getLocalizedFontDisplayName
 import com.sbssh.ui.components.FontDownloadProgressDialog
-import com.sbssh.util.LocalFontProvider
-import com.sbssh.util.TerminalFont
+import com.sbssh.connectbot.util.LocalFontProvider
+import com.sbssh.connectbot.util.TerminalFont
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

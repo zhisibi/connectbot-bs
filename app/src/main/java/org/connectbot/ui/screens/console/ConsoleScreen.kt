@@ -110,7 +110,7 @@ import androidx.preference.PreferenceManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.sbssh.R
-import com.sbssh.data.entity.Host
+import com.sbssh.connectbot.data.entity.Host
 import com.sbssh.service.PromptRequest
 import com.sbssh.terminal.ProgressState
 import com.sbssh.terminal.SelectionController
@@ -124,8 +124,8 @@ import com.sbssh.ui.components.TERMINAL_KEYBOARD_HEIGHT_DP
 import com.sbssh.ui.components.TerminalKeyboard
 import com.sbssh.ui.components.UrlScanDialog
 import com.sbssh.ui.theme.terminal
-import com.sbssh.util.PreferenceConstants
-import com.sbssh.util.rememberTerminalTypefaceResultFromStoredValue
+import com.sbssh.connectbot.util.PreferenceConstants
+import com.sbssh.connectbot.util.rememberTerminalTypefaceResultFromStoredValue
 import timber.log.Timber
 
 /**

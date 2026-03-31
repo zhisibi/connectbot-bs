@@ -53,15 +53,15 @@ import androidx.preference.PreferenceManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import com.sbssh.R
-import com.sbssh.data.entity.Host
+import com.sbssh.connectbot.data.entity.Host
 import com.sbssh.service.TerminalManager
 import com.sbssh.ui.components.DisconnectAllDialog
 import com.sbssh.ui.navigation.NavDestinations
 import com.sbssh.ui.theme.ConnectBotTheme
-import com.sbssh.util.IconStyle
-import com.sbssh.util.NotificationPermissionHelper
-import com.sbssh.util.PreferenceConstants
-import com.sbssh.util.ShortcutIconGenerator
+import com.sbssh.connectbot.util.IconStyle
+import com.sbssh.connectbot.util.NotificationPermissionHelper
+import com.sbssh.connectbot.util.PreferenceConstants
+import com.sbssh.connectbot.util.ShortcutIconGenerator
 import timber.log.Timber
 
 // TODO: Move back to ComponentActivity when https://issuetracker.google.com/issues/178855209 is fixed.
@@ -291,16 +291,7 @@ class MainActivity : AppCompatActivity() {
 
             ConnectBotApp(
                 appUiState = appUiState,
-                navController = navController,
-                makingShortcut = makingShortcut,
-                authRequired = authOnLaunchEnabled,
-                isAuthenticated = isAuthenticated,
-                onAuthenticationSuccess = { appViewModel.onAuthenticationSuccess() },
-                onRetryMigration = { appViewModel.retryMigration() },
-                onSelectShortcut = { host, color, iconStyle ->
-                    createShortcutAndFinish(host, color, iconStyle)
-                },
-                onNavigateToConsole = onNavigateToConsole
+                navController = navController
             )
         }
     }

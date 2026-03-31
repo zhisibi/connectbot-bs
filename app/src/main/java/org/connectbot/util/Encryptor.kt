@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sbssh.util
+package com.sbssh.connectbot.util
 
 import java.security.MessageDigest
 import java.security.SecureRandom

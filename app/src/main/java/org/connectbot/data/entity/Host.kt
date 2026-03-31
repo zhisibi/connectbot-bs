@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.data.entity
+package com.sbssh.connectbot.data.entity
 
 import android.net.Uri
 import androidx.room.ColumnInfo

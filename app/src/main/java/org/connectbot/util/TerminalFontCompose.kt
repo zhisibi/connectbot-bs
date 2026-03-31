@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.util
+package com.sbssh.connectbot.util
 
 import android.graphics.Typeface
 import androidx.compose.runtime.Composable

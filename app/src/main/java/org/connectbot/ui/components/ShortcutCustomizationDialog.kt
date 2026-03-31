@@ -53,11 +53,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sbssh.R
-import com.sbssh.data.entity.Host
+import com.sbssh.connectbot.data.entity.Host
 import com.sbssh.ui.common.ColorOption
 import com.sbssh.ui.common.getIconColors
-import com.sbssh.util.IconStyle
-import com.sbssh.util.ShortcutIconGenerator
+import com.sbssh.connectbot.util.IconStyle
+import com.sbssh.connectbot.util.ShortcutIconGenerator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

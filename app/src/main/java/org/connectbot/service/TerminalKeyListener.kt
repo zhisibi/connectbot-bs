@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import com.sbssh.terminal.ModifierManager
 import com.sbssh.terminal.VTermKey
-import com.sbssh.util.PreferenceConstants
+import com.sbssh.connectbot.util.PreferenceConstants
 import timber.log.Timber
 import java.io.IOException
 

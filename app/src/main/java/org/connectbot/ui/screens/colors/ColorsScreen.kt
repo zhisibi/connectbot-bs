@@ -76,7 +76,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import kotlinx.coroutines.launch
 import com.sbssh.R
-import com.sbssh.data.entity.ColorScheme
+import com.sbssh.connectbot.data.entity.ColorScheme
 import com.sbssh.ui.PreviewScreen
 import com.sbssh.ui.common.getLocalizedColorSchemeDescription
 import com.sbssh.ui.theme.ConnectBotTheme

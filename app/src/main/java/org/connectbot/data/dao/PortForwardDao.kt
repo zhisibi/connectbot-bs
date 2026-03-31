@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.data.dao
+package com.sbssh.connectbot.data.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -23,7 +23,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
-import com.sbssh.data.entity.PortForward
+import com.sbssh.connectbot.data.entity.PortForward
 
 /**
  * Data Access Object for SSH port forwarding rules.

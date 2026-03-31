@@ -29,14 +29,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import com.sbssh.data.ColorSchemeRepository
-import com.sbssh.data.ProfileRepository
-import com.sbssh.data.entity.ColorScheme
-import com.sbssh.data.entity.Profile
+import com.sbssh.connectbot.data.ColorSchemeRepository
+import com.sbssh.connectbot.data.ProfileRepository
+import com.sbssh.connectbot.data.entity.ColorScheme
+import com.sbssh.connectbot.data.entity.Profile
 import com.sbssh.di.CoroutineDispatchers
-import com.sbssh.util.LocalFontProvider
-import com.sbssh.util.TerminalFont
-import com.sbssh.util.TerminalFontProvider
+import com.sbssh.connectbot.util.LocalFontProvider
+import com.sbssh.connectbot.util.TerminalFont
+import com.sbssh.connectbot.util.TerminalFontProvider
 import javax.inject.Inject
 
 data class ProfileEditorUiState(

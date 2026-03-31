@@ -63,7 +63,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.sbssh.R
-import com.sbssh.data.entity.PortForward
+import com.sbssh.connectbot.data.entity.PortForward
 import com.sbssh.ui.PreviewScreen
 import com.sbssh.ui.theme.ConnectBotTheme
 

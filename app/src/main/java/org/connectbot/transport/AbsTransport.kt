@@ -19,8 +19,8 @@ package com.sbssh.transport
 
 import android.content.Context
 import android.net.Uri
-import com.sbssh.data.entity.Host
-import com.sbssh.data.entity.PortForward
+import com.sbssh.connectbot.data.entity.Host
+import com.sbssh.connectbot.data.entity.PortForward
 import com.sbssh.service.TerminalBridge
 import com.sbssh.service.TerminalManager
 import java.io.IOException

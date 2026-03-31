@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.util
+package com.sbssh.connectbot.util
 
 /**
  * Available terminal fonts that can be downloaded via Google Fonts.

@@ -40,7 +40,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sbssh.R
-import com.sbssh.data.ColorSchemePresets
+import com.sbssh.connectbot.data.ColorSchemePresets
 
 /**
  * Dialog for selecting a color from the 256-color terminal palette.

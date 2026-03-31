@@ -42,8 +42,8 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import com.sbssh.R
-import com.sbssh.data.entity.Host
-import com.sbssh.data.entity.PortForward
+import com.sbssh.connectbot.data.entity.Host
+import com.sbssh.connectbot.data.entity.PortForward
 import com.sbssh.di.CoroutineDispatchers
 import com.sbssh.terminal.ProgressState
 import com.sbssh.terminal.TerminalEmulator
@@ -51,7 +51,7 @@ import com.sbssh.terminal.TerminalEmulatorFactory
 import com.sbssh.transport.AbsTransport
 import com.sbssh.transport.SSH
 import com.sbssh.transport.TransportFactory
-import com.sbssh.util.HostConstants
+import com.sbssh.connectbot.util.HostConstants
 import timber.log.Timber
 import java.io.IOException
 import java.nio.charset.Charset
@@ -371,7 +371,7 @@ class TerminalBridge {
     /**
      * Apply profile settings to the terminal.
      */
-    private fun applyProfileSettings(profile: com.sbssh.data.entity.Profile) {
+    private fun applyProfileSettings(profile: com.sbssh.connectbot.data.entity.Profile) {
         // Apply font size
         val newFontSize = if (profile.fontSize > 0) profile.fontSize else DEFAULT_FONT_SIZE_SP
         if (newFontSize.toFloat() != fontSizeSp) {

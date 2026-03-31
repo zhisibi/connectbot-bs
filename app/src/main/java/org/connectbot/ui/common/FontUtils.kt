@@ -20,7 +20,7 @@ package com.sbssh.ui.common
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.sbssh.R
-import com.sbssh.util.TerminalFont
+import com.sbssh.connectbot.util.TerminalFont
 
 /**
  * Get the localized display name for a font family value.

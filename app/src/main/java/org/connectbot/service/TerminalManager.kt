@@ -50,18 +50,18 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import com.sbssh.R
-import com.sbssh.data.ColorSchemeRepository
-import com.sbssh.data.HostRepository
-import com.sbssh.data.ProfileRepository
-import com.sbssh.data.PubkeyRepository
-import com.sbssh.data.entity.Host
-import com.sbssh.data.entity.Pubkey
+import com.sbssh.connectbot.data.ColorSchemeRepository
+import com.sbssh.connectbot.data.HostRepository
+import com.sbssh.connectbot.data.ProfileRepository
+import com.sbssh.connectbot.data.PubkeyRepository
+import com.sbssh.connectbot.data.entity.Host
+import com.sbssh.connectbot.data.entity.Pubkey
 import com.sbssh.di.CoroutineDispatchers
 import com.sbssh.transport.TransportFactory
-import com.sbssh.util.PreferenceConstants
-import com.sbssh.util.ProviderLoader
-import com.sbssh.util.ProviderLoaderListener
-import com.sbssh.util.PubkeyUtils
+import com.sbssh.connectbot.util.PreferenceConstants
+import com.sbssh.connectbot.util.ProviderLoader
+import com.sbssh.connectbot.util.ProviderLoaderListener
+import com.sbssh.connectbot.util.PubkeyUtils
 import timber.log.Timber
 import java.io.IOException
 import java.lang.ref.WeakReference
@@ -144,7 +144,7 @@ class TerminalManager :
     internal lateinit var dispatchers: CoroutineDispatchers
 
     @Inject
-    internal lateinit var securePasswordStorage: com.sbssh.util.SecurePasswordStorage
+    internal lateinit var securePasswordStorage: com.sbssh.connectbot.util.SecurePasswordStorage
 
     private val binder: IBinder = TerminalBinder()
 

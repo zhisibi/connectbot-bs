@@ -24,12 +24,9 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
-import com.sbssh.data.entity.Host
 import com.sbssh.service.TerminalManager
-import com.sbssh.ui.navigation.ConnectBotNavHost
-import com.sbssh.ui.navigation.NavDestinations
-import com.sbssh.ui.theme.ConnectBotTheme
-import com.sbssh.util.IconStyle
+import com.sbssh.ui.navigation.NavGraph
+import com.sbssh.ui.theme.SbsshTheme
 
 val LocalTerminalManager = compositionLocalOf<TerminalManager?> {
     null
@@ -39,59 +36,11 @@ val LocalTerminalManager = compositionLocalOf<TerminalManager?> {
 fun ConnectBotApp(
     appUiState: AppUiState,
     navController: NavHostController,
-    makingShortcut: Boolean,
-    authRequired: Boolean,
-    isAuthenticated: Boolean,
-    onAuthenticationSuccess: () -> Unit,
-    onRetryMigration: () -> Unit,
-    onSelectShortcut: (Host, String?, IconStyle) -> Unit,
-    onNavigateToConsole: (Host) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    ConnectBotTheme {
-        when (appUiState) {
-            is AppUiState.Loading -> {
-                LoadingScreen(modifier = modifier)
-            }
-
-            is AppUiState.MigrationInProgress -> {
-                MigrationScreen(
-                    uiState = MigrationUiState.InProgress(appUiState.state),
-                    onRetry = onRetryMigration,
-                    modifier = modifier
-                )
-            }
-
-            is AppUiState.MigrationFailed -> {
-                MigrationScreen(
-                    uiState = MigrationUiState.Failed(
-                        appUiState.error,
-                        appUiState.debugLog
-                    ),
-                    onRetry = onRetryMigration,
-                    modifier = modifier
-                )
-            }
-
-            is AppUiState.Ready -> {
-                if (authRequired && !isAuthenticated && !makingShortcut) {
-                    AuthenticationScreen(
-                        onAuthenticationSuccess = onAuthenticationSuccess,
-                        modifier = modifier
-                    )
-                } else {
-                    CompositionLocalProvider(LocalTerminalManager provides appUiState.terminalManager) {
-                        ConnectBotNavHost(
-                            navController = navController,
-                            startDestination = NavDestinations.HOST_LIST,
-                            makingShortcut = makingShortcut,
-                            onSelectShortcut = onSelectShortcut,
-                            onNavigateToConsole = onNavigateToConsole,
-                            modifier = modifier
-                        )
-                    }
-                }
-            }
+    SbsshTheme {
+        CompositionLocalProvider(LocalTerminalManager provides appUiState.terminalManager) {
+            NavGraph(navController = navController)
         }
     }
 }

@@ -22,7 +22,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import com.sbssh.data.LogRepository
+import com.sbssh.connectbot.data.LogRepository
 import javax.inject.Inject
 
 data class LogViewerUiState(

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.data
+package com.sbssh.connectbot.data
 
 import com.sbssh.logging.LocalTree
 import javax.inject.Inject

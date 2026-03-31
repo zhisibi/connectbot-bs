@@ -70,9 +70,9 @@ import com.sbssh.ui.PreviewScreen
 import com.sbssh.ui.common.getLocalizedFontDisplayName
 import com.sbssh.ui.components.FontDownloadProgressDialog
 import com.sbssh.ui.theme.ConnectBotTheme
-import com.sbssh.util.LocalFontProvider
-import com.sbssh.util.NotificationPermissionHelper
-import com.sbssh.util.TerminalFont
+import com.sbssh.connectbot.util.LocalFontProvider
+import com.sbssh.connectbot.util.NotificationPermissionHelper
+import com.sbssh.connectbot.util.TerminalFont
 import org.xmlpull.v1.XmlPullParser
 import java.util.Locale
 

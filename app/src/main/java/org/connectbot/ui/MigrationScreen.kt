@@ -57,8 +57,8 @@ import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import com.sbssh.R
-import com.sbssh.data.migration.MigrationState
-import com.sbssh.data.migration.MigrationStatus
+import com.sbssh.connectbot.data.migration.MigrationState
+import com.sbssh.connectbot.data.migration.MigrationStatus
 import com.sbssh.ui.theme.ConnectBotTheme
 
 /**

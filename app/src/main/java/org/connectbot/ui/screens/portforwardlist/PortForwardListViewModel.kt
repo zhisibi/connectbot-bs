@@ -28,12 +28,12 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.sbssh.data.HostRepository
-import com.sbssh.data.entity.PortForward
+import com.sbssh.connectbot.data.HostRepository
+import com.sbssh.connectbot.data.entity.PortForward
 import com.sbssh.di.CoroutineDispatchers
 import com.sbssh.service.TerminalBridge
 import com.sbssh.service.TerminalManager
-import com.sbssh.util.HostConstants
+import com.sbssh.connectbot.util.HostConstants
 import timber.log.Timber
 import javax.inject.Inject
 

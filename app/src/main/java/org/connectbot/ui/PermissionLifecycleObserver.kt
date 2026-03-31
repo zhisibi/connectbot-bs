@@ -25,7 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import com.sbssh.util.NotificationPermissionHelper
+import com.sbssh.connectbot.util.NotificationPermissionHelper
 
 /**
  * Observes lifecycle events and re-checks notification permission status when the screen resumes.

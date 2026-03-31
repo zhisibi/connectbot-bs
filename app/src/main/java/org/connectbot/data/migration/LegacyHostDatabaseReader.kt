@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-package com.sbssh.data.migration
+package com.sbssh.connectbot.data.migration
 
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import com.sbssh.data.entity.ColorPalette
-import com.sbssh.data.entity.ColorScheme
-import com.sbssh.data.entity.KnownHost
-import com.sbssh.data.entity.PortForward
+import com.sbssh.connectbot.data.entity.ColorPalette
+import com.sbssh.connectbot.data.entity.ColorScheme
+import com.sbssh.connectbot.data.entity.KnownHost
+import com.sbssh.connectbot.data.entity.PortForward
 import timber.log.Timber
 
 /**

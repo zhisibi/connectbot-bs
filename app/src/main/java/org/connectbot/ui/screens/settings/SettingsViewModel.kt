@@ -38,12 +38,12 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.sbssh.data.ProfileRepository
-import com.sbssh.data.entity.Profile
+import com.sbssh.connectbot.data.ProfileRepository
+import com.sbssh.connectbot.data.entity.Profile
 import com.sbssh.di.CoroutineDispatchers
-import com.sbssh.util.LocalFontProvider
-import com.sbssh.util.PreferenceConstants
-import com.sbssh.util.TerminalFontProvider
+import com.sbssh.connectbot.util.LocalFontProvider
+import com.sbssh.connectbot.util.PreferenceConstants
+import com.sbssh.connectbot.util.TerminalFontProvider
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -364,7 +364,7 @@ class SettingsViewModel @Inject constructor(
 
     private fun preloadFont(storedValue: String) {
         if (LocalFontProvider.isLocalFont(storedValue)) return
-        val googleFontName = com.sbssh.util.TerminalFont.getGoogleFontName(storedValue)
+        val googleFontName = com.sbssh.connectbot.util.TerminalFont.getGoogleFontName(storedValue)
         if (googleFontName.isBlank()) return
 
         viewModelScope.launch {

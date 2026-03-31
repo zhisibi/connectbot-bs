@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.data
+package com.sbssh.connectbot.data
 
 import android.content.ContentValues
 import android.database.Cursor

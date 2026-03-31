@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.data
+package com.sbssh.connectbot.data
 
 /**
  * Built-in color scheme presets for terminal emulation.

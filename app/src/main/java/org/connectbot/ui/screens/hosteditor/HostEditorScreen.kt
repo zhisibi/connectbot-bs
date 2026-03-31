@@ -65,18 +65,18 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.sbssh.BuildConfig
 import com.sbssh.R
-import com.sbssh.data.entity.ColorScheme
-import com.sbssh.data.entity.Host
-import com.sbssh.data.entity.Profile
-import com.sbssh.data.entity.Pubkey
+import com.sbssh.connectbot.data.entity.ColorScheme
+import com.sbssh.connectbot.data.entity.Host
+import com.sbssh.connectbot.data.entity.Profile
+import com.sbssh.connectbot.data.entity.Pubkey
 import com.sbssh.ui.PreviewScreen
 import com.sbssh.ui.common.getIconColors
 import com.sbssh.ui.common.getLocalizedColorSchemeDescription
 import com.sbssh.ui.common.getLocalizedFontDisplayName
 import com.sbssh.ui.theme.ConnectBotTheme
-import com.sbssh.util.HostConstants
-import com.sbssh.util.LocalFontProvider
-import com.sbssh.util.TerminalFont
+import com.sbssh.connectbot.util.HostConstants
+import com.sbssh.connectbot.util.LocalFontProvider
+import com.sbssh.connectbot.util.TerminalFont
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

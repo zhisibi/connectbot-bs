@@ -34,12 +34,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import com.sbssh.data.migration.DatabaseMigrator
-import com.sbssh.data.migration.MigrationResult
-import com.sbssh.data.migration.MigrationState
+import com.sbssh.connectbot.data.migration.DatabaseMigrator
+import com.sbssh.connectbot.data.migration.MigrationResult
+import com.sbssh.connectbot.data.migration.MigrationState
 import com.sbssh.di.CoroutineDispatchers
 import com.sbssh.service.TerminalManager
-import com.sbssh.util.PreferenceConstants
+import com.sbssh.connectbot.util.PreferenceConstants
 import timber.log.Timber
 import javax.inject.Inject
 

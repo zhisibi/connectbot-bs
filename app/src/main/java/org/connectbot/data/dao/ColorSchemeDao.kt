@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.data.dao
+package com.sbssh.connectbot.data.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -24,8 +24,8 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
-import com.sbssh.data.entity.ColorPalette
-import com.sbssh.data.entity.ColorScheme
+import com.sbssh.connectbot.data.entity.ColorPalette
+import com.sbssh.connectbot.data.entity.ColorScheme
 
 /**
  * Data Access Object for terminal color schemes and palettes.

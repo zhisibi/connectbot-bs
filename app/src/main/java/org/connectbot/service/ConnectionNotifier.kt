@@ -30,9 +30,9 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.sbssh.R
-import com.sbssh.data.entity.Host
+import com.sbssh.connectbot.data.entity.Host
 import com.sbssh.ui.MainActivity
-import com.sbssh.util.HostConstants
+import com.sbssh.connectbot.util.HostConstants
 import javax.inject.Inject
 import javax.inject.Singleton
 

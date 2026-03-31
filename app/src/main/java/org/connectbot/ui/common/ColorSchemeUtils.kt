@@ -20,7 +20,7 @@ package com.sbssh.ui.common
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.sbssh.R
-import com.sbssh.data.entity.ColorScheme
+import com.sbssh.connectbot.data.entity.ColorScheme
 
 /**
  * Get the localized description for a color scheme.

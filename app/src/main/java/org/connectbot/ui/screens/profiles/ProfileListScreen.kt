@@ -62,7 +62,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import com.sbssh.R
-import com.sbssh.data.entity.Profile
+import com.sbssh.connectbot.data.entity.Profile
 import com.sbssh.ui.common.getLocalizedFontDisplayName
 
 @OptIn(ExperimentalMaterial3Api::class)

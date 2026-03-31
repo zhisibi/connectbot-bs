@@ -25,8 +25,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import com.sbssh.data.ColorSchemeRepository
-import com.sbssh.data.entity.ColorScheme
+import com.sbssh.connectbot.data.ColorSchemeRepository
+import com.sbssh.connectbot.data.entity.ColorScheme
 import javax.inject.Inject
 
 data class SchemeManagerUiState(

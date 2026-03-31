@@ -1,12 +1,11 @@
 package com.sbssh
 
-import android.app.Application
 import dagger.hilt.android.HiltAndroidApp
 import com.sbssh.logging.TimberInitializer
 import javax.inject.Inject
 
 @HiltAndroidApp
-class ConnectBotApplication : Application() {
+class ConnectBotApplication : SbsshApp() {
 
     @Inject
     lateinit var timberInitializer: TimberInitializer

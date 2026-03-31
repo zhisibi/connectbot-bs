@@ -26,13 +26,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import com.sbssh.data.HostRepository
-import com.sbssh.data.ProfileRepository
-import com.sbssh.data.PubkeyRepository
-import com.sbssh.data.entity.Host
-import com.sbssh.data.entity.Profile
-import com.sbssh.data.entity.Pubkey
-import com.sbssh.util.SecurePasswordStorage
+import com.sbssh.connectbot.data.HostRepository
+import com.sbssh.connectbot.data.ProfileRepository
+import com.sbssh.connectbot.data.PubkeyRepository
+import com.sbssh.connectbot.data.entity.Host
+import com.sbssh.connectbot.data.entity.Profile
+import com.sbssh.connectbot.data.entity.Pubkey
+import com.sbssh.connectbot.util.SecurePasswordStorage
 import javax.inject.Inject
 
 data class HostEditorUiState(

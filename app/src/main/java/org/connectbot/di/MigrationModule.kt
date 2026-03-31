@@ -23,8 +23,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import com.sbssh.data.migration.LegacyHostDatabaseReader
-import com.sbssh.data.migration.LegacyPubkeyDatabaseReader
+import com.sbssh.connectbot.data.migration.LegacyHostDatabaseReader
+import com.sbssh.connectbot.data.migration.LegacyPubkeyDatabaseReader
 import javax.inject.Singleton
 
 @Module

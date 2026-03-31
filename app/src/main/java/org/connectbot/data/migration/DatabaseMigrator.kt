@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.data.migration
+package com.sbssh.connectbot.data.migration
 
 import android.content.Context
 import androidx.room.withTransaction
@@ -26,14 +26,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import com.sbssh.BuildConfig
-import com.sbssh.data.ConnectBotDatabase
-import com.sbssh.data.entity.ColorPalette
-import com.sbssh.data.entity.ColorScheme
-import com.sbssh.data.entity.Host
-import com.sbssh.data.entity.KnownHost
-import com.sbssh.data.entity.PortForward
-import com.sbssh.data.entity.Profile
-import com.sbssh.data.entity.Pubkey
+import com.sbssh.connectbot.data.ConnectBotDatabase
+import com.sbssh.connectbot.data.entity.ColorPalette
+import com.sbssh.connectbot.data.entity.ColorScheme
+import com.sbssh.connectbot.data.entity.Host
+import com.sbssh.connectbot.data.entity.KnownHost
+import com.sbssh.connectbot.data.entity.PortForward
+import com.sbssh.connectbot.data.entity.Profile
+import com.sbssh.connectbot.data.entity.Pubkey
 import com.sbssh.di.CoroutineDispatchers
 import timber.log.Timber
 import java.io.File

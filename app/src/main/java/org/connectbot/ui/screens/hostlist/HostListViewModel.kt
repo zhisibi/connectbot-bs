@@ -34,12 +34,12 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import com.sbssh.R
-import com.sbssh.data.HostRepository
-import com.sbssh.data.entity.Host
+import com.sbssh.connectbot.data.HostRepository
+import com.sbssh.connectbot.data.entity.Host
 import com.sbssh.di.CoroutineDispatchers
 import com.sbssh.service.ServiceError
 import com.sbssh.service.TerminalManager
-import com.sbssh.util.PreferenceConstants
+import com.sbssh.connectbot.util.PreferenceConstants
 import javax.inject.Inject
 
 enum class ConnectionState {
