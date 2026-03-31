@@ -28,6 +28,7 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -157,6 +158,8 @@ fun ConsoleScreen(
 
     // Capture latest callback for use in effects
     val currentOnNavigateBack by rememberUpdatedState(onNavigateBack)
+
+    BackHandler { onNavigateBack() }
 
     LaunchedEffect(terminalManager) {
         terminalManager?.let { viewModel.setTerminalManager(it) }
@@ -328,6 +331,19 @@ fun ConsoleScreen(
                 withDismissAction = true
             )
         }
+    }
+
+    if (uiState.error != null) {
+        AlertDialog(
+            onDismissRequest = { onNavigateBack() },
+            title = { Text("Error") },
+            text = { Text(uiState.error ?: "Unknown error") },
+            confirmButton = {
+                TextButton(onClick = { onNavigateBack() }) {
+                    Text(stringResource(R.string.button_back))
+                }
+            }
+        )
     }
 
     fun handleTerminalInteraction() {
