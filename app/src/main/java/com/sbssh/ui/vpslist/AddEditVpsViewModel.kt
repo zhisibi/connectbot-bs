@@ -1,16 +1,18 @@
 package com.sbssh.ui.vpslist
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.sbssh.data.crypto.FieldCryptoManager
 import com.sbssh.data.crypto.SessionKeyHolder
-import com.sbssh.data.db.AppDatabase
+import com.sbssh.data.db.VpsDao
 import com.sbssh.data.db.VpsEntity
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class AddEditVpsUiState(
     val alias: String = "",
@@ -26,20 +28,22 @@ data class AddEditVpsUiState(
     val error: String? = null
 )
 
-class AddEditVpsViewModel(private val vpsId: Long? = null) : ViewModel() {
+@HiltViewModel
+class AddEditVpsViewModel @Inject constructor(
+    private val dao: VpsDao,
+    savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
+    private val vpsId: Long? = savedStateHandle.get<Long>("vpsId")
     private val crypto = FieldCryptoManager()
-    private var dao = runCatching { AppDatabase.getInstance().vpsDao() }.getOrNull()
     private val _uiState = MutableStateFlow(AddEditVpsUiState())
     val uiState: StateFlow<AddEditVpsUiState> = _uiState.asStateFlow()
 
     init {
-        if (dao == null) {
-            _uiState.value = _uiState.value.copy(error = "Database not initialized")
-        } else if (vpsId != null) {
+        if (vpsId != null) {
             viewModelScope.launch {
                 try {
-                    val vps = dao!!.getVpsById(vpsId)
+                    val vps = dao.getVpsById(vpsId)
                     if (vps != null) {
                         val key = SessionKeyHolder.get()
                         _uiState.value = AddEditVpsUiState(
@@ -99,7 +103,7 @@ class AddEditVpsViewModel(private val vpsId: Long? = null) : ViewModel() {
                 val key = SessionKeyHolder.get()
                 val now = System.currentTimeMillis()
                 if (vpsId == null) {
-                    dao?.insertVps(
+                    dao.insertVps(
                         VpsEntity(
                             alias = state.alias.trim(),
                             host = state.host.trim(),
@@ -114,8 +118,8 @@ class AddEditVpsViewModel(private val vpsId: Long? = null) : ViewModel() {
                         )
                     )
                 } else {
-                    val existing = dao?.getVpsById(vpsId) ?: return@launch
-                    dao?.updateVps(
+                    val existing = dao.getVpsById(vpsId) ?: return@launch
+                    dao.updateVps(
                         existing.copy(
                             alias = state.alias.trim(),
                             host = state.host.trim(),
@@ -138,10 +142,4 @@ class AddEditVpsViewModel(private val vpsId: Long? = null) : ViewModel() {
 
     fun clearError() { _uiState.value = _uiState.value.copy(error = null) }
 
-    class Factory(private val vpsId: Long?) : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return AddEditVpsViewModel(vpsId) as T
-        }
-    }
 }

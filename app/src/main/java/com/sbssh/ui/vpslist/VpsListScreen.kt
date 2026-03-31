@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.sbssh.R
 import com.sbssh.data.db.VpsEntity
 
@@ -26,7 +26,7 @@ fun VpsListScreen(
     onConnectSftp: (Long) -> Unit,
     onSettings: () -> Unit
 ) {
-    val viewModel: VpsListViewModel = viewModel(factory = VpsListViewModel.Factory())
+    val viewModel: VpsListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     Scaffold(
         topBar = {

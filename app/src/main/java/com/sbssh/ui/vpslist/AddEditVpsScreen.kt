@@ -18,7 +18,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,9 +28,7 @@ fun AddEditVpsScreen(
     onBack: () -> Unit
 ) {
     val context = LocalContext.current
-    val viewModel: AddEditVpsViewModel = viewModel(
-        factory = AddEditVpsViewModel.Factory(vpsId)
-    )
+    val viewModel: AddEditVpsViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(uiState.isSaved) {

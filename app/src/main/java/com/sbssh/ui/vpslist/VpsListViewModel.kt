@@ -1,12 +1,13 @@
 package com.sbssh.ui.vpslist
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.sbssh.data.db.AppDatabase
+import com.sbssh.data.db.VpsDao
 import com.sbssh.data.db.VpsEntity
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 data class VpsListUiState(
     val vpsList: List<VpsEntity> = emptyList(),
@@ -15,24 +16,18 @@ data class VpsListUiState(
     val showDeleteDialog: Long? = null
 )
 
-class VpsListViewModel : ViewModel() {
-
-    private var dao = runCatching { AppDatabase.getInstance().vpsDao() }.getOrNull()
+@HiltViewModel
+class VpsListViewModel @Inject constructor(
+    private val dao: VpsDao
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(VpsListUiState())
     val uiState: StateFlow<VpsListUiState> = _uiState.asStateFlow()
 
     init {
-        if (dao == null) {
-            _uiState.value = _uiState.value.copy(
-                isLoading = false,
-                error = "Database not initialized"
-            )
-        } else {
-            viewModelScope.launch {
-                dao!!.getAllVps().collect { list ->
-                    _uiState.value = _uiState.value.copy(vpsList = list, isLoading = false)
-                }
+        viewModelScope.launch {
+            dao.getAllVps().collect { list ->
+                _uiState.value = _uiState.value.copy(vpsList = list, isLoading = false)
             }
         }
     }
@@ -47,15 +42,8 @@ class VpsListViewModel : ViewModel() {
 
     fun deleteVps(id: Long) {
         viewModelScope.launch {
-            dao?.deleteVpsById(id)
+            dao.deleteVpsById(id)
             _uiState.value = _uiState.value.copy(showDeleteDialog = null)
-        }
-    }
-
-    class Factory : ViewModelProvider.Factory {
-        @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return VpsListViewModel() as T
         }
     }
 }
