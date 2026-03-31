@@ -105,7 +105,7 @@ import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

@@ -71,7 +71,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.sbssh.R
 import com.sbssh.ui.PreviewScreen
 import com.sbssh.ui.components.ColorPickerDialog
