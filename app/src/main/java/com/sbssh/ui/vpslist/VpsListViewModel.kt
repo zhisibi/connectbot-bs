@@ -26,6 +26,17 @@ class VpsListViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
+            try {
+                val first = dao.getAllVpsAsList()
+                _uiState.value = _uiState.value.copy(vpsList = first, isLoading = false)
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = e.message ?: "Failed to load servers"
+                )
+            }
+        }
+        viewModelScope.launch {
             dao.getAllVps()
                 .catch { e ->
                     if (e is kotlinx.coroutines.CancellationException) return@catch

@@ -17,13 +17,15 @@ fun TerminalScreen(
 ) {
     val viewModel: TerminalScreenViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsState()
+    var hasNavigated by remember { mutableStateOf(false) }
 
     LaunchedEffect(vpsId) {
         viewModel.openTerminal(vpsId)
     }
 
     LaunchedEffect(uiState) {
-        if (uiState is TerminalUiState.Ready) {
+        if (!hasNavigated && uiState is TerminalUiState.Ready) {
+            hasNavigated = true
             onOpenConsole((uiState as TerminalUiState.Ready).hostId)
         }
     }

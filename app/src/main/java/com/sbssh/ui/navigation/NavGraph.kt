@@ -100,7 +100,9 @@ fun NavGraph(
             arguments = listOf(navArgument("hostId") { type = NavType.LongType })
         ) {
             ConsoleScreen(
-                onNavigateBack = { navController.popBackStack() },
+                onNavigateBack = {
+                    navController.popBackStack(Routes.VPS_LIST, false)
+                },
                 onNavigateToPortForwards = { navController.popBackStack() }
             )
         }
