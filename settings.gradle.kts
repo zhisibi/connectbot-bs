@@ -6,9 +6,11 @@ pluginManagement {
         maven("https://mirrors.huaweicloud.com/repository/maven")
         maven("https://maven.aliyun.com/repository/google")
         maven("https://maven.aliyun.com/repository/public")
-        google()
         gradlePluginPortal()
         mavenCentral()
+    }
+    plugins {
+        id("org.jetbrains.kotlin.plugin.compose") version "2.3.0"
     }
 }
 
@@ -18,7 +20,6 @@ dependencyResolutionManagement {
         maven("https://maven.aliyun.com/repository/google")
         maven("https://maven.aliyun.com/repository/public")
         maven("https://mirrors.huaweicloud.com/repository/maven")
-        google()
         mavenCentral()
     }
 }
