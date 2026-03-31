@@ -20,7 +20,7 @@ object CrashHandler {
         crashDir = File(context.filesDir, "crash")
         if (!crashDir.exists()) crashDir.mkdirs()
 
-        val defaultHandler = Thread.getDefaultUncaughtExceptionHandler()
+        val appContext = context.applicationContext
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
             try {
                 val timestamp = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.getDefault()).format(Date())
@@ -39,12 +39,25 @@ object CrashHandler {
                     append("-----\n")
                 }
 
-                crashFile.writeText(header + sw.toString())
+                val logText = header + sw.toString()
+                crashFile.writeText(logText)
                 AppLogger.log("CRASH", "Uncaught exception saved to ${crashFile.absolutePath}", throwable)
+
+                // Launch crash UI
+                val intent = android.content.Intent(appContext, com.sbssh.ui.CrashActivity::class.java).apply {
+                    addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK)
+                    addFlags(android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    putExtra(com.sbssh.ui.CrashActivity.EXTRA_CRASH_LOG, logText)
+                }
+                appContext.startActivity(intent)
+
+                // Give the activity a moment to start before killing the process
+                try { Thread.sleep(400) } catch (_: Exception) { }
             } catch (_: Exception) {
                 // ignore
             } finally {
-                defaultHandler?.uncaughtException(thread, throwable)
+                android.os.Process.killProcess(android.os.Process.myPid())
+                kotlin.system.exitProcess(10)
             }
         }
     }
