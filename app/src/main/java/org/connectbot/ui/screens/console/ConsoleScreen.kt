@@ -36,6 +36,8 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
@@ -576,6 +578,13 @@ fun ConsoleScreen(
                             .padding(
                                 top = if (!titleBarHide) titleBarHeight else 0.dp
                             )
+                            .pointerInput(Unit) {
+                                detectTapGestures(onTap = {
+                                    handleTerminalInteraction()
+                                    imeFocusRequester.requestFocus()
+                                    inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+                                })
+                            }
                     ) {
                         // Hidden IME input bridge to capture soft keyboard (Enter/Backspace)
                         var imeBuffer by remember { mutableStateOf("") }
