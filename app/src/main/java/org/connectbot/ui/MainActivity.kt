@@ -126,17 +126,12 @@ class MainActivity : AppCompatActivity() {
 
         val language = SettingsManager.getInstance(this).settings.value.language
         val tag = if (language == "zh") "zh-CN" else "en"
-        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag))
+        val desiredLocales = LocaleListCompat.forLanguageTags(tag)
+        if (AppCompatDelegate.getApplicationLocales().toLanguageTags() != desiredLocales.toLanguageTags()) {
+            AppCompatDelegate.setApplicationLocales(desiredLocales)
+        }
 
         appViewModel = ViewModelProvider(this)[AppViewModel::class.java]
-
-        val savedLanguage = SettingsManager.getInstance(this).settings.value.language
-        val localeList = when (savedLanguage) {
-            "zh" -> LocaleListCompat.forLanguageTags("zh")
-            "en" -> LocaleListCompat.forLanguageTags("en")
-            else -> LocaleListCompat.getEmptyLocaleList()
-        }
-        AppCompatDelegate.setApplicationLocales(localeList)
 
         if (savedInstanceState == null) {
             requestedUri = intent?.data
