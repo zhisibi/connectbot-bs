@@ -38,9 +38,6 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}) {
         contract = ActivityResultContracts.OpenDocument()
     ) { uri -> uri?.let { viewModel.restoreServers(it) } }
 
-    LaunchedEffect(uiState.shouldRestart) {
-        if (uiState.shouldRestart) { viewModel.onRestartConsumed(); activity?.recreate() }
-    }
     LaunchedEffect(uiState.error) {
         uiState.error?.let { Toast.makeText(context, it, Toast.LENGTH_LONG).show(); viewModel.clearMessages() }
     }

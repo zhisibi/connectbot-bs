@@ -151,7 +151,7 @@ class SettingsViewModel(
     fun setLanguage(lang: String) {
         applyLocale(lang)
         settingsManager.setLanguage(lang)
-        _uiState.value = _uiState.value.copy(language = lang, showLanguageDialog = false, shouldRestart = true)
+        _uiState.value = _uiState.value.copy(language = lang, showLanguageDialog = false, shouldRestart = false)
     }
 
     private fun applyLocale(lang: String) {

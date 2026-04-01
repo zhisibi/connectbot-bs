@@ -713,4 +713,9 @@
   <string name="cloud_sync_not_enabled">未启用（即将上线）</string>
   <string name="cloud_sync_enabled">已启用</string>
   <string name="about">关于</string>
+  <string name="set_master_password">设置主密码</string>
+  <string name="enter_master_password">输入主密码</string>
+  <string name="create_password_desc">创建一个强主密码以加密你的数据</string>
+  <string name="unlock_password_desc">请输入主密码以解锁</string>
+  <string name="unlock_biometrics">使用生物识别解锁</string>
 </resources>
