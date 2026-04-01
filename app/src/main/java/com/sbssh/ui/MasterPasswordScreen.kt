@@ -59,7 +59,7 @@ fun MasterPasswordScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("SbSSH") },
+                title = { Text(stringResource(R.string.app_name)) },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
@@ -104,7 +104,7 @@ fun MasterPasswordScreen(
                         IconButton(onClick = { passwordVisible = !passwordVisible }) {
                             Icon(
                                 imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                                contentDescription = "Toggle visibility"
+                                contentDescription = stringResource(R.string.toggle_visibility)
                             )
                         }
                     },
@@ -124,7 +124,7 @@ fun MasterPasswordScreen(
                             IconButton(onClick = { confirmVisible = !confirmVisible }) {
                                 Icon(
                                     imageVector = if (confirmVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                                    contentDescription = "Toggle visibility"
+                                    contentDescription = stringResource(R.string.toggle_visibility)
                                 )
                             }
                         },
@@ -178,7 +178,7 @@ fun MasterPasswordScreen(
                                     val keyBytes = cryptoManager.getBiometricKey()
                                     viewModel.unlockWithBiometric(keyBytes)
                                 } catch (e: Exception) {
-                                    Toast.makeText(context, "Biometric error: ${e.message}", Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(context, context.getString(R.string.toast_biometric_error, e.message ?: ""), Toast.LENGTH_SHORT).show()
                                 }
                             }
                             override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
@@ -187,9 +187,9 @@ fun MasterPasswordScreen(
                             }
                         }
                         val promptInfo = androidx.biometric.BiometricPrompt.PromptInfo.Builder()
-                            .setTitle("Biometric Authentication")
-                            .setSubtitle("Use your fingerprint to unlock")
-                            .setNegativeButtonText("Cancel")
+                            .setTitle(context.getString(R.string.biometric_auth_title))
+                            .setSubtitle(context.getString(R.string.biometric_auth_subtitle))
+                            .setNegativeButtonText(context.getString(R.string.cancel))
                             .setAllowedAuthenticators(androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG)
                             .build()
                         val biometricPrompt = androidx.biometric.BiometricPrompt(activity, executor, callback)
@@ -203,14 +203,14 @@ fun MasterPasswordScreen(
                 }
                 Spacer(modifier = Modifier.height(8.dp))
                 TextButton(onClick = { usePasswordLogin = true }) {
-                    Text("使用密码登录")
+                    Text(stringResource(R.string.label_use_password))
                 }
             }
 
             if (!uiState.isFirstLaunch && uiState.biometricAvailable && usePasswordLogin) {
                 Spacer(modifier = Modifier.height(8.dp))
                 TextButton(onClick = { usePasswordLogin = false }) {
-                    Text("使用指纹登录")
+                    Text(stringResource(R.string.label_use_biometrics))
                 }
             }
         }

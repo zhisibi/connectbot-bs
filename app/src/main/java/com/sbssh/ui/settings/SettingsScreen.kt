@@ -54,7 +54,7 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}) {
                 title = { Text(stringResource(R.string.settings)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
@@ -94,10 +94,10 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}) {
                 if (uiState.cloudSyncEnabled) stringResource(R.string.cloud_sync_enabled) else stringResource(R.string.cloud_sync_not_enabled),
                 onClick = { viewModel.showCloudSyncDialog() })
 
-            SettingsCard(Icons.Default.BugReport, "Debug Log", "View app logs",
+            SettingsCard(Icons.Default.BugReport, stringResource(R.string.title_debug_log), stringResource(R.string.subtitle_view_app_logs),
                 onClick = { onViewLog() })
 
-            SettingsCard(Icons.Default.Info, stringResource(R.string.about), "SbSSH ${BuildConfig.VERSION_NAME}",
+            SettingsCard(Icons.Default.Info, stringResource(R.string.about), stringResource(R.string.about_version, stringResource(R.string.app_name), BuildConfig.VERSION_NAME),
                 onClick = { viewModel.showAbout() })
         }
     }
@@ -206,13 +206,13 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}) {
             title = { Text(stringResource(R.string.about_title)) },
             text = {
                 Column {
-                    Text("SbSSH ${BuildConfig.VERSION_NAME}", fontWeight = FontWeight.Bold); Spacer(Modifier.height(8.dp))
+                    Text(stringResource(R.string.about_version, stringResource(R.string.app_name), BuildConfig.VERSION_NAME), fontWeight = FontWeight.Bold); Spacer(Modifier.height(8.dp))
                     Text(stringResource(R.string.about_desc)); Spacer(Modifier.height(8.dp))
                     Text(stringResource(R.string.about_features), fontWeight = FontWeight.SemiBold)
                     Text(stringResource(R.string.about_ssh)); Text(stringResource(R.string.about_sftp))
                     Text(stringResource(R.string.about_encryption)); Text(stringResource(R.string.about_biometric))
                     Text(stringResource(R.string.about_backup)); Spacer(Modifier.height(8.dp))
-                    Text("© 2026 sbssh", style = MaterialTheme.typography.labelSmall)
+                    Text(stringResource(R.string.about_copyright), style = MaterialTheme.typography.labelSmall)
                 }
             },
             confirmButton = { TextButton(onClick = { viewModel.dismissAbout() }) { Text(stringResource(R.string.ok)) } })

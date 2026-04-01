@@ -30,6 +30,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -45,6 +46,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.core.content.pm.ShortcutInfoCompat
 import androidx.core.content.pm.ShortcutManagerCompat
 import androidx.core.net.toUri
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavController
@@ -56,6 +58,7 @@ import com.sbssh.R
 import com.sbssh.connectbot.data.entity.Host
 import com.sbssh.service.TerminalManager
 import com.sbssh.ui.components.DisconnectAllDialog
+import com.sbssh.ui.settings.SettingsManager
 import com.sbssh.ui.navigation.Routes
 import com.sbssh.ui.theme.ConnectBotTheme
 import com.sbssh.connectbot.util.IconStyle
@@ -121,7 +124,19 @@ class MainActivity : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
+        val language = SettingsManager.getInstance(this).settings.value.language
+        val tag = if (language == "zh") "zh-CN" else "en"
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(tag))
+
         appViewModel = ViewModelProvider(this)[AppViewModel::class.java]
+
+        val savedLanguage = SettingsManager.getInstance(this).settings.value.language
+        val localeList = when (savedLanguage) {
+            "zh" -> LocaleListCompat.forLanguageTags("zh")
+            "en" -> LocaleListCompat.forLanguageTags("en")
+            else -> LocaleListCompat.getEmptyLocaleList()
+        }
+        AppCompatDelegate.setApplicationLocales(localeList)
 
         if (savedInstanceState == null) {
             requestedUri = intent?.data

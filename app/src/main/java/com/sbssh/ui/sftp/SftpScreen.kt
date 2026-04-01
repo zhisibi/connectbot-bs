@@ -4,6 +4,7 @@ package com.sbssh.ui.sftp
 
 import android.widget.Toast
 import android.os.Environment
+import androidx.compose.ui.res.stringResource
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -20,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.sbssh.R
 import androidx.lifecycle.viewmodel.compose.viewModel
 import java.io.File
 import java.text.SimpleDateFormat
@@ -62,7 +64,7 @@ fun SftpScreen(
                 tempFile.renameTo(namedFile)
                 viewModel.uploadFile(namedFile.absolutePath)
             } catch (e: Exception) {
-                Toast.makeText(context, "Failed to read file", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.toast_failed_read_file), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -76,52 +78,52 @@ fun SftpScreen(
                             value = uiState.query,
                             onValueChange = { viewModel.updateQuery(it) },
                             singleLine = true,
-                            placeholder = { Text("搜索文件") },
+                            placeholder = { Text(stringResource(R.string.sftp_search_hint)) },
                             modifier = Modifier.fillMaxWidth()
                         )
                     } else {
-                        Text("SFTP")
+                        Text(stringResource(R.string.label_sftp))
                     }
                 },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 actions = {
                     IconButton(onClick = { showSearch = !showSearch }) {
-                        Icon(Icons.Default.Search, contentDescription = "Search")
+                        Icon(Icons.Default.Search, contentDescription = stringResource(R.string.content_desc_search))
                     }
                     Box {
                         IconButton(onClick = { showSortMenu = true }) {
-                            Icon(Icons.Default.Sort, contentDescription = "Sort")
+                            Icon(Icons.Default.Sort, contentDescription = stringResource(R.string.content_desc_sort))
                         }
                         DropdownMenu(
                             expanded = showSortMenu,
                             onDismissRequest = { showSortMenu = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("名称") },
+                                text = { Text(stringResource(R.string.sftp_sort_name)) },
                                 onClick = { showSortMenu = false; viewModel.updateSort(SortType.NAME) }
                             )
                             DropdownMenuItem(
-                                text = { Text("时间") },
+                                text = { Text(stringResource(R.string.sftp_sort_time)) },
                                 onClick = { showSortMenu = false; viewModel.updateSort(SortType.TIME) }
                             )
                             DropdownMenuItem(
-                                text = { Text("类型") },
+                                text = { Text(stringResource(R.string.sftp_sort_type)) },
                                 onClick = { showSortMenu = false; viewModel.updateSort(SortType.TYPE) }
                             )
                         }
                     }
                     IconButton(onClick = { uploadLauncher.launch("*/*") }) {
-                        Icon(Icons.Default.UploadFile, contentDescription = "Upload")
+                        Icon(Icons.Default.UploadFile, contentDescription = stringResource(R.string.content_desc_upload))
                     }
                     IconButton(onClick = { viewModel.showCreateFolder() }) {
-                        Icon(Icons.Default.CreateNewFolder, contentDescription = "New Folder")
+                        Icon(Icons.Default.CreateNewFolder, contentDescription = stringResource(R.string.content_desc_new_folder))
                     }
                     IconButton(onClick = { viewModel.loadDirectory(uiState.currentPath) }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.content_desc_refresh))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -145,7 +147,7 @@ fun SftpScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(onClick = { viewModel.navigateUp() }) {
-                        Icon(Icons.Default.ArrowUpward, contentDescription = "Up")
+                        Icon(Icons.Default.ArrowUpward, contentDescription = stringResource(R.string.content_desc_up))
                     }
                     Text(
                         uiState.currentPath,
@@ -185,7 +187,7 @@ fun SftpScreen(
                             modifier = Modifier.weight(1f)
                         )
                         IconButton(onClick = { viewModel.clearError() }) {
-                            Icon(Icons.Default.Close, contentDescription = "Dismiss")
+                            Icon(Icons.Default.Close, contentDescription = stringResource(R.string.content_desc_dismiss))
                         }
                     }
                 }
@@ -195,7 +197,7 @@ fun SftpScreen(
                 uiState.isConnecting -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text("Connecting...")
+                            Text(stringResource(R.string.sftp_connecting))
                         }
                     }
                 }
@@ -210,12 +212,12 @@ fun SftpScreen(
                 }
                 uiState.isLoading -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("Loading files...")
+                        Text(stringResource(R.string.sftp_loading_files))
                     }
                 }
                 uiState.files.isEmpty() -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text("Empty directory", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(stringResource(R.string.sftp_empty_directory), color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
                 else -> {
@@ -248,12 +250,12 @@ fun SftpScreen(
         var folderName by remember { mutableStateOf("") }
         AlertDialog(
             onDismissRequest = { viewModel.dismissCreateFolder() },
-            title = { Text("New Folder") },
+            title = { Text(stringResource(R.string.sftp_new_folder)) },
             text = {
                 OutlinedTextField(
                     value = folderName,
                     onValueChange = { folderName = it },
-                    label = { Text("Folder Name") },
+                    label = { Text(stringResource(R.string.sftp_folder_name)) },
                     singleLine = true
                 )
             },
@@ -261,10 +263,10 @@ fun SftpScreen(
                 TextButton(
                     onClick = { viewModel.createFolder(folderName) },
                     enabled = folderName.isNotBlank()
-                ) { Text("Create") }
+                ) { Text(stringResource(R.string.action_create)) }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.dismissCreateFolder() }) { Text("Cancel") }
+                TextButton(onClick = { viewModel.dismissCreateFolder() }) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }
@@ -273,12 +275,12 @@ fun SftpScreen(
         var newName by remember { mutableStateOf(file.name) }
         AlertDialog(
             onDismissRequest = { viewModel.dismissRename() },
-            title = { Text("Rename") },
+            title = { Text(stringResource(R.string.sftp_rename)) },
             text = {
                 OutlinedTextField(
                     value = newName,
                     onValueChange = { newName = it },
-                    label = { Text("New Name") },
+                    label = { Text(stringResource(R.string.sftp_new_name)) },
                     singleLine = true
                 )
             },
@@ -286,10 +288,10 @@ fun SftpScreen(
                 TextButton(
                     onClick = { viewModel.rename(file, newName) },
                     enabled = newName.isNotBlank() && newName != file.name
-                ) { Text("Rename") }
+                ) { Text(stringResource(R.string.sftp_rename)) }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.dismissRename() }) { Text("Cancel") }
+                TextButton(onClick = { viewModel.dismissRename() }) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }
@@ -315,29 +317,29 @@ fun SftpScreen(
 
         AlertDialog(
             onDismissRequest = { viewModel.dismissChmod() },
-            title = { Text("Change Permissions") },
+            title = { Text(stringResource(R.string.sftp_change_permissions)) },
             text = {
                 Column {
-                    Text("File: ${file.name}", style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.sftp_file_label, file.name), style = MaterialTheme.typography.bodySmall)
                     Spacer(modifier = Modifier.height(8.dp))
 
-                    PermissionRow("Owner", ownerPerms) { ownerPerms = it }
-                    PermissionRow("Group", groupPerms) { groupPerms = it }
-                    PermissionRow("Other", otherPerms) { otherPerms = it }
+                    PermissionRow(stringResource(R.string.permission_owner), ownerPerms) { ownerPerms = it }
+                    PermissionRow(stringResource(R.string.permission_group), groupPerms) { groupPerms = it }
+                    PermissionRow(stringResource(R.string.permission_other), otherPerms) { otherPerms = it }
 
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(
-                        "Octal: ${permsToInt().toString().padStart(3, '0')}",
+                        stringResource(R.string.permission_octal, permsToInt().toString().padStart(3, '0')),
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.Bold
                     )
                 }
             },
             confirmButton = {
-                TextButton(onClick = { viewModel.chmod(file, permsToInt()) }) { Text("Apply") }
+                TextButton(onClick = { viewModel.chmod(file, permsToInt()) }) { Text(stringResource(R.string.action_apply)) }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.dismissChmod() }) { Text("Cancel") }
+                TextButton(onClick = { viewModel.dismissChmod() }) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }
@@ -345,15 +347,15 @@ fun SftpScreen(
     uiState.showDeleteConfirm?.let { file ->
         AlertDialog(
             onDismissRequest = { viewModel.dismissDelete() },
-            title = { Text("Delete") },
-            text = { Text("Delete \"${file.name}\"?") },
+            title = { Text(stringResource(R.string.action_delete)) },
+            text = { Text(stringResource(R.string.sftp_delete_confirm, file.name)) },
             confirmButton = {
                 TextButton(onClick = { viewModel.deleteFile(file) }) {
-                    Text("Delete", color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.action_delete), color = MaterialTheme.colorScheme.error)
                 }
             },
             dismissButton = {
-                TextButton(onClick = { viewModel.dismissDelete() }) { Text("Cancel") }
+                TextButton(onClick = { viewModel.dismissDelete() }) { Text(stringResource(R.string.action_cancel)) }
             }
         )
     }
@@ -439,28 +441,28 @@ private fun SftpFileItem(
 
             Box {
                 IconButton(onClick = { showMenu = true }) {
-                    Icon(Icons.Default.MoreVert, contentDescription = "More")
+                    Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.content_desc_more))
                 }
                 DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
                     if (!file.isDirectory) {
                         DropdownMenuItem(
-                            text = { Text("Download") },
+                            text = { Text(stringResource(R.string.action_download)) },
                             onClick = { showMenu = false; onDownload() },
                             leadingIcon = { Icon(Icons.Default.Download, contentDescription = null) }
                         )
                     }
                     DropdownMenuItem(
-                        text = { Text("Rename") },
+                        text = { Text(stringResource(R.string.sftp_rename)) },
                         onClick = { showMenu = false; onRename() },
                         leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null) }
                     )
                     DropdownMenuItem(
-                        text = { Text("Permissions") },
+                        text = { Text(stringResource(R.string.action_permissions)) },
                         onClick = { showMenu = false; onChmod() },
                         leadingIcon = { Icon(Icons.Default.Security, contentDescription = null) }
                     )
                     DropdownMenuItem(
-                        text = { Text("Delete") },
+                        text = { Text(stringResource(R.string.action_delete)) },
                         onClick = { showMenu = false; onDelete() },
                         leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error) }
                     )

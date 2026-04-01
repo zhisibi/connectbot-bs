@@ -3,6 +3,7 @@ package com.sbssh.ui.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.sbssh.R
 import com.sbssh.SbsshApp
 import com.sbssh.data.crypto.CryptoManager
 import com.sbssh.data.crypto.SessionKeyHolder
@@ -38,11 +39,11 @@ class MasterPasswordViewModel(
 
     fun setPassword(password: String, confirmPassword: String) {
         if (password.length < 6) {
-            _uiState.value = _uiState.value.copy(error = "Password must be at least 6 characters")
+            _uiState.value = _uiState.value.copy(error = SbsshApp.instance.getString(R.string.password_min_length))
             return
         }
         if (password != confirmPassword) {
-            _uiState.value = _uiState.value.copy(error = "Passwords do not match")
+            _uiState.value = _uiState.value.copy(error = SbsshApp.instance.getString(R.string.passwords_do_not_match))
             return
         }
 
@@ -75,7 +76,7 @@ class MasterPasswordViewModel(
                 cryptoManager.clearMasterPasswordState()
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = e.message ?: "Failed to set password"
+                    error = e.message ?: SbsshApp.instance.getString(R.string.failed_set_password)
                 )
             }
         }
@@ -90,7 +91,7 @@ class MasterPasswordViewModel(
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
                         isFirstLaunch = true,
-                        error = "Previous setup was incomplete. Please set a new master password."
+                        error = SbsshApp.instance.getString(R.string.previous_setup_incomplete)
                     )
                     return@launch
                 }
@@ -111,14 +112,14 @@ class MasterPasswordViewModel(
                 } else {
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = "Incorrect password"
+                        error = SbsshApp.instance.getString(R.string.incorrect_password)
                     )
                 }
             } catch (e: Exception) {
                 SessionKeyHolder.clear()
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = e.message ?: "Failed to unlock"
+                    error = e.message ?: SbsshApp.instance.getString(R.string.failed_unlock)
                 )
             }
         }
@@ -139,7 +140,7 @@ class MasterPasswordViewModel(
                 SessionKeyHolder.clear()
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = e.message ?: "Biometric unlock failed"
+                    error = e.message ?: SbsshApp.instance.getString(R.string.biometric_unlock_failed)
                 )
             }
         }

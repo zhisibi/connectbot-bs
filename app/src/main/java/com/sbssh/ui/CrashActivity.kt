@@ -9,6 +9,7 @@ import android.widget.LinearLayout
 import android.widget.ScrollView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.sbssh.R
 import com.sbssh.util.CrashHandler
 
 class CrashActivity : AppCompatActivity() {
@@ -25,7 +26,7 @@ class CrashActivity : AppCompatActivity() {
         }
 
         val copyButton = Button(this).apply {
-            text = "复制崩溃日志"
+            text = getString(R.string.crash_copy_log)
             setOnClickListener {
                 val clipboard = getSystemService(Activity.CLIPBOARD_SERVICE) as ClipboardManager
                 clipboard.setPrimaryClip(ClipData.newPlainText("crash_log", logText))
@@ -33,7 +34,7 @@ class CrashActivity : AppCompatActivity() {
         }
 
         val closeButton = Button(this).apply {
-            text = "关闭"
+            text = getString(R.string.action_close)
             setOnClickListener { finish() }
         }
 

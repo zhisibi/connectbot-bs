@@ -3,13 +3,14 @@ package com.sbssh.util
 import androidx.biometric.BiometricPrompt
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import com.sbssh.R
 
 object BiometricHelper {
 
     fun showBiometricPrompt(
         activity: AppCompatActivity,
-        title: String = "Biometric Authentication",
-        subtitle: String = "Use your fingerprint or face to unlock",
+        title: String? = null,
+        subtitle: String? = null,
         onSuccess: (BiometricPrompt.CryptoObject?) -> Unit,
         onError: (Int, String) -> Unit,
         onFailed: () -> Unit
@@ -33,9 +34,9 @@ object BiometricHelper {
         val biometricPrompt = BiometricPrompt(activity, executor, callback)
 
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle(title)
-            .setSubtitle(subtitle)
-            .setNegativeButtonText("Use Password")
+            .setTitle(title ?: activity.getString(R.string.biometric_auth_title))
+            .setSubtitle(subtitle ?: activity.getString(R.string.biometric_auth_subtitle))
+            .setNegativeButtonText(activity.getString(R.string.use_password))
             .setAllowedAuthenticators(
                 androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
             )
@@ -47,8 +48,8 @@ object BiometricHelper {
     fun showBiometricPromptWithCrypto(
         activity: AppCompatActivity,
         cryptoObject: BiometricPrompt.CryptoObject,
-        title: String = "Biometric Authentication",
-        subtitle: String = "Use your fingerprint or face to unlock",
+        title: String? = null,
+        subtitle: String? = null,
         onSuccess: (BiometricPrompt.CryptoObject?) -> Unit,
         onError: (Int, String) -> Unit,
         onFailed: () -> Unit
@@ -72,9 +73,9 @@ object BiometricHelper {
         val biometricPrompt = BiometricPrompt(activity, executor, callback)
 
         val promptInfo = BiometricPrompt.PromptInfo.Builder()
-            .setTitle(title)
-            .setSubtitle(subtitle)
-            .setNegativeButtonText("Use Password")
+            .setTitle(title ?: activity.getString(R.string.biometric_auth_title))
+            .setSubtitle(subtitle ?: activity.getString(R.string.biometric_auth_subtitle))
+            .setNegativeButtonText(activity.getString(R.string.use_password))
             .setAllowedAuthenticators(
                 androidx.biometric.BiometricManager.Authenticators.BIOMETRIC_STRONG
             )

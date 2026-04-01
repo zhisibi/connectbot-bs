@@ -39,7 +39,7 @@ fun VpsListScreen(
                 title = { Text(stringResource(R.string.my_servers)) },
                 actions = {
                     IconButton(onClick = onSettings) {
-                        Icon(Icons.Default.Settings, contentDescription = "Settings")
+                        Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.content_desc_settings))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -67,12 +67,12 @@ fun VpsListScreen(
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text("加载失败", style = MaterialTheme.typography.titleMedium)
+                    Text(stringResource(R.string.error_load_failed), style = MaterialTheme.typography.titleMedium)
                     Spacer(modifier = Modifier.height(8.dp))
-                    Text(uiState.error ?: "Unknown error")
+                    Text(uiState.error ?: stringResource(R.string.error_unknown))
                     Spacer(modifier = Modifier.height(12.dp))
                     Button(onClick = { viewModel.retry() }) {
-                        Text("重试")
+                        Text(stringResource(R.string.action_retry))
                     }
                 }
             }
@@ -197,7 +197,7 @@ private fun VpsCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = if (vps.authType == "KEY") "私钥" else "Password",
+                        text = if (vps.authType == "KEY") stringResource(R.string.auth_type_private_key) else stringResource(R.string.auth_type_password),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.SemiBold
@@ -206,12 +206,12 @@ private fun VpsCard(
 
                 Box {
                     IconButton(onClick = { showMenu = true }) {
-                        Icon(Icons.Default.MoreVert, contentDescription = "More")
+                        Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.content_desc_more))
                     }
                     DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
                         if (isConnected || isDisconnected) {
                             DropdownMenuItem(
-                                text = { Text("断开连接") },
+                                text = { Text(stringResource(R.string.action_disconnect)) },
                                 onClick = { showMenu = false; onDisconnect() },
                                 leadingIcon = { Icon(Icons.Default.LinkOff, contentDescription = null) }
                             )
@@ -246,7 +246,7 @@ private fun VpsCard(
                     ) {
                         Icon(Icons.Default.Terminal, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("SSH", style = MaterialTheme.typography.labelMedium, color = Color.White)
+                        Text(stringResource(R.string.label_ssh), style = MaterialTheme.typography.labelMedium, color = Color.White)
                     }
                 } else {
                     Button(
@@ -256,7 +256,7 @@ private fun VpsCard(
                     ) {
                         Icon(Icons.Default.Terminal, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("SSH", style = MaterialTheme.typography.labelMedium)
+                        Text(stringResource(R.string.label_ssh), style = MaterialTheme.typography.labelMedium)
                     }
                 }
 
@@ -267,7 +267,7 @@ private fun VpsCard(
                 ) {
                     Icon(Icons.Default.Folder, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("SFTP", style = MaterialTheme.typography.labelMedium)
+                    Text(stringResource(R.string.label_sftp), style = MaterialTheme.typography.labelMedium)
                 }
             }
         }

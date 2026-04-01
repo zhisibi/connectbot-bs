@@ -3,6 +3,7 @@ package com.sbssh.ui.sftp
 import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.ViewModel
+import com.sbssh.R
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.sbssh.data.crypto.FieldCryptoManager
@@ -51,7 +52,7 @@ class SftpViewModel(private val vpsId: Long, private val context: Context) : Vie
         if (dao == null) {
             _uiState.value = _uiState.value.copy(
                 isConnecting = false,
-                connectionError = "Database not initialized"
+                connectionError = context.getString(R.string.sftp_db_not_initialized)
             )
         } else {
             viewModelScope.launch {
@@ -76,13 +77,13 @@ class SftpViewModel(private val vpsId: Long, private val context: Context) : Vie
                         } else {
                             _uiState.value = _uiState.value.copy(
                                 isConnecting = false,
-                                connectionError = "Failed to connect to ${v.host}"
+                                connectionError = context.getString(R.string.sftp_connect_failed, v.host)
                             )
                         }
                     } catch (e: Exception) {
                         _uiState.value = _uiState.value.copy(
                             isConnecting = false,
-                            connectionError = e.message ?: "Connection failed"
+                            connectionError = e.message ?: context.getString(R.string.sftp_connection_failed)
                         )
                     }
                 }
@@ -104,7 +105,7 @@ class SftpViewModel(private val vpsId: Long, private val context: Context) : Vie
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = e.message ?: "Failed to list directory"
+                    error = e.message ?: context.getString(R.string.sftp_list_failed)
                 )
             }
         }
@@ -134,7 +135,7 @@ class SftpViewModel(private val vpsId: Long, private val context: Context) : Vie
                 _uiState.value = _uiState.value.copy(showCreateFolderDialog = false)
                 loadDirectory(_uiState.value.currentPath)
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = e.message ?: "Failed to create folder")
+                _uiState.value = _uiState.value.copy(error = e.message ?: context.getString(R.string.sftp_create_folder_failed))
             }
         }
     }
@@ -150,7 +151,7 @@ class SftpViewModel(private val vpsId: Long, private val context: Context) : Vie
                 _uiState.value = _uiState.value.copy(showRenameDialog = null)
                 loadDirectory(_uiState.value.currentPath)
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = e.message ?: "Failed to rename")
+                _uiState.value = _uiState.value.copy(error = e.message ?: context.getString(R.string.sftp_rename_failed))
             }
         }
     }
@@ -165,7 +166,7 @@ class SftpViewModel(private val vpsId: Long, private val context: Context) : Vie
                 _uiState.value = _uiState.value.copy(showChmodDialog = null)
                 loadDirectory(_uiState.value.currentPath)
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = e.message ?: "Failed to change permissions")
+                _uiState.value = _uiState.value.copy(error = e.message ?: context.getString(R.string.sftp_chmod_failed))
             }
         }
     }
@@ -180,7 +181,7 @@ class SftpViewModel(private val vpsId: Long, private val context: Context) : Vie
                 _uiState.value = _uiState.value.copy(showDeleteConfirm = null)
                 loadDirectory(_uiState.value.currentPath)
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = e.message ?: "Failed to delete")
+                _uiState.value = _uiState.value.copy(error = e.message ?: context.getString(R.string.sftp_delete_failed))
             }
         }
     }
@@ -190,19 +191,19 @@ class SftpViewModel(private val vpsId: Long, private val context: Context) : Vie
         if (!localFile.exists()) return
         val remotePath = "${_uiState.value.currentPath}/${localFile.name}"
 
-        _uiState.value = _uiState.value.copy(uploadProgress = "Uploading ${localFile.name}...")
+        _uiState.value = _uiState.value.copy(uploadProgress = context.getString(R.string.sftp_uploading, localFile.name))
         viewModelScope.launch {
             try {
                 manager.uploadFile(localFile, remotePath)
                 _uiState.value = _uiState.value.copy(uploadProgress = null)
                 loadDirectory(_uiState.value.currentPath)
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "Upload complete", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_upload_complete), Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     uploadProgress = null,
-                    error = e.message ?: "Upload failed"
+                    error = e.message ?: context.getString(R.string.sftp_upload_failed)
                 )
             }
         }
@@ -210,18 +211,18 @@ class SftpViewModel(private val vpsId: Long, private val context: Context) : Vie
 
     fun downloadFile(file: SftpFileInfo, localDir: File) {
         val localFile = File(localDir, file.name)
-        _uiState.value = _uiState.value.copy(uploadProgress = "Downloading ${file.name}...")
+        _uiState.value = _uiState.value.copy(uploadProgress = context.getString(R.string.sftp_downloading, file.name))
         viewModelScope.launch {
             try {
                 manager.downloadFile(file.path, localFile)
                 _uiState.value = _uiState.value.copy(uploadProgress = null)
                 withContext(Dispatchers.Main) {
-                    Toast.makeText(context, "Downloaded to ${localFile.absolutePath}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, context.getString(R.string.toast_downloaded_to, localFile.absolutePath), Toast.LENGTH_SHORT).show()
                 }
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     uploadProgress = null,
-                    error = e.message ?: "Download failed"
+                    error = e.message ?: context.getString(R.string.sftp_download_failed)
                 )
             }
         }

@@ -7,12 +7,15 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.sbssh.data.crypto.CryptoManager
+import com.sbssh.R
 import com.sbssh.data.crypto.FieldCryptoManager
 import com.sbssh.data.crypto.SessionKeyHolder
 import com.sbssh.data.db.AppDatabase
@@ -84,6 +87,7 @@ class SettingsViewModel(
     init {
         val biometricAvailable = activity?.let { BiometricHelper.isBiometricAvailable(it) } ?: false
         val settings = settingsManager.settings.value
+        applyLocale(settings.language)
         _uiState.value = _uiState.value.copy(
             biometricEnabled = cryptoManager.isBiometricEnabled(),
             biometricAvailable = biometricAvailable,
@@ -114,18 +118,18 @@ class SettingsViewModel(
         val current = _uiState.value.biometricEnabled
         if (current) {
             cryptoManager.disableBiometric()
-            _uiState.value = _uiState.value.copy(biometricEnabled = false, showBiometricPasswordDialog = false, success = "Biometric login disabled")
+            _uiState.value = _uiState.value.copy(biometricEnabled = false, showBiometricPasswordDialog = false, success = context.getString(R.string.biometric_disabled))
             return
         }
         // User is already logged in — use session key directly, no need to re-verify password
         if (activity == null) {
             AppLogger.log("BIO", "Activity is null!")
-            _uiState.value = _uiState.value.copy(error = "Activity context missing", showBiometricPasswordDialog = false)
+            _uiState.value = _uiState.value.copy(error = context.getString(R.string.error_activity_context_missing), showBiometricPasswordDialog = false)
             return
         }
         if (!BiometricHelper.isBiometricAvailable(activity)) {
             AppLogger.log("BIO", "Biometric not available on device")
-            _uiState.value = _uiState.value.copy(error = "Biometric not available on this device", showBiometricPasswordDialog = false)
+            _uiState.value = _uiState.value.copy(error = context.getString(R.string.biometric_not_available), showBiometricPasswordDialog = false)
             return
         }
         try {
@@ -133,10 +137,10 @@ class SettingsViewModel(
             AppLogger.log("BIO", "Got session key, length=${keyBytes.size}, enabling biometric...")
             cryptoManager.enableBiometric(keyBytes)
             AppLogger.log("BIO", "Biometric enabled successfully")
-            _uiState.value = _uiState.value.copy(biometricEnabled = true, showBiometricPasswordDialog = false, success = "Biometric login enabled")
+            _uiState.value = _uiState.value.copy(biometricEnabled = true, showBiometricPasswordDialog = false, success = context.getString(R.string.biometric_enabled))
         } catch (e: Exception) {
             AppLogger.log("BIO", "Enable failed", e)
-            _uiState.value = _uiState.value.copy(error = "Enable failed: ${e.javaClass.simpleName}: ${e.message}", showBiometricPasswordDialog = false)
+            _uiState.value = _uiState.value.copy(error = context.getString(R.string.biometric_enable_failed, e.javaClass.simpleName, e.message ?: ""), showBiometricPasswordDialog = false)
         }
     }
 
@@ -145,8 +149,15 @@ class SettingsViewModel(
     fun dismissLanguageDialog() { _uiState.value = _uiState.value.copy(showLanguageDialog = false) }
 
     fun setLanguage(lang: String) {
+        applyLocale(lang)
         settingsManager.setLanguage(lang)
         _uiState.value = _uiState.value.copy(language = lang, showLanguageDialog = false, shouldRestart = true)
+    }
+
+    private fun applyLocale(lang: String) {
+        val tag = if (lang == "zh") "zh-CN" else "en"
+        val localeList = LocaleListCompat.forLanguageTags(tag)
+        AppCompatDelegate.setApplicationLocales(localeList)
     }
 
     fun onRestartConsumed() { _uiState.value = _uiState.value.copy(shouldRestart = false) }
@@ -157,17 +168,17 @@ class SettingsViewModel(
 
     fun setFontSize(size: String) {
         settingsManager.setFontSize(size)
-        _uiState.value = _uiState.value.copy(fontSize = size, showFontSizeDialog = false, success = "Font size updated")
+        _uiState.value = _uiState.value.copy(fontSize = size, showFontSizeDialog = false, success = context.getString(R.string.font_size_updated))
     }
 
     // ========== Backup helpers ==========
     private suspend fun buildBackupEnvelope(): String {
-        if (dao == null) throw IllegalStateException("Database not initialized")
+        if (dao == null) throw IllegalStateException(context.getString(R.string.error_database_not_initialized))
         // Step 1: Read VPS data
         val vpsList = try { dao!!.getAllVpsAsList() } catch (e: Exception) {
             AppLogger.log("BACKUP", "getAllVpsAsList failed", e); throw e }
         AppLogger.log("BACKUP", "VPS count: ${vpsList.size}")
-        if (vpsList.isEmpty()) throw IllegalStateException("No servers to backup")
+        if (vpsList.isEmpty()) throw IllegalStateException(context.getString(R.string.error_no_servers_to_backup))
 
         // Step 2: Serialize
         val backupList = vpsList.map { v ->
@@ -214,7 +225,7 @@ class SettingsViewModel(
             try {
                 val dataToWrite = buildBackupEnvelope()
                 val bytes = dataToWrite.toByteArray(Charsets.UTF_8)
-                if (bytes.isEmpty()) throw IllegalStateException("Backup bytes empty")
+                if (bytes.isEmpty()) throw IllegalStateException(context.getString(R.string.error_backup_bytes_empty))
 
                 val fileName = getBackupFileName()
                 val values = ContentValues().apply {
@@ -224,16 +235,16 @@ class SettingsViewModel(
                 }
                 val resolver = context.contentResolver
                 val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values)
-                    ?: throw IllegalStateException("Failed to create download file")
+                    ?: throw IllegalStateException(context.getString(R.string.error_backup_create_file_failed))
 
                 resolver.openOutputStream(uri)?.use { it.write(bytes); it.flush() }
-                    ?: throw IllegalStateException("openOutputStream returned null")
+                    ?: throw IllegalStateException(context.getString(R.string.error_backup_open_output_failed))
 
                 AppLogger.log("BACKUP", "Saved to Downloads: uri=$uri, bytes=${bytes.size}")
-                _uiState.value = _uiState.value.copy(success = "Backup saved to Downloads (${bytes.size} bytes)")
+                _uiState.value = _uiState.value.copy(success = context.getString(R.string.success_backup_saved_downloads, bytes.size))
             } catch (e: Exception) {
                 AppLogger.log("BACKUP", "Backup FAILED", e)
-                _uiState.value = _uiState.value.copy(error = "Backup failed: ${e.javaClass.simpleName}: ${e.message}")
+                _uiState.value = _uiState.value.copy(error = context.getString(R.string.error_backup_failed, "${e.javaClass.simpleName}: ${e.message}"))
             }
         }
     }
@@ -247,16 +258,16 @@ class SettingsViewModel(
                 val tempFile = java.io.File(context.cacheDir, "sbssh_backup_temp.enc")
                 tempFile.writeText(dataToWrite, Charsets.UTF_8)
                 val bytes = tempFile.readBytes()
-                if (bytes.isEmpty()) throw IllegalStateException("Backup bytes empty")
+                if (bytes.isEmpty()) throw IllegalStateException(context.getString(R.string.error_backup_bytes_empty))
                 val output = context.contentResolver.openOutputStream(uri)
-                    ?: throw IllegalStateException("openOutputStream returned null")
+                    ?: throw IllegalStateException(context.getString(R.string.error_backup_open_output_failed))
                 output.use { it.write(bytes); it.flush() }
                 tempFile.delete()
                 AppLogger.log("BACKUP", "Copied ${bytes.size} bytes to URI")
-                _uiState.value = _uiState.value.copy(success = "Backup saved (${bytes.size} bytes)")
+                _uiState.value = _uiState.value.copy(success = context.getString(R.string.success_backup_saved, bytes.size))
             } catch (e: Exception) {
                 AppLogger.log("BACKUP", "Backup FAILED", e)
-                _uiState.value = _uiState.value.copy(error = "Backup failed: ${e.javaClass.simpleName}: ${e.message}")
+                _uiState.value = _uiState.value.copy(error = context.getString(R.string.error_backup_failed, "${e.javaClass.simpleName}: ${e.message}"))
             }
         }
     }
@@ -268,11 +279,11 @@ class SettingsViewModel(
             try {
                 if (dao == null) {
                     AppLogger.log("RESTORE", "DAO is null")
-                    _uiState.value = _uiState.value.copy(error = "Database not initialized")
+                    _uiState.value = _uiState.value.copy(error = context.getString(R.string.error_database_not_initialized))
                     return@launch
                 }
                 val content = context.contentResolver.openInputStream(uri)?.bufferedReader()?.readText()
-                    ?: throw Exception("Failed to read backup file")
+                    ?: throw Exception(context.getString(R.string.error_failed_read_backup))
                 AppLogger.log("RESTORE", "Read ${content.length} chars from file")
 
                 // Try to parse new envelope format first
@@ -294,7 +305,7 @@ class SettingsViewModel(
                 val json = if (encrypted) {
                     if (!SessionKeyHolder.isSet()) {
                         AppLogger.log("RESTORE", "Session key NOT set, cannot decrypt")
-                        _uiState.value = _uiState.value.copy(error = "Please unlock app before restore")
+                        _uiState.value = _uiState.value.copy(error = context.getString(R.string.error_restore_unlock_required))
                         return@launch
                     }
                     val key = SessionKeyHolder.get()
@@ -335,10 +346,10 @@ class SettingsViewModel(
                     count++
                 }
                 AppLogger.log("RESTORE", "Restored $count server(s)")
-                _uiState.value = _uiState.value.copy(success = "Restored $count server(s)")
+                _uiState.value = _uiState.value.copy(success = context.getString(R.string.success_restored_servers, count))
             } catch (e: Exception) {
                 AppLogger.log("RESTORE", "Restore FAILED", e)
-                _uiState.value = _uiState.value.copy(error = "Restore failed: ${e.message}")
+                _uiState.value = _uiState.value.copy(error = context.getString(R.string.error_restore_failed, e.message ?: ""))
             }
         }
     }
@@ -349,7 +360,13 @@ class SettingsViewModel(
 
     fun saveCloudSync(enabled: Boolean, url: String, username: String) {
         settingsManager.setCloudSync(enabled, url, username)
-        _uiState.value = _uiState.value.copy(cloudSyncEnabled = enabled, cloudSyncUrl = url, cloudSyncUsername = username, showCloudSyncDialog = false, success = if (enabled) "Cloud sync configured (coming soon)" else "Cloud sync disabled")
+        _uiState.value = _uiState.value.copy(
+            cloudSyncEnabled = enabled,
+            cloudSyncUrl = url,
+            cloudSyncUsername = username,
+            showCloudSyncDialog = false,
+            success = if (enabled) context.getString(R.string.success_cloud_sync_configured) else context.getString(R.string.success_cloud_sync_disabled)
+        )
     }
 
     // ========== Change Password ==========
@@ -357,8 +374,8 @@ class SettingsViewModel(
     fun dismissChangePasswordDialog() { _uiState.value = _uiState.value.copy(showChangePasswordDialog = false) }
 
     fun changePassword(oldPassword: String, newPassword: String, confirmPassword: String) {
-        if (newPassword != confirmPassword) { _uiState.value = _uiState.value.copy(error = "Passwords do not match"); return }
-        if (newPassword.length < 6) { _uiState.value = _uiState.value.copy(error = "New password must be at least 6 characters"); return }
+        if (newPassword != confirmPassword) { _uiState.value = _uiState.value.copy(error = context.getString(R.string.alert_passwords_do_not_match_msg)); return }
+        if (newPassword.length < 6) { _uiState.value = _uiState.value.copy(error = context.getString(R.string.error_new_password_too_short)); return }
         viewModelScope.launch {
             try {
                 val newKeyBytes = cryptoManager.changeMasterPassword(oldPassword, newPassword)
@@ -378,9 +395,9 @@ class SettingsViewModel(
                     }
                 }
                 SessionKeyHolder.set(newKeyBytes)
-                _uiState.value = _uiState.value.copy(showChangePasswordDialog = false, success = "Password changed successfully")
+                _uiState.value = _uiState.value.copy(showChangePasswordDialog = false, success = context.getString(R.string.success_password_changed))
             } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(error = e.message ?: "Password change failed")
+                _uiState.value = _uiState.value.copy(error = e.message ?: context.getString(R.string.error_password_change_failed))
             }
         }
     }

@@ -12,18 +12,22 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.sbssh.util.AppLogger
+import com.sbssh.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LogScreen(onBack: () -> Unit) {
     var logText by remember { mutableStateOf("") }
     val clipboardManager = LocalClipboardManager.current
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         while (true) {
@@ -35,28 +39,28 @@ fun LogScreen(onBack: () -> Unit) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Debug Log") },
+                title = { Text(stringResource(R.string.title_debug_log)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 actions = {
                     IconButton(onClick = {
                         clipboardManager.setText(AnnotatedString(logText))
                     }) {
-                        Icon(Icons.Default.ContentCopy, contentDescription = "Copy logs")
+                        Icon(Icons.Default.ContentCopy, contentDescription = stringResource(R.string.action_copy_logs))
                     }
                     IconButton(onClick = {
                         logText = AppLogger.getLog()
                     }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "Refresh logs")
+                        Icon(Icons.Default.Refresh, contentDescription = stringResource(R.string.action_refresh_logs))
                     }
                     IconButton(onClick = {
                         AppLogger.clear()
-                        logText = "Logs cleared"
+                        logText = context.getString(R.string.logs_cleared)
                     }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Clear logs")
+                        Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.action_clear_logs))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(

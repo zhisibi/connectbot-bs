@@ -3,6 +3,7 @@ package com.sbssh.ui.terminal
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sbssh.R
 import com.sbssh.connectbot.data.ConnectBotDatabase
 import com.sbssh.connectbot.data.entity.Host
 import com.sbssh.connectbot.util.SecurePasswordStorage
@@ -40,7 +41,7 @@ class TerminalScreenViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val vps = withContext(Dispatchers.IO) { vpsDao.getVpsById(vpsId) }
-                    ?: throw IllegalStateException("VPS not found")
+                    ?: throw IllegalStateException(context.getString(R.string.error_vps_not_found))
 
                 val hostId = withContext(Dispatchers.IO) {
                     val key = SessionKeyHolder.get()
@@ -49,7 +50,7 @@ class TerminalScreenViewModel @Inject constructor(
                     var pubkeyId: Long? = null
                     if (vps.authType == "KEY") {
                         val keyContent = crypto.decrypt(vps.encryptedKeyContent, key)
-                            ?: throw IllegalStateException("Private key missing")
+                            ?: throw IllegalStateException(context.getString(R.string.error_private_key_missing))
                         val passphrase = crypto.decrypt(vps.encryptedKeyPassphrase, key)
 
                         val keyPair = try {
@@ -59,7 +60,7 @@ class TerminalScreenViewModel @Inject constructor(
                                 com.trilead.ssh2.crypto.PEMDecoder.decode(keyContent.toCharArray(), passphrase)
                             }
                         } catch (e: Exception) {
-                            throw IllegalStateException("Failed to parse key: ${e.message}")
+                            throw IllegalStateException(context.getString(R.string.error_parse_key_failed, e.message ?: ""))
                         }
 
                         val algorithm = if (keyPair.private.algorithm == "EdDSA") "Ed25519" else keyPair.private.algorithm
@@ -127,7 +128,7 @@ class TerminalScreenViewModel @Inject constructor(
 
                 _uiState.value = TerminalUiState.Ready(hostId)
             } catch (e: Exception) {
-                _uiState.value = TerminalUiState.Error(e.message ?: "Failed to open terminal")
+                _uiState.value = TerminalUiState.Error(e.message ?: context.getString(R.string.error_failed_open_terminal))
             }
         }
     }

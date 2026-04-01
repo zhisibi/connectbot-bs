@@ -13,12 +13,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.sbssh.R
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,7 +47,7 @@ fun AddEditVpsScreen(
                     viewModel.updateKeyContent(content)
                 }
             } catch (e: Exception) {
-                Toast.makeText(context, "Failed to read key file", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, context.getString(R.string.toast_failed_read_key_file), Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -53,10 +55,10 @@ fun AddEditVpsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (vpsId == null) "Add Server" else "Edit Server") },
+                title = { Text(if (vpsId == null) stringResource(R.string.add_server) else stringResource(R.string.edit_server)) },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.Default.ArrowBack, contentDescription = stringResource(R.string.action_back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -76,7 +78,7 @@ fun AddEditVpsScreen(
             OutlinedTextField(
                 value = uiState.alias,
                 onValueChange = viewModel::updateAlias,
-                label = { Text("Alias (Server Nickname)") },
+                label = { Text(stringResource(R.string.label_alias_server_nickname)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -84,7 +86,7 @@ fun AddEditVpsScreen(
             OutlinedTextField(
                 value = uiState.host,
                 onValueChange = viewModel::updateHost,
-                label = { Text("Host (IP or Domain)") },
+                label = { Text(stringResource(R.string.label_host_ip_or_domain)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
@@ -92,7 +94,7 @@ fun AddEditVpsScreen(
             OutlinedTextField(
                 value = uiState.port,
                 onValueChange = viewModel::updatePort,
-                label = { Text("Port") },
+                label = { Text(stringResource(R.string.label_port)) },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 modifier = Modifier.fillMaxWidth()
@@ -101,23 +103,23 @@ fun AddEditVpsScreen(
             OutlinedTextField(
                 value = uiState.username,
                 onValueChange = viewModel::updateUsername,
-                label = { Text("Username") },
+                label = { Text(stringResource(R.string.label_username)) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth()
             )
 
             // Auth type selector
-            Text("Authentication Type", style = MaterialTheme.typography.labelLarge)
+            Text(stringResource(R.string.label_auth_type), style = MaterialTheme.typography.labelLarge)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FilterChip(
                     selected = uiState.authType == "PASSWORD",
                     onClick = { viewModel.updateAuthType("PASSWORD") },
-                    label = { Text("Password") }
+                    label = { Text(stringResource(R.string.label_password)) }
                 )
                 FilterChip(
                     selected = uiState.authType == "KEY",
                     onClick = { viewModel.updateAuthType("KEY") },
-                    label = { Text("SSH Key") }
+                    label = { Text(stringResource(R.string.label_ssh_key)) }
                 )
             }
 
@@ -126,14 +128,14 @@ fun AddEditVpsScreen(
                 OutlinedTextField(
                     value = uiState.password,
                     onValueChange = viewModel::updatePassword,
-                    label = { Text("Password") },
+                    label = { Text(stringResource(R.string.label_password)) },
                     singleLine = true,
                     visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
                         IconButton(onClick = { passwordVisible = !passwordVisible }) {
                             Icon(
                                 if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                                contentDescription = "Toggle"
+                                contentDescription = stringResource(R.string.toggle_visibility)
                             )
                         }
                     },
@@ -143,7 +145,7 @@ fun AddEditVpsScreen(
                 OutlinedTextField(
                     value = uiState.keyContent,
                     onValueChange = viewModel::updateKeyContent,
-                    label = { Text("Private Key Content") },
+                    label = { Text(stringResource(R.string.label_private_key_content)) },
                     minLines = 4,
                     maxLines = 8,
                     modifier = Modifier.fillMaxWidth()
@@ -156,7 +158,7 @@ fun AddEditVpsScreen(
                     ) {
                         Icon(Icons.Default.UploadFile, contentDescription = null)
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("Import Key File")
+                        Text(stringResource(R.string.action_import_key_file))
                     }
                 }
 
@@ -164,14 +166,14 @@ fun AddEditVpsScreen(
                 OutlinedTextField(
                     value = uiState.keyPassphrase,
                     onValueChange = viewModel::updateKeyPassphrase,
-                    label = { Text("Key Passphrase (Optional)") },
+                    label = { Text(stringResource(R.string.label_key_passphrase_optional)) },
                     singleLine = true,
                     visualTransformation = if (passphraseVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     trailingIcon = {
                         IconButton(onClick = { passphraseVisible = !passphraseVisible }) {
                             Icon(
                                 if (passphraseVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                                contentDescription = "Toggle"
+                                contentDescription = stringResource(R.string.toggle_visibility)
                             )
                         }
                     },
@@ -195,11 +197,11 @@ fun AddEditVpsScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 if (uiState.isLoading) {
-                    Text("Saving...")
+                    Text(stringResource(R.string.status_saving))
                 } else {
                     Icon(Icons.Default.Save, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
-                    Text(if (vpsId == null) "Add Server" else "Save Changes")
+                    Text(if (vpsId == null) stringResource(R.string.add_server) else stringResource(R.string.save_changes))
                 }
             }
         }

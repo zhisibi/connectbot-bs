@@ -1,8 +1,10 @@
 package com.sbssh.ui.vpslist
 
+import android.content.Context
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.sbssh.R
 import com.sbssh.data.crypto.FieldCryptoManager
 import com.sbssh.data.crypto.SessionKeyHolder
 import com.sbssh.data.db.VpsDao
@@ -31,6 +33,7 @@ data class AddEditVpsUiState(
 @HiltViewModel
 class AddEditVpsViewModel @Inject constructor(
     private val dao: VpsDao,
+    @dagger.hilt.android.qualifiers.ApplicationContext private val context: Context,
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
@@ -58,7 +61,7 @@ class AddEditVpsViewModel @Inject constructor(
                         )
                     }
                 } catch (e: Exception) {
-                    _uiState.value = _uiState.value.copy(error = e.message ?: "Failed to load server")
+                    _uiState.value = _uiState.value.copy(error = e.message ?: context.getString(R.string.failed_load_server))
                 }
             }
         }
@@ -76,24 +79,24 @@ class AddEditVpsViewModel @Inject constructor(
     fun save() {
         val state = _uiState.value
         if (state.alias.isBlank()) {
-            _uiState.value = state.copy(error = "Alias is required")
+            _uiState.value = state.copy(error = context.getString(R.string.alias_required))
             return
         }
         if (state.host.isBlank()) {
-            _uiState.value = state.copy(error = "Host is required")
+            _uiState.value = state.copy(error = context.getString(R.string.host_required))
             return
         }
         if (state.username.isBlank()) {
-            _uiState.value = state.copy(error = "Username is required")
+            _uiState.value = state.copy(error = context.getString(R.string.username_required))
             return
         }
         val portInt = state.port.toIntOrNull() ?: 22
         if (state.authType == "PASSWORD" && state.password.isBlank()) {
-            _uiState.value = state.copy(error = "Password is required")
+            _uiState.value = state.copy(error = context.getString(R.string.password_required))
             return
         }
         if (state.authType == "KEY" && state.keyContent.isBlank()) {
-            _uiState.value = state.copy(error = "Private key is required")
+            _uiState.value = state.copy(error = context.getString(R.string.private_key_required))
             return
         }
 
@@ -136,7 +139,7 @@ class AddEditVpsViewModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(isLoading = false, isSaved = true)
             } catch (e: Exception) {
                 if (e is kotlinx.coroutines.CancellationException) return@launch
-                _uiState.value = _uiState.value.copy(isLoading = false, error = e.message ?: "Save failed")
+                _uiState.value = _uiState.value.copy(isLoading = false, error = e.message ?: context.getString(R.string.save_failed))
             }
         }
     }

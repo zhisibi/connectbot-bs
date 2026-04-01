@@ -21,11 +21,16 @@ package com.sbssh.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import com.sbssh.service.TerminalManager
 import com.sbssh.ui.navigation.NavGraph
+import com.sbssh.ui.settings.SettingsManager
 import com.sbssh.ui.theme.SbsshTheme
 
 val LocalTerminalManager = compositionLocalOf<TerminalManager?> {
@@ -40,7 +45,11 @@ fun ConnectBotApp(
 ) {
     val terminalManager = (appUiState as? AppUiState.Ready)?.terminalManager
 
-    SbsshTheme {
+    val context = LocalContext.current
+    val settingsManager = remember { SettingsManager.getInstance(context) }
+    val settings by settingsManager.settings.collectAsState()
+
+    SbsshTheme(fontScale = settings.fontScale) {
         CompositionLocalProvider(LocalTerminalManager provides terminalManager) {
             NavGraph(navController = navController)
         }

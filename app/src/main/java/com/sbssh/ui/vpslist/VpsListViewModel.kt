@@ -1,13 +1,16 @@
 package com.sbssh.ui.vpslist
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.sbssh.data.db.VpsDao
 import com.sbssh.data.db.VpsEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.sbssh.R
 
 data class VpsListUiState(
     val vpsList: List<VpsEntity> = emptyList(),
@@ -18,7 +21,8 @@ data class VpsListUiState(
 
 @HiltViewModel
 class VpsListViewModel @Inject constructor(
-    private val dao: VpsDao
+    private val dao: VpsDao,
+    @ApplicationContext private val context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(VpsListUiState())
@@ -32,7 +36,7 @@ class VpsListViewModel @Inject constructor(
             if (_uiState.value.isLoading) {
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = "Database not ready"
+                    error = context.getString(R.string.error_database_not_ready)
                 )
             }
         }
@@ -52,7 +56,7 @@ class VpsListViewModel @Inject constructor(
                 if (e is kotlinx.coroutines.CancellationException) return@launch
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
-                    error = e.message ?: "Failed to load servers"
+                    error = e.message ?: context.getString(R.string.error_failed_load_servers)
                 )
             }
         }
@@ -65,7 +69,7 @@ class VpsListViewModel @Inject constructor(
                     if (e is kotlinx.coroutines.CancellationException) return@catch
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
-                        error = e.message ?: "Failed to load servers"
+                        error = e.message ?: context.getString(R.string.error_failed_load_servers)
                     )
                 }
                 .collect { list ->
