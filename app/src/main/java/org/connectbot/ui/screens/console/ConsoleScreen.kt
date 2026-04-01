@@ -38,7 +38,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -95,10 +95,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.foundation.focusable
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.isShiftPressed
@@ -273,9 +271,9 @@ fun ConsoleScreen(
         }
     }
 
-    // Request focus on terminal when screen appears (e.g., returning from navigation)
+    // Request focus on IME bridge when screen appears
     LaunchedEffect(Unit) {
-        termFocusRequester.requestFocus()
+        imeFocusRequester.requestFocus()
     }
 
     // Drive IME show/hide when our state changes
@@ -587,46 +585,50 @@ fun ConsoleScreen(
                             }
                     ) {
                         // Hidden IME input bridge to capture soft keyboard (Enter/Backspace)
-                        var imeBuffer by remember { mutableStateOf("") }
-                        BasicTextField(
-                            value = imeBuffer,
-                            onValueChange = { newValue ->
-                                if (newValue == imeBuffer) return@BasicTextField
-
-                                // Detect newline/enter
-                                if (newValue.contains('\n') || newValue.contains('\r')) {
-                                    bridge.terminalEmulator.dispatchKey(0, VTermKey.ENTER)
-                                    imeBuffer = ""
-                                    return@BasicTextField
-                                }
-
-                                if (newValue.length > imeBuffer.length) {
-                                    val added = newValue.substring(imeBuffer.length)
-                                    if (added.isNotEmpty()) {
-                                        bridge.injectString(added)
-                                    }
-                                } else if (newValue.length < imeBuffer.length) {
-                                    val deleted = imeBuffer.length - newValue.length
-                                    repeat(deleted) {
-                                        bridge.terminalEmulator.dispatchKey(0, VTermKey.BACKSPACE)
-                                    }
-                                }
-
-                                // Reset buffer to keep diffs simple
-                                imeBuffer = ""
-                            },
+                        var imeInternalChange by remember { mutableStateOf(false) }
+                        AndroidView(
                             modifier = Modifier
                                 .size(1.dp)
                                 .alpha(0.01f)
                                 .focusRequester(imeFocusRequester),
-                            keyboardOptions = KeyboardOptions.Default.copy(
-                                imeAction = ImeAction.None
-                            ),
-                            keyboardActions = KeyboardActions(
-                                onAny = {
-                                    bridge.terminalEmulator.dispatchKey(0, VTermKey.ENTER)
+                            factory = { ctx ->
+                                android.widget.EditText(ctx).apply {
+                                    isSingleLine = false
+                                    inputType = android.text.InputType.TYPE_CLASS_TEXT
+                                    imeOptions = android.view.inputmethod.EditorInfo.IME_ACTION_NONE
+                                    setText("")
+                                    setSelection(0)
+
+                                    addTextChangedListener(object : android.text.TextWatcher {
+                                        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                                        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                                        override fun afterTextChanged(s: android.text.Editable?) {
+                                            if (imeInternalChange) return
+                                            val newValue = s?.toString() ?: ""
+                                            if (newValue.isEmpty()) return
+
+                                            // Newline/enter
+                                            if (newValue.contains('\n') || newValue.contains('\r')) {
+                                                bridge.terminalEmulator.dispatchKey(0, VTermKey.ENTER)
+                                            } else {
+                                                // Inject typed text
+                                                bridge.injectString(newValue)
+                                            }
+
+                                            // Clear buffer
+                                            imeInternalChange = true
+                                            setText("")
+                                            setSelection(0)
+                                            imeInternalChange = false
+                                        }
+                                    })
                                 }
-                            )
+                            },
+                            update = { editText ->
+                                if (showSoftwareKeyboard) {
+                                    editText.requestFocus()
+                                }
+                            }
                         )
 
                         // Get font from profile (stored in bridge)
@@ -655,8 +657,8 @@ fun ConsoleScreen(
                                 ),
                             typeface = fontResult.typeface,
                             initialFontSize = fontSize.sp,
-                            keyboardEnabled = true,
-                            showSoftKeyboard = showSoftwareKeyboard,
+                            keyboardEnabled = false,
+                            showSoftKeyboard = false,
                             focusRequester = termFocusRequester,
                             forcedSize = forceSize,
                             modifierManager = bridge.keyHandler,
