@@ -224,6 +224,7 @@ fun ConsoleScreen(
     val inputMethodManager = remember {
         context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     }
+    var imeEditText by remember { mutableStateOf<android.widget.EditText?>(null) }
 
     var forceSize: Pair<Int, Int>? by remember { mutableStateOf(null) }
 
@@ -280,8 +281,9 @@ fun ConsoleScreen(
     LaunchedEffect(showSoftwareKeyboard) {
         if (showSoftwareKeyboard) {
             imeFocusRequester.requestFocus()
+            imeEditText?.requestFocus()
             keyboardController?.show()
-            inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+            inputMethodManager.showSoftInput(imeEditText ?: view, InputMethodManager.SHOW_IMPLICIT)
         } else {
             keyboardController?.hide()
             inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
@@ -438,7 +440,8 @@ fun ConsoleScreen(
         if (!hasHardwareKeyboard) {
             showSoftwareKeyboard = true
             imeFocusRequester.requestFocus()
-            inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+            imeEditText?.requestFocus()
+            inputMethodManager.showSoftInput(imeEditText ?: view, InputMethodManager.SHOW_IMPLICIT)
         }
         // Show title bar temporarily when terminal is tapped (if auto-hide enabled)
         if (titleBarHide) {
@@ -580,7 +583,8 @@ fun ConsoleScreen(
                                 detectTapGestures(onTap = {
                                     handleTerminalInteraction()
                                     imeFocusRequester.requestFocus()
-                                    inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
+                                    imeEditText?.requestFocus()
+                                    inputMethodManager.showSoftInput(imeEditText ?: view, InputMethodManager.SHOW_IMPLICIT)
                                 })
                             }
                     ) {
@@ -598,6 +602,7 @@ fun ConsoleScreen(
                                     imeOptions = android.view.inputmethod.EditorInfo.IME_ACTION_NONE
                                     setText("")
                                     setSelection(0)
+                                    imeEditText = this
 
                                     addTextChangedListener(object : android.text.TextWatcher {
                                         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -625,6 +630,7 @@ fun ConsoleScreen(
                                 }
                             },
                             update = { editText ->
+                                imeEditText = editText
                                 if (showSoftwareKeyboard) {
                                     editText.requestFocus()
                                 }
