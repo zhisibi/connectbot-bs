@@ -500,18 +500,6 @@ fun ConsoleScreen(
                 .onPreviewKeyEvent { keyEvent ->
                     if (keyEvent.type == KeyEventType.KeyDown) {
                         when {
-                            // Backspace
-                            keyEvent.key == Key.Backspace -> {
-                                currentBridge?.terminalEmulator?.dispatchKey(0, VTermKey.BACKSPACE)
-                                true
-                            }
-
-                            // Enter
-                            keyEvent.key == Key.Enter -> {
-                                currentBridge?.terminalEmulator?.dispatchKey(0, VTermKey.ENTER)
-                                true
-                            }
-
                             // Ctrl+Shift+C: copy selection
                             keyEvent.key == Key.C && keyEvent.isCtrlPressed && keyEvent.isShiftPressed -> {
                                 selectionController?.copySelection()
@@ -611,6 +599,21 @@ fun ConsoleScreen(
                                     setOnFocusChangeListener { _, hasFocus ->
                                         if (hasFocus) {
                                             inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+                                        }
+                                    }
+
+                                    setOnKeyListener { _, keyCode, event ->
+                                        if (event.action != android.view.KeyEvent.ACTION_DOWN) return@setOnKeyListener false
+                                        when (keyCode) {
+                                            android.view.KeyEvent.KEYCODE_DEL -> {
+                                                bridge.terminalEmulator.dispatchKey(0, VTermKey.BACKSPACE)
+                                                true
+                                            }
+                                            android.view.KeyEvent.KEYCODE_ENTER -> {
+                                                bridge.terminalEmulator.dispatchKey(0, VTermKey.ENTER)
+                                                true
+                                            }
+                                            else -> false
                                         }
                                     }
 
