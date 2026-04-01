@@ -586,7 +586,29 @@ fun ConsoleScreen(
                                 .alpha(0.01f)
                                 .focusRequester(imeFocusRequester),
                             factory = { ctx ->
-                                android.widget.EditText(ctx).apply {
+                                object : android.widget.EditText(ctx) {
+                                    override fun onKeyDown(keyCode: Int, event: android.view.KeyEvent?): Boolean {
+                                        return when (keyCode) {
+                                            android.view.KeyEvent.KEYCODE_DEL -> {
+                                                bridge.terminalEmulator.dispatchKey(0, VTermKey.BACKSPACE)
+                                                true
+                                            }
+                                            android.view.KeyEvent.KEYCODE_ENTER -> {
+                                                bridge.terminalEmulator.dispatchKey(0, VTermKey.ENTER)
+                                                true
+                                            }
+                                            else -> super.onKeyDown(keyCode, event)
+                                        }
+                                    }
+
+                                    override fun onKeyUp(keyCode: Int, event: android.view.KeyEvent?): Boolean {
+                                        return when (keyCode) {
+                                            android.view.KeyEvent.KEYCODE_DEL,
+                                            android.view.KeyEvent.KEYCODE_ENTER -> true
+                                            else -> super.onKeyUp(keyCode, event)
+                                        }
+                                    }
+                                }.apply {
                                     isSingleLine = false
                                     isFocusable = true
                                     isFocusableInTouchMode = true
@@ -599,21 +621,6 @@ fun ConsoleScreen(
                                     setOnFocusChangeListener { _, hasFocus ->
                                         if (hasFocus) {
                                             inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
-                                        }
-                                    }
-
-                                    setOnKeyListener { _, keyCode, event ->
-                                        if (event.action != android.view.KeyEvent.ACTION_DOWN) return@setOnKeyListener false
-                                        when (keyCode) {
-                                            android.view.KeyEvent.KEYCODE_DEL -> {
-                                                bridge.terminalEmulator.dispatchKey(0, VTermKey.BACKSPACE)
-                                                true
-                                            }
-                                            android.view.KeyEvent.KEYCODE_ENTER -> {
-                                                bridge.terminalEmulator.dispatchKey(0, VTermKey.ENTER)
-                                                true
-                                            }
-                                            else -> false
                                         }
                                     }
 
