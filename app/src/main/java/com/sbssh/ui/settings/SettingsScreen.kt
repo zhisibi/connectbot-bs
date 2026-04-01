@@ -41,8 +41,11 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
     val restoreLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        val uri = result.data?.data
-        AppLogger.log("RESTORE_UI", "onResult: resultCode=${result.resultCode}, uri=$uri")
+        val intent = result.data
+        val uri = intent?.data ?: intent?.clipData?.let { cd ->
+            if (cd.itemCount > 0) cd.getItemAt(0).uri else null
+        }
+        AppLogger.log("RESTORE_UI", "onResult: resultCode=${result.resultCode}, data=${intent?.data}, clip=${intent?.clipData}, uri=$uri")
         if (uri == null) {
             Toast.makeText(context, "No file selected", Toast.LENGTH_SHORT).show()
             return@rememberLauncherForActivityResult
@@ -111,6 +114,7 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
                     val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                         addCategory(Intent.CATEGORY_OPENABLE)
                         type = "*/*"
+                        putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false)
                         addFlags(
                             Intent.FLAG_GRANT_READ_URI_PERMISSION or
                                 Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
