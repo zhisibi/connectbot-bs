@@ -35,6 +35,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.consumeWindowInsets
@@ -72,6 +74,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.ui.draw.alpha
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -89,6 +92,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.input.key.KeyEventType
 import androidx.compose.ui.input.key.isCtrlPressed
 import androidx.compose.ui.input.key.isShiftPressed
@@ -209,6 +217,8 @@ fun ConsoleScreen(
     var showSoftwareKeyboard by remember { mutableStateOf(!hasHardwareKeyboard) }
 
     val termFocusRequester = remember { FocusRequester() }
+    val imeFocusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
     val keyboardController = LocalSoftwareKeyboardController.current
     val view = LocalView.current
     val inputMethodManager = remember {
@@ -269,12 +279,13 @@ fun ConsoleScreen(
     // Drive IME show/hide when our state changes
     LaunchedEffect(showSoftwareKeyboard) {
         if (showSoftwareKeyboard) {
-            termFocusRequester.requestFocus()
+            imeFocusRequester.requestFocus()
             keyboardController?.show()
             inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
         } else {
             keyboardController?.hide()
             inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+            focusManager.clearFocus(force = true)
         }
     }
 
@@ -426,6 +437,7 @@ fun ConsoleScreen(
         // Ensure soft keyboard can be shown again after hide
         if (!hasHardwareKeyboard) {
             showSoftwareKeyboard = true
+            imeFocusRequester.requestFocus()
             inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
         }
         // Show title bar temporarily when terminal is tapped (if auto-hide enabled)
@@ -565,6 +577,49 @@ fun ConsoleScreen(
                                 top = if (!titleBarHide) titleBarHeight else 0.dp
                             )
                     ) {
+                        // Hidden IME input bridge to capture soft keyboard (Enter/Backspace)
+                        var imeBuffer by remember { mutableStateOf("") }
+                        BasicTextField(
+                            value = imeBuffer,
+                            onValueChange = { newValue ->
+                                if (newValue == imeBuffer) return@BasicTextField
+
+                                // Detect newline/enter
+                                if (newValue.contains('\n') || newValue.contains('\r')) {
+                                    bridge.terminalEmulator.dispatchKey(0, VTermKey.ENTER)
+                                    imeBuffer = ""
+                                    return@BasicTextField
+                                }
+
+                                if (newValue.length > imeBuffer.length) {
+                                    val added = newValue.substring(imeBuffer.length)
+                                    if (added.isNotEmpty()) {
+                                        bridge.injectString(added)
+                                    }
+                                } else if (newValue.length < imeBuffer.length) {
+                                    val deleted = imeBuffer.length - newValue.length
+                                    repeat(deleted) {
+                                        bridge.terminalEmulator.dispatchKey(0, VTermKey.BACKSPACE)
+                                    }
+                                }
+
+                                // Reset buffer to keep diffs simple
+                                imeBuffer = ""
+                            },
+                            modifier = Modifier
+                                .size(1.dp)
+                                .alpha(0.01f)
+                                .focusRequester(imeFocusRequester),
+                            keyboardOptions = KeyboardOptions.Default.copy(
+                                imeAction = ImeAction.None
+                            ),
+                            keyboardActions = KeyboardActions(
+                                onAny = {
+                                    bridge.terminalEmulator.dispatchKey(0, VTermKey.ENTER)
+                                }
+                            )
+                        )
+
                         // Get font from profile (stored in bridge)
                         val fontResult = rememberTerminalTypefaceResultFromStoredValue(bridge.fontFamily)
                         val coroutineScope = rememberCoroutineScope()
