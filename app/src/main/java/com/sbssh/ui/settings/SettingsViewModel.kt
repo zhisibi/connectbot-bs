@@ -22,10 +22,12 @@ import com.sbssh.data.db.AppDatabase
 import com.sbssh.data.db.VpsEntity
 import com.sbssh.util.AppLogger
 import com.sbssh.util.BiometricHelper
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -282,6 +284,9 @@ class SettingsViewModel(
         viewModelScope.launch {
             try {
                 if (dao == null) {
+                    dao = runCatching { AppDatabase.getInstance().vpsDao() }.getOrNull()
+                }
+                if (dao == null) {
                     AppLogger.log("RESTORE", "DAO is null")
                     _uiState.value = _uiState.value.copy(error = context.getString(R.string.error_database_not_initialized))
                     return@launch
@@ -333,21 +338,26 @@ class SettingsViewModel(
                 val type = object : TypeToken<List<BackupItem>>() {}.type
                 val backupList: List<BackupItem> = gson.fromJson(json, type)
                 val now = System.currentTimeMillis()
-                var count = 0
-                for (item in backupList) {
-                    dao!!.insertVps(VpsEntity(
-                        alias = item.alias.ifBlank { "Unknown" },
-                        host = item.host.ifBlank { "0.0.0.0" },
-                        port = item.port,
-                        username = item.username.ifBlank { "root" },
-                        authType = item.authType,
-                        encryptedPassword = item.encryptedPassword,
-                        encryptedKeyContent = item.encryptedKeyContent,
-                        encryptedKeyPassphrase = item.encryptedKeyPassphrase,
-                        createdAt = if (item.createdAt > 0) item.createdAt else now,
-                        updatedAt = if (item.updatedAt > 0) item.updatedAt else now
-                    ))
-                    count++
+                val count = withContext(Dispatchers.IO) {
+                    var restored = 0
+                    for (item in backupList) {
+                        dao!!.insertVps(
+                            VpsEntity(
+                                alias = item.alias.ifBlank { "Unknown" },
+                                host = item.host.ifBlank { "0.0.0.0" },
+                                port = item.port,
+                                username = item.username.ifBlank { "root" },
+                                authType = item.authType,
+                                encryptedPassword = item.encryptedPassword,
+                                encryptedKeyContent = item.encryptedKeyContent,
+                                encryptedKeyPassphrase = item.encryptedKeyPassphrase,
+                                createdAt = if (item.createdAt > 0) item.createdAt else now,
+                                updatedAt = if (item.updatedAt > 0) item.updatedAt else now
+                            )
+                        )
+                        restored++
+                    }
+                    restored
                 }
                 AppLogger.log("RESTORE", "Restored $count server(s)")
                 _uiState.value = _uiState.value.copy(success = context.getString(R.string.success_restored_servers, count))
