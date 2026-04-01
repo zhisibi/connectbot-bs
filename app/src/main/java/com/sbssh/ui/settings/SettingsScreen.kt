@@ -34,9 +34,26 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     // Backup: save directly to Downloads (no SAF picker)
+    var isRestoring by remember { mutableStateOf(false) }
     val restoreLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
-    ) { uri -> uri?.let { viewModel.restoreServers(it) } }
+    ) { uri ->
+        isRestoring = false
+        if (uri == null) {
+            Toast.makeText(context, "No file selected", Toast.LENGTH_SHORT).show()
+            return@rememberLauncherForActivityResult
+        }
+        // Persist read permission so the Uri remains accessible across process/rotation.
+        try {
+            context.contentResolver.takePersistableUriPermission(
+                uri,
+                android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
+            )
+        } catch (_: Exception) {
+            // Some providers don't support persistable permissions; ignore.
+        }
+        viewModel.restoreServers(uri)
+    }
 
     LaunchedEffect(uiState.error) {
         uiState.error?.let { Toast.makeText(context, it, Toast.LENGTH_LONG).show(); viewModel.clearMessages() }
@@ -86,7 +103,11 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
 
             SettingsCard(Icons.Default.Restore, stringResource(R.string.server_restore),
                 stringResource(R.string.restore_from_backup),
-                onClick = { restoreLauncher.launch(arrayOf("*/*")) })
+                onClick = {
+                    if (isRestoring) return@SettingsCard
+                    isRestoring = true
+                    restoreLauncher.launch(arrayOf("*/*"))
+                })
 
             SettingsCard(Icons.Default.Lock, stringResource(R.string.change_password),
                 stringResource(R.string.change_password_desc),

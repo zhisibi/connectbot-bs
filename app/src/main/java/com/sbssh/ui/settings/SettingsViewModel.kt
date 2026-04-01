@@ -80,7 +80,7 @@ class SettingsViewModel(
     private val cryptoManager = CryptoManager(context)
     private val fieldCrypto = FieldCryptoManager()
     private val settingsManager = SettingsManager.getInstance(context)
-    private var dao = runCatching { AppDatabase.getInstance().vpsDao() }.getOrNull()
+    private var dao = runCatching { AppDatabase.getInstance(context).vpsDao() }.getOrNull()
     private val gson = Gson()
 
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -284,7 +284,7 @@ class SettingsViewModel(
         viewModelScope.launch {
             try {
                 if (dao == null) {
-                    dao = runCatching { AppDatabase.getInstance().vpsDao() }.getOrNull()
+                    dao = runCatching { AppDatabase.getInstance(context).vpsDao() }.getOrNull()
                 }
                 if (dao == null) {
                     AppLogger.log("RESTORE", "DAO is null")
@@ -359,11 +359,7 @@ class SettingsViewModel(
                     }
                     restored
                 }
-                var count = insertOnce()
-                if (count == 0 && backupList.isNotEmpty()) {
-                    AppLogger.log("RESTORE", "Restore returned 0, retrying once")
-                    count = insertOnce()
-                }
+                val count = insertOnce()
                 AppLogger.log("RESTORE", "Restored $count server(s)")
                 _uiState.value = _uiState.value.copy(success = context.getString(R.string.success_restored_servers, count))
             } catch (e: Exception) {
