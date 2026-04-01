@@ -3,6 +3,7 @@
 package com.sbssh.ui.sftp
 
 import android.widget.Toast
+import android.os.Environment
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
@@ -36,6 +37,8 @@ fun SftpScreen(
         factory = SftpViewModel.Factory(vpsId, context)
     )
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var showSearch by remember { mutableStateOf(false) }
+    var showSortMenu by remember { mutableStateOf(false) }
 
     val uploadLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -67,13 +70,50 @@ fun SftpScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("SFTP") },
+                title = {
+                    if (showSearch) {
+                        OutlinedTextField(
+                            value = uiState.query,
+                            onValueChange = { viewModel.updateQuery(it) },
+                            singleLine = true,
+                            placeholder = { Text("搜索文件") },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    } else {
+                        Text("SFTP")
+                    }
+                },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
                 actions = {
+                    IconButton(onClick = { showSearch = !showSearch }) {
+                        Icon(Icons.Default.Search, contentDescription = "Search")
+                    }
+                    Box {
+                        IconButton(onClick = { showSortMenu = true }) {
+                            Icon(Icons.Default.Sort, contentDescription = "Sort")
+                        }
+                        DropdownMenu(
+                            expanded = showSortMenu,
+                            onDismissRequest = { showSortMenu = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("名称") },
+                                onClick = { showSortMenu = false; viewModel.updateSort(SortType.NAME) }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("时间") },
+                                onClick = { showSortMenu = false; viewModel.updateSort(SortType.TIME) }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("类型") },
+                                onClick = { showSortMenu = false; viewModel.updateSort(SortType.TYPE) }
+                            )
+                        }
+                    }
                     IconButton(onClick = { uploadLauncher.launch("*/*") }) {
                         Icon(Icons.Default.UploadFile, contentDescription = "Upload")
                     }
@@ -189,7 +229,7 @@ fun SftpScreen(
                                 file = file,
                                 onClick = { viewModel.navigateTo(file) },
                                 onDownload = {
-                                    val downloadsDir = context.getExternalFilesDir(null) ?: context.cacheDir
+                                    val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
                                     viewModel.downloadFile(file, downloadsDir)
                                 },
                                 onRename = { viewModel.showRename(file) },

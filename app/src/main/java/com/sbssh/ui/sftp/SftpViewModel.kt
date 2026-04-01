@@ -29,8 +29,12 @@ data class SftpUiState(
     val showChmodDialog: SftpFileInfo? = null,
     val showDeleteConfirm: SftpFileInfo? = null,
     val uploadProgress: String? = null,
-    val connectionError: String? = null
+    val connectionError: String? = null,
+    val query: String = "",
+    val sortType: SortType = SortType.NAME
 )
+
+enum class SortType { NAME, TIME, TYPE }
 
 class SftpViewModel(private val vpsId: Long, private val context: Context) : ViewModel() {
 
@@ -38,6 +42,7 @@ class SftpViewModel(private val vpsId: Long, private val context: Context) : Vie
     private val manager = SftpManager()
 
     private val _uiState = MutableStateFlow(SftpUiState())
+    private var lastFiles: List<SftpFileInfo> = emptyList()
     val uiState: StateFlow<SftpUiState> = _uiState.asStateFlow()
 
     private var vps: VpsEntity? = null
@@ -90,8 +95,9 @@ class SftpViewModel(private val vpsId: Long, private val context: Context) : Vie
         viewModelScope.launch {
             try {
                 val files = manager.listDirectory(path)
+                lastFiles = files
                 _uiState.value = _uiState.value.copy(
-                    files = files,
+                    files = applyFilterSort(files, _uiState.value.query, _uiState.value.sortType),
                     currentPath = path,
                     isLoading = false
                 )
@@ -222,6 +228,39 @@ class SftpViewModel(private val vpsId: Long, private val context: Context) : Vie
     }
 
     fun clearError() { _uiState.value = _uiState.value.copy(error = null) }
+
+    fun updateQuery(query: String) {
+        _uiState.value = _uiState.value.copy(
+            query = query,
+            files = applyFilterSort(lastFiles, query, _uiState.value.sortType)
+        )
+    }
+
+    fun updateSort(sortType: SortType) {
+        _uiState.value = _uiState.value.copy(
+            sortType = sortType,
+            files = applyFilterSort(lastFiles, _uiState.value.query, sortType)
+        )
+    }
+
+    private fun applyFilterSort(
+        files: List<SftpFileInfo>,
+        query: String,
+        sortType: SortType
+    ): List<SftpFileInfo> {
+        val filtered = if (query.isBlank()) {
+            files
+        } else {
+            files.filter { it.name.contains(query, ignoreCase = true) }
+        }
+
+        val sorted = when (sortType) {
+            SortType.NAME -> filtered.sortedWith(compareByDescending<SftpFileInfo> { it.isDirectory }.thenBy { it.name.lowercase() })
+            SortType.TIME -> filtered.sortedWith(compareByDescending<SftpFileInfo> { it.isDirectory }.thenByDescending { it.modifiedTime })
+            SortType.TYPE -> filtered.sortedWith(compareByDescending<SftpFileInfo> { it.isDirectory }.thenBy { it.permissions })
+        }
+        return sorted
+    }
 
     override fun onCleared() {
         super.onCleared()
