@@ -102,8 +102,16 @@ class TerminalScreenViewModel @Inject constructor(
                     } else {
                         null
                     } ?: run {
+                        // Host.nickname is UNIQUE in ConnectBot DB. Restored servers may contain duplicate aliases,
+                        // so ensure nickname is unique before insert.
+                        val nicknameBase = vps.alias.ifBlank { "server" }
+                        val nickname = run {
+                            val exists = cbDb.hostDao().getByNickname(nicknameBase)
+                            if (exists == null) nicknameBase else "${nicknameBase}_${System.currentTimeMillis()}"
+                        }
+
                         val host = Host.createSshHost(
-                            nickname = vps.alias,
+                            nickname = nickname,
                             hostname = vps.host,
                             port = vps.port,
                             username = vps.username

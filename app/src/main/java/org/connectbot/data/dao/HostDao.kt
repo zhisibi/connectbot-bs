@@ -106,6 +106,12 @@ interface HostDao {
     suspend fun findByKnownHost(hostname: String, port: Int): Host?
 
     /**
+     * Find a host by nickname.
+     */
+    @Query("SELECT * FROM hosts WHERE nickname = :nickname LIMIT 1")
+    suspend fun getByNickname(nickname: String): Host?
+
+    /**
      * Get all SSH hosts that can be used as jump hosts.
      * Only SSH protocol hosts can serve as jump hosts.
      */
