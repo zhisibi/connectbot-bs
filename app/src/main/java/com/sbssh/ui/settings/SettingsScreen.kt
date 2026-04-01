@@ -1,6 +1,5 @@
 package com.sbssh.ui.settings
 
-import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -36,27 +35,15 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     // Backup: save directly to Downloads (no SAF picker)
-    // Use StartActivityForResult for better device compatibility (some devices/providers don't reliably
-    // deliver OpenDocument results on first launch).
+    // Use GetContent for better device compatibility: some DocumentsUI flows return RESULT_OK
+    // but a null intent/data on first pick.
     val restoreLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        val intent = result.data
-        val uri = intent?.data ?: intent?.clipData?.let { cd ->
-            if (cd.itemCount > 0) cd.getItemAt(0).uri else null
-        }
-        AppLogger.log("RESTORE_UI", "onResult: resultCode=${result.resultCode}, data=${intent?.data}, clip=${intent?.clipData}, uri=$uri")
+        contract = ActivityResultContracts.GetContent()
+    ) { uri ->
+        AppLogger.log("RESTORE_UI", "onResult(GetContent): uri=$uri")
         if (uri == null) {
             Toast.makeText(context, "No file selected", Toast.LENGTH_SHORT).show()
             return@rememberLauncherForActivityResult
-        }
-        try {
-            context.contentResolver.takePersistableUriPermission(
-                uri,
-                Intent.FLAG_GRANT_READ_URI_PERMISSION
-            )
-        } catch (_: Exception) {
-            // ignore
         }
         viewModel.restoreServers(uri)
     }
@@ -111,16 +98,7 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
                 stringResource(R.string.restore_from_backup),
                 onClick = {
                     AppLogger.log("RESTORE_UI", "click restore")
-                    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
-                        addCategory(Intent.CATEGORY_OPENABLE)
-                        type = "*/*"
-                        putExtra(Intent.EXTRA_ALLOW_MULTIPLE, false)
-                        addFlags(
-                            Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                                Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
-                        )
-                    }
-                    restoreLauncher.launch(intent)
+                    restoreLauncher.launch("*/*")
                 })
 
             SettingsCard(Icons.Default.Lock, stringResource(R.string.change_password),
