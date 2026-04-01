@@ -63,6 +63,14 @@ class SettingsManager private constructor(context: Context) {
         )
     }
 
+    fun getCloudToken(): String? = prefs.getString("cloud_token", null)
+    fun setCloudToken(token: String?) {
+        prefs.edit().putString("cloud_token", token).apply()
+    }
+    fun clearCloudToken() {
+        prefs.edit().remove("cloud_token").apply()
+    }
+
     companion object {
         @Volatile
         private var INSTANCE: SettingsManager? = null

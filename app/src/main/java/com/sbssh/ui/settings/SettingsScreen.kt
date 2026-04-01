@@ -169,25 +169,87 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
 
     // Cloud sync dialog
     if (uiState.showCloudSyncDialog) {
-        var enabled by remember { mutableStateOf(uiState.cloudSyncEnabled) }
-        var url by remember { mutableStateOf(uiState.cloudSyncUrl) }
-        var username by remember { mutableStateOf(uiState.cloudSyncUsername) }
-        AlertDialog(onDismissRequest = { viewModel.dismissCloudSyncDialog() },
-            title = { Text(stringResource(R.string.cloud_sync_settings)) },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Row(Modifier.fillMaxWidth(), Arrangement.SpaceBetween, Alignment.CenterVertically) {
-                        Text(stringResource(R.string.enable_cloud_sync)); Switch(checked = enabled, onCheckedChange = { enabled = it })
+        if (uiState.cloudSyncLoggedIn) {
+            // Logged in — show sync actions
+            AlertDialog(onDismissRequest = { viewModel.dismissCloudSyncDialog() },
+                title = { Text(stringResource(R.string.cloud_sync)) },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Text(stringResource(R.string.username) + ": " + uiState.cloudSyncUsername)
+                        Text(stringResource(R.string.server_url) + ": " + uiState.cloudSyncUrl)
+                        if (uiState.cloudSyncLastSync != null) {
+                            Text("Last sync: ${uiState.cloudSyncLastSync}", style = MaterialTheme.typography.labelSmall)
+                        }
+                        if (uiState.cloudSyncLoading) {
+                            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                        }
                     }
-                    if (enabled) {
-                        OutlinedTextField(value = url, onValueChange = { url = it }, label = { Text(stringResource(R.string.server_url)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
-                        OutlinedTextField(value = username, onValueChange = { username = it }, label = { Text(stringResource(R.string.username)) }, singleLine = true, modifier = Modifier.fillMaxWidth())
-                        Text(stringResource(R.string.cloud_sync_coming_soon), style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
+                },
+                confirmButton = {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        TextButton(onClick = { viewModel.cloudUpload() }, enabled = !uiState.cloudSyncLoading) {
+                            Text(stringResource(R.string.action_upload))
+                        }
+                        TextButton(onClick = { viewModel.cloudDownload() }, enabled = !uiState.cloudSyncLoading) {
+                            Text(stringResource(R.string.action_download))
+                        }
                     }
-                }
-            },
-            confirmButton = { TextButton(onClick = { viewModel.saveCloudSync(enabled, url, username) }) { Text(stringResource(R.string.save)) } },
-            dismissButton = { TextButton(onClick = { viewModel.dismissCloudSyncDialog() }) { Text(stringResource(R.string.cancel)) } })
+                },
+                dismissButton = {
+                    Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        TextButton(onClick = { viewModel.cloudLogout() }) { Text(stringResource(R.string.action_logout)) }
+                        TextButton(onClick = { viewModel.dismissCloudSyncDialog() }) { Text(stringResource(R.string.cancel)) }
+                    }
+                })
+        } else {
+            // Not logged in — show login/register
+            var url by remember { mutableStateOf(uiState.cloudSyncUrl.ifEmpty { "" }) }
+            var username by remember { mutableStateOf("") }
+            var password by remember { mutableStateOf("") }
+            var showPassword by remember { mutableStateOf(false) }
+            var isRegister by remember { mutableStateOf(false) }
+            AlertDialog(onDismissRequest = { viewModel.dismissCloudSyncDialog() },
+                title = { Text(if (isRegister) "Register" else stringResource(R.string.cloud_sync)) },
+                text = {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedTextField(value = url, onValueChange = { url = it },
+                            label = { Text(stringResource(R.string.server_url)) },
+                            placeholder = { Text("http://192.168.1.100:9800") },
+                            singleLine = true, modifier = Modifier.fillMaxWidth())
+                        OutlinedTextField(value = username, onValueChange = { username = it },
+                            label = { Text(stringResource(R.string.username)) },
+                            singleLine = true, modifier = Modifier.fillMaxWidth())
+                        OutlinedTextField(value = password, onValueChange = { password = it },
+                            label = { Text(stringResource(R.string.master_password)) },
+                            singleLine = true,
+                            visualTransformation = if (showPassword) VisualTransformation.None else PasswordVisualTransformation(),
+                            trailingIcon = { IconButton(onClick = { showPassword = !showPassword }) {
+                                Icon(if (showPassword) Icons.Default.VisibilityOff else Icons.Default.Visibility, null) } },
+                            modifier = Modifier.fillMaxWidth())
+                        if (isRegister) {
+                            Text("Register with your master password. Your PBKDF2 salt will be uploaded so other devices can sync.",
+                                style = MaterialTheme.typography.labelSmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        }
+                        if (uiState.cloudSyncLoading) {
+                            LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                        }
+                        TextButton(onClick = { isRegister = !isRegister }, modifier = Modifier.align(Alignment.End)) {
+                            Text(if (isRegister) "Already have account? Login" else "No account? Register")
+                        }
+                    }
+                },
+                confirmButton = {
+                    TextButton(
+                        onClick = {
+                            if (isRegister) viewModel.cloudRegister(url, username, password)
+                            else viewModel.cloudLogin(url, username, password)
+                        },
+                        enabled = url.isNotBlank() && username.isNotBlank() && password.isNotBlank() && !uiState.cloudSyncLoading
+                    ) { Text(if (isRegister) stringResource(R.string.action_register) else stringResource(R.string.action_login)) }
+                },
+                dismissButton = { TextButton(onClick = { viewModel.dismissCloudSyncDialog() }) { Text(stringResource(R.string.cancel)) } })
+        }
     }
 
     // Change password dialog

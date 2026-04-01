@@ -20,6 +20,8 @@ import com.sbssh.data.crypto.FieldCryptoManager
 import com.sbssh.data.crypto.SessionKeyHolder
 import com.sbssh.data.db.AppDatabase
 import com.sbssh.data.db.VpsEntity
+import com.sbssh.ui.cloud.CloudSyncApi
+import com.sbssh.ui.cloud.CloudException
 import com.sbssh.util.AppLogger
 import com.sbssh.util.BiometricHelper
 import kotlinx.coroutines.Dispatchers
@@ -48,7 +50,10 @@ data class SettingsUiState(
     val shouldRestart: Boolean = false,
     val cloudSyncEnabled: Boolean = false,
     val cloudSyncUrl: String = "",
-    val cloudSyncUsername: String = ""
+    val cloudSyncUsername: String = "",
+    val cloudSyncLoading: Boolean = false,
+    val cloudSyncLoggedIn: Boolean = false,
+    val cloudSyncLastSync: String? = null
 )
 
 // Backup format wrapper (v1)
@@ -82,6 +87,7 @@ class SettingsViewModel(
     private val settingsManager = SettingsManager.getInstance(context)
     private var dao = runCatching { AppDatabase.getInstance(context).vpsDao() }.getOrNull()
     private val gson = Gson()
+    private var cloudApi = CloudSyncApi(settingsManager.settings.value.cloudSyncUrl.ifEmpty { "http://localhost:9800" })
 
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()
@@ -97,7 +103,8 @@ class SettingsViewModel(
             fontSize = settings.fontSize,
             cloudSyncEnabled = settings.cloudSyncEnabled,
             cloudSyncUrl = settings.cloudSyncUrl,
-            cloudSyncUsername = settings.cloudSyncUsername
+            cloudSyncUsername = settings.cloudSyncUsername,
+            cloudSyncLoggedIn = settingsManager.getCloudToken() != null
         )
     }
 
@@ -373,15 +380,202 @@ class SettingsViewModel(
     fun showCloudSyncDialog() { _uiState.value = _uiState.value.copy(showCloudSyncDialog = true) }
     fun dismissCloudSyncDialog() { _uiState.value = _uiState.value.copy(showCloudSyncDialog = false) }
 
-    fun saveCloudSync(enabled: Boolean, url: String, username: String) {
-        settingsManager.setCloudSync(enabled, url, username)
+    fun cloudLogin(url: String, username: String, password: String) {
+        if (url.isBlank() || username.isBlank() || password.isBlank()) {
+            _uiState.value = _uiState.value.copy(error = "All fields are required")
+            return
+        }
+        _uiState.value = _uiState.value.copy(cloudSyncLoading = true)
+        viewModelScope.launch {
+            try {
+                cloudApi.setBaseUrl(url)
+                val resp = withContext(Dispatchers.IO) { cloudApi.login(username, password) }
+                settingsManager.setCloudSync(true, url, username)
+                settingsManager.setCloudToken(resp.token)
+                _uiState.value = _uiState.value.copy(
+                    cloudSyncEnabled = true,
+                    cloudSyncUrl = url,
+                    cloudSyncUsername = username,
+                    cloudSyncLoggedIn = true,
+                    cloudSyncLoading = false,
+                    showCloudSyncDialog = false,
+                    success = context.getString(R.string.success_cloud_sync_configured)
+                )
+            } catch (e: Exception) {
+                AppLogger.log("CLOUD", "Login failed", e)
+                _uiState.value = _uiState.value.copy(
+                    cloudSyncLoading = false,
+                    error = "Login failed: ${e.message}"
+                )
+            }
+        }
+    }
+
+    fun cloudRegister(url: String, username: String, password: String) {
+        if (url.isBlank() || username.isBlank() || password.isBlank()) {
+            _uiState.value = _uiState.value.copy(error = "All fields are required")
+            return
+        }
+        if (password.length < 6) {
+            _uiState.value = _uiState.value.copy(error = "Password must be at least 6 characters")
+            return
+        }
+        _uiState.value = _uiState.value.copy(cloudSyncLoading = true)
+        viewModelScope.launch {
+            try {
+                cloudApi.setBaseUrl(url)
+                // Upload the PBKDF2 salt so other devices can derive the same DEK
+                val saltBytes = cryptoManager.getSalt()
+                val saltBase64 = android.util.Base64.encodeToString(saltBytes, android.util.Base64.NO_WRAP)
+                val resp = withContext(Dispatchers.IO) { cloudApi.register(username, password, saltBase64) }
+                settingsManager.setCloudSync(true, url, username)
+                settingsManager.setCloudToken(resp.token)
+                _uiState.value = _uiState.value.copy(
+                    cloudSyncEnabled = true,
+                    cloudSyncUrl = url,
+                    cloudSyncUsername = username,
+                    cloudSyncLoggedIn = true,
+                    cloudSyncLoading = false,
+                    showCloudSyncDialog = false,
+                    success = context.getString(R.string.success_cloud_sync_configured)
+                )
+            } catch (e: Exception) {
+                AppLogger.log("CLOUD", "Register failed", e)
+                _uiState.value = _uiState.value.copy(
+                    cloudSyncLoading = false,
+                    error = "Register failed: ${e.message}"
+                )
+            }
+        }
+    }
+
+    fun cloudLogout() {
+        settingsManager.setCloudSync(false)
+        settingsManager.clearCloudToken()
         _uiState.value = _uiState.value.copy(
-            cloudSyncEnabled = enabled,
-            cloudSyncUrl = url,
-            cloudSyncUsername = username,
+            cloudSyncEnabled = false,
+            cloudSyncUrl = "",
+            cloudSyncUsername = "",
+            cloudSyncLoggedIn = false,
             showCloudSyncDialog = false,
-            success = if (enabled) context.getString(R.string.success_cloud_sync_configured) else context.getString(R.string.success_cloud_sync_disabled)
+            success = "Cloud sync disabled"
         )
+    }
+
+    fun cloudUpload() {
+        val token = settingsManager.getCloudToken()
+        if (token == null) {
+            _uiState.value = _uiState.value.copy(error = "Please login first")
+            return
+        }
+        val url = _uiState.value.cloudSyncUrl
+        if (url.isBlank()) {
+            _uiState.value = _uiState.value.copy(error = "Server URL not configured")
+            return
+        }
+        _uiState.value = _uiState.value.copy(cloudSyncLoading = true)
+        viewModelScope.launch {
+            try {
+                cloudApi.setBaseUrl(url)
+                val envelope = buildBackupEnvelope()
+                withContext(Dispatchers.IO) { cloudApi.upload(token, envelope, android.os.Build.MODEL) }
+                _uiState.value = _uiState.value.copy(
+                    cloudSyncLoading = false,
+                    cloudSyncLastSync = java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date()),
+                    success = "Upload successful"
+                )
+            } catch (e: Exception) {
+                AppLogger.log("CLOUD", "Upload failed", e)
+                _uiState.value = _uiState.value.copy(
+                    cloudSyncLoading = false,
+                    error = "Upload failed: ${e.message}"
+                )
+            }
+        }
+    }
+
+    fun cloudDownload() {
+        val token = settingsManager.getCloudToken()
+        if (token == null) {
+            _uiState.value = _uiState.value.copy(error = "Please login first")
+            return
+        }
+        val url = _uiState.value.cloudSyncUrl
+        if (url.isBlank()) {
+            _uiState.value = _uiState.value.copy(error = "Server URL not configured")
+            return
+        }
+        _uiState.value = _uiState.value.copy(cloudSyncLoading = true)
+        viewModelScope.launch {
+            try {
+                cloudApi.setBaseUrl(url)
+                val resp = withContext(Dispatchers.IO) { cloudApi.download(token) }
+                if (resp.encryptedData.isNullOrBlank()) {
+                    _uiState.value = _uiState.value.copy(cloudSyncLoading = false, error = "No data on server")
+                    return@launch
+                }
+                // Restore from the downloaded backup envelope
+                val content = resp.encryptedData
+                val envelope = try { gson.fromJson(content, BackupEnvelope::class.java) } catch (_: Exception) { null }
+                val payload: String
+                val encrypted: Boolean
+                if (envelope != null && envelope.format == "sbssh_backup_v1") {
+                    encrypted = envelope.encrypted
+                    payload = envelope.payload
+                } else {
+                    encrypted = false
+                    payload = content
+                }
+                val json = if (encrypted) {
+                    if (!SessionKeyHolder.isSet()) {
+                        _uiState.value = _uiState.value.copy(cloudSyncLoading = false, error = "Please unlock app first")
+                        return@launch
+                    }
+                    val key = SessionKeyHolder.get()
+                    fieldCrypto.decrypt(payload, key) ?: throw Exception("Decrypt failed")
+                } else payload
+                val type = object : com.google.gson.reflect.TypeToken<List<BackupItem>>() {}.type
+                val backupList: List<BackupItem> = gson.fromJson(json, type)
+                if (dao == null) dao = runCatching { AppDatabase.getInstance(context).vpsDao() }.getOrNull()
+                if (dao == null) {
+                    _uiState.value = _uiState.value.copy(cloudSyncLoading = false, error = "Database not initialized")
+                    return@launch
+                }
+                val now = System.currentTimeMillis()
+                val count = withContext(Dispatchers.IO) {
+                    var restored = 0
+                    for (item in backupList) {
+                        dao!!.insertVps(
+                            VpsEntity(
+                                alias = item.alias.ifBlank { "Unknown" },
+                                host = item.host.ifBlank { "0.0.0.0" },
+                                port = item.port,
+                                username = item.username.ifBlank { "root" },
+                                authType = item.authType,
+                                encryptedPassword = item.encryptedPassword,
+                                encryptedKeyContent = item.encryptedKeyContent,
+                                encryptedKeyPassphrase = item.encryptedKeyPassphrase,
+                                createdAt = if (item.createdAt > 0) item.createdAt else now,
+                                updatedAt = if (item.updatedAt > 0) item.updatedAt else now
+                            )
+                        )
+                        restored++
+                    }
+                    restored
+                }
+                _uiState.value = _uiState.value.copy(
+                    cloudSyncLoading = false,
+                    cloudSyncLastSync = java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date()),
+                    success = "Download successful: $count server(s) restored"
+                )
+            } catch (e: Exception) {
+                AppLogger.log("CLOUD", "Download failed", e)
+                _uiState.value = _uiState.value.copy(
+                    cloudSyncLoading = false,
+                    error = "Download failed: ${e.message}"
+                )
+            }
+        }
     }
 
     // ========== Change Password ==========
