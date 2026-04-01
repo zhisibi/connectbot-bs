@@ -232,19 +232,37 @@ private fun VpsCard(
 
             Spacer(modifier = Modifier.height(6.dp))
 
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-                Button(
-                    onClick = onConnectTerminal,
-                    modifier = Modifier.weight(1f),
-                    contentPadding = PaddingValues(vertical = 4.dp)
-                ) {
-                    Icon(Icons.Default.Terminal, contentDescription = null, modifier = Modifier.size(16.dp))
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text("SSH", style = MaterialTheme.typography.labelMedium)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(6.dp)
+            ) {
+                val buttonWeight = 0.66f
+                if (isConnected) {
+                    Button(
+                        onClick = onConnectTerminal,
+                        modifier = Modifier.weight(buttonWeight),
+                        contentPadding = PaddingValues(vertical = 4.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
+                    ) {
+                        Icon(Icons.Default.Terminal, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("SSH", style = MaterialTheme.typography.labelMedium, color = Color.White)
+                    }
+                } else {
+                    Button(
+                        onClick = onConnectTerminal,
+                        modifier = Modifier.weight(buttonWeight),
+                        contentPadding = PaddingValues(vertical = 4.dp)
+                    ) {
+                        Icon(Icons.Default.Terminal, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Text("SSH", style = MaterialTheme.typography.labelMedium)
+                    }
                 }
+
                 OutlinedButton(
                     onClick = onConnectSftp,
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(buttonWeight),
                     contentPadding = PaddingValues(vertical = 4.dp)
                 ) {
                     Icon(Icons.Default.Folder, contentDescription = null, modifier = Modifier.size(16.dp))
