@@ -274,7 +274,9 @@ fun ConsoleScreen(
 
     // Request focus on IME bridge when screen appears
     LaunchedEffect(Unit) {
+        showSoftwareKeyboard = true
         imeFocusRequester.requestFocus()
+        imeEditText?.requestFocus()
     }
 
     // Drive IME show/hide when our state changes
@@ -598,11 +600,19 @@ fun ConsoleScreen(
                             factory = { ctx ->
                                 android.widget.EditText(ctx).apply {
                                     isSingleLine = false
+                                    isFocusable = true
+                                    isFocusableInTouchMode = true
                                     inputType = android.text.InputType.TYPE_CLASS_TEXT
                                     imeOptions = android.view.inputmethod.EditorInfo.IME_ACTION_NONE
                                     setText("")
                                     setSelection(0)
                                     imeEditText = this
+
+                                    setOnFocusChangeListener { _, hasFocus ->
+                                        if (hasFocus) {
+                                            inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
+                                        }
+                                    }
 
                                     addTextChangedListener(object : android.text.TextWatcher {
                                         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -633,6 +643,7 @@ fun ConsoleScreen(
                                 imeEditText = editText
                                 if (showSoftwareKeyboard) {
                                     editText.requestFocus()
+                                    inputMethodManager.showSoftInput(editText, InputMethodManager.SHOW_IMPLICIT)
                                 }
                             }
                         )
@@ -663,7 +674,7 @@ fun ConsoleScreen(
                                 ),
                             typeface = fontResult.typeface,
                             initialFontSize = fontSize.sp,
-                            keyboardEnabled = false,
+                            keyboardEnabled = true,
                             showSoftKeyboard = false,
                             focusRequester = termFocusRequester,
                             forcedSize = forceSize,
