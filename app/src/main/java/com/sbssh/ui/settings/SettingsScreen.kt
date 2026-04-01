@@ -25,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sbssh.R
 import com.sbssh.BuildConfig
+import com.sbssh.util.AppLogger
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -35,15 +36,13 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     // Backup: save directly to Downloads (no SAF picker)
-    var isRestoring by remember { mutableStateOf(false) }
-
     // Use StartActivityForResult for better device compatibility (some devices/providers don't reliably
     // deliver OpenDocument results on first launch).
     val restoreLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        isRestoring = false
         val uri = result.data?.data
+        AppLogger.log("RESTORE_UI", "onResult: resultCode=${result.resultCode}, uri=$uri")
         if (uri == null) {
             Toast.makeText(context, "No file selected", Toast.LENGTH_SHORT).show()
             return@rememberLauncherForActivityResult
@@ -108,8 +107,7 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
             SettingsCard(Icons.Default.Restore, stringResource(R.string.server_restore),
                 stringResource(R.string.restore_from_backup),
                 onClick = {
-                    if (isRestoring) return@SettingsCard
-                    isRestoring = true
+                    AppLogger.log("RESTORE_UI", "click restore")
                     val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                         addCategory(Intent.CATEGORY_OPENABLE)
                         type = "*/*"
