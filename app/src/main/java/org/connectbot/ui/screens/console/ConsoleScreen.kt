@@ -79,6 +79,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
@@ -102,6 +103,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.graphics.Color
 import androidx.core.content.edit
 import androidx.core.net.toUri
 import androidx.core.view.WindowInsetsCompat
@@ -315,6 +317,28 @@ fun ConsoleScreen(
     val connecting = currentBridge?.isConnecting == true
     val canForwardPorts = currentBridge?.canFowardPorts() == true
     val snackbarHostState = remember { SnackbarHostState() }
+    var lastState by remember { mutableStateOf("") }
+    val logLines = remember { mutableStateListOf<String>() }
+
+    fun appendLog(line: String) {
+        if (logLines.size > 200) {
+            logLines.removeFirst()
+        }
+        logLines.add(line)
+    }
+
+    LaunchedEffect(sessionOpen, connecting, disconnected) {
+        val state = when {
+            sessionOpen -> "SESSION_OPEN"
+            connecting -> "CONNECTING"
+            disconnected -> "DISCONNECTED"
+            else -> "IDLE"
+        }
+        if (state != lastState) {
+            lastState = state
+            appendLog("STATE: $state")
+        }
+    }
 
     // Show software keyboard when session becomes open (if no hardware keyboard)
     // Also show when switching to a different bridge that's already open
@@ -345,6 +369,7 @@ fun ConsoleScreen(
     // Show snackbar for network status messages
     LaunchedEffect(Unit) {
         viewModel.networkStatusMessages.collect { message ->
+            appendLog("NET: $message")
             snackbarHostState.showSnackbar(message)
         }
     }
@@ -902,6 +927,25 @@ fun ConsoleScreen(
                     }
                 }
             )
+
+            // SSH connection log panel (always visible)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xAA000000))
+                    .padding(8.dp)
+            ) {
+                Text("SSH LOG", color = Color.White, fontSize = 12.sp)
+                logLines.takeLast(8).forEach { line ->
+                    Text(
+                        line,
+                        color = Color.White,
+                        fontSize = 10.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+            }
 
             // Progress indicator for OSC 9;4 progress reporting
             val progressState = uiState.progressState
