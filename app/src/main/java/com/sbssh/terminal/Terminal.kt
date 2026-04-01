@@ -1,23 +1,16 @@
 package com.sbssh.terminal
 
 import android.graphics.Typeface
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.TextUnit
+import org.connectbot.terminal.ModifierManager
+import org.connectbot.terminal.SelectionController
+import org.connectbot.terminal.ComposeController
 import org.connectbot.terminal.TerminalEmulator
-
-interface SelectionController {
-    fun copySelection() {}
-}
+import org.connectbot.terminal.Terminal as ConnectBotTerminal
 
 @Composable
 fun Terminal(
@@ -35,18 +28,23 @@ fun Terminal(
     onImeVisibilityChanged: (Boolean) -> Unit = {},
     onHyperlinkClick: (String) -> Unit = {}
 ) {
-    val selectionController = remember { object : SelectionController {} }
+    val actualTypeface = typeface ?: Typeface.MONOSPACE
+    val actualFocusRequester = focusRequester ?: remember { FocusRequester() }
 
-    LaunchedEffect(Unit) {
-        onSelectionControllerAvailable(selectionController)
-    }
-
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.Black)
-            .pointerInput(Unit) {
-                detectTapGestures(onTap = { onTerminalTap() })
-            }
+    ConnectBotTerminal(
+        terminalEmulator = terminalEmulator,
+        modifier = modifier,
+        typeface = actualTypeface,
+        initialFontSize = initialFontSize,
+        keyboardEnabled = keyboardEnabled,
+        showSoftKeyboard = showSoftKeyboard,
+        focusRequester = actualFocusRequester,
+        onTerminalTap = onTerminalTap,
+        onImeVisibilityChanged = onImeVisibilityChanged,
+        forcedSize = forcedSize,
+        modifierManager = modifierManager as? ModifierManager,
+        onSelectionControllerAvailable = onSelectionControllerAvailable,
+        onHyperlinkClick = onHyperlinkClick,
+        onComposeControllerAvailable = { _: ComposeController? -> }
     )
 }
