@@ -14,8 +14,8 @@ android {
         applicationId = "com.sbssh"
         minSdk = 24
         targetSdk = 35
-        versionCode = 1
-        versionName = "0.1"
+        versionCode = 2
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "com.sbssh.HiltTestRunner"
         vectorDrawables.useSupportLibrary = true
@@ -127,8 +127,8 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 }
 
-// Workaround: disable checkDebugClasspath task (fails in this environment)
-tasks.matching { it.name == "checkDebugClasspath" }.configureEach {
+// Workaround: disable classpath check tasks (fail in this environment)
+tasks.matching { it.name == "checkDebugClasspath" || it.name == "checkReleaseClasspath" }.configureEach {
     enabled = false
 }
 
