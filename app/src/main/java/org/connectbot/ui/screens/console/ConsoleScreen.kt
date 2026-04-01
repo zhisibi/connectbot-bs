@@ -20,6 +20,7 @@ package com.sbssh.ui.screens.console
 import android.app.Activity
 import android.content.ClipboardManager
 import android.content.Context
+import android.view.inputmethod.InputMethodManager
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
@@ -100,6 +101,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -118,6 +120,7 @@ import com.sbssh.connectbot.data.entity.Host
 import com.sbssh.service.PromptRequest
 import org.connectbot.terminal.ProgressState
 import org.connectbot.terminal.SelectionController
+import org.connectbot.terminal.VTermKey
 import com.sbssh.terminal.Terminal
 import com.sbssh.ui.LoadingScreen
 import com.sbssh.ui.LocalTerminalManager
@@ -207,6 +210,10 @@ fun ConsoleScreen(
 
     val termFocusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
+    val view = LocalView.current
+    val inputMethodManager = remember {
+        context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    }
 
     var forceSize: Pair<Int, Int>? by remember { mutableStateOf(null) }
 
@@ -264,8 +271,10 @@ fun ConsoleScreen(
         if (showSoftwareKeyboard) {
             termFocusRequester.requestFocus()
             keyboardController?.show()
+            inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
         } else {
             keyboardController?.hide()
+            inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
 
@@ -417,6 +426,7 @@ fun ConsoleScreen(
         // Ensure soft keyboard can be shown again after hide
         if (!hasHardwareKeyboard) {
             showSoftwareKeyboard = true
+            inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
         }
         // Show title bar temporarily when terminal is tapped (if auto-hide enabled)
         if (titleBarHide) {
@@ -473,6 +483,18 @@ fun ConsoleScreen(
                 .onPreviewKeyEvent { keyEvent ->
                     if (keyEvent.type == KeyEventType.KeyDown) {
                         when {
+                            // Backspace
+                            keyEvent.key == Key.Backspace -> {
+                                currentBridge?.terminalEmulator?.dispatchKey(0, VTermKey.BACKSPACE)
+                                true
+                            }
+
+                            // Enter
+                            keyEvent.key == Key.Enter -> {
+                                currentBridge?.terminalEmulator?.dispatchKey(0, VTermKey.ENTER)
+                                true
+                            }
+
                             // Ctrl+Shift+C: copy selection
                             keyEvent.key == Key.C && keyEvent.isCtrlPressed && keyEvent.isShiftPressed -> {
                                 selectionController?.copySelection()
@@ -611,10 +633,12 @@ fun ConsoleScreen(
                                 onInteraction = { handleTerminalInteraction() },
                                 onHideIme = {
                                     showSoftwareKeyboard = false
+                                    inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
                                 },
                                 onShowIme = {
                                     showSoftwareKeyboard = true
                                     termFocusRequester.requestFocus()
+                                    inputMethodManager.showSoftInput(view, InputMethodManager.SHOW_IMPLICIT)
                                 },
                                 onOpenTextInput = {
                                     showTextInputDialog = true
