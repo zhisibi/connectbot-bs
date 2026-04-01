@@ -55,6 +55,7 @@ class ConsoleViewModel @Inject constructor(
 ) : ViewModel() {
     private val hostId: Long = savedStateHandle.get<Long>("hostId") ?: -1L
     private var terminalManager: TerminalManager? = null
+    private var connectTimeoutJob: kotlinx.coroutines.Job? = null
 
     private val _uiState = MutableStateFlow(ConsoleUiState())
     val uiState: StateFlow<ConsoleUiState> = _uiState.asStateFlow()
@@ -87,12 +88,13 @@ class ConsoleViewModel @Inject constructor(
                 viewModelScope.launch {
                     ensureBridgeExists()
                 }
-                viewModelScope.launch {
-                    kotlinx.coroutines.delay(10000)
-                    val bridges = _uiState.value.bridges
-                    if (bridges.none { it.host.id == hostId }) {
+                connectTimeoutJob?.cancel()
+                connectTimeoutJob = viewModelScope.launch {
+                    kotlinx.coroutines.delay(12000)
+                    val bridge = _uiState.value.bridges.firstOrNull { it.host.id == hostId }
+                    if (bridge == null || !bridge.isSessionOpen) {
                         _uiState.update {
-                            it.copy(isLoading = false, error = "Connection timeout or failed to open session")
+                            it.copy(isLoading = false, error = "SSH connection failed or no output")
                         }
                     }
                 }
@@ -217,6 +219,10 @@ class ConsoleViewModel @Inject constructor(
             }
         } else {
             allBridges
+        }
+
+        if (filteredBridges.any { it.isSessionOpen }) {
+            connectTimeoutJob?.cancel()
         }
 
         _uiState.update {

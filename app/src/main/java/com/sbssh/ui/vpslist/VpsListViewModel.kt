@@ -25,6 +25,25 @@ class VpsListViewModel @Inject constructor(
     val uiState: StateFlow<VpsListUiState> = _uiState.asStateFlow()
 
     init {
+        loadOnce()
+        observeFlow()
+        viewModelScope.launch {
+            kotlinx.coroutines.delay(2000)
+            if (_uiState.value.isLoading) {
+                _uiState.value = _uiState.value.copy(
+                    isLoading = false,
+                    error = "Database not ready"
+                )
+            }
+        }
+    }
+
+    fun retry() {
+        _uiState.value = _uiState.value.copy(isLoading = true, error = null)
+        loadOnce()
+    }
+
+    private fun loadOnce() {
         viewModelScope.launch {
             try {
                 val first = dao.getAllVpsAsList()
@@ -37,6 +56,9 @@ class VpsListViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    private fun observeFlow() {
         viewModelScope.launch {
             dao.getAllVps()
                 .catch { e ->

@@ -65,6 +65,10 @@ fun VpsListScreen(
                     Text("加载失败", style = MaterialTheme.typography.titleMedium)
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(uiState.error ?: "Unknown error")
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(onClick = { viewModel.retry() }) {
+                        Text("重试")
+                    }
                 }
             }
         } else if (uiState.vpsList.isEmpty()) {
