@@ -57,10 +57,7 @@ class MasterPasswordViewModel(
                 // Store session key for field-level encryption
                 SessionKeyHolder.set(keyBytes)
 
-                // Init plain Room database
-                AppDatabase.close()
-                AppDatabase.getInstance(SbsshApp.instance)
-                AppLogger.log("AUTH", "setPassword: database initialized")
+                AppLogger.log("AUTH", "setPassword: database already initialized")
 
                 // Now persist salt + password verification hash
                 cryptoManager.saveSalt(salt)
@@ -105,9 +102,7 @@ class MasterPasswordViewModel(
                     // Store session key for field-level decryption
                     SessionKeyHolder.set(keyBytes)
 
-                    // Init plain Room database
-                    AppDatabase.close()
-                    AppDatabase.getInstance(SbsshApp.instance)
+                    // AppDatabase already initialized by Hilt
 
                     _uiState.value = _uiState.value.copy(
                         isLoading = false,
@@ -134,8 +129,7 @@ class MasterPasswordViewModel(
             _uiState.value = _uiState.value.copy(isLoading = true, error = null)
             try {
                 SessionKeyHolder.set(decryptedKey)
-                AppDatabase.close()
-                AppDatabase.getInstance(SbsshApp.instance)
+                // AppDatabase already initialized by Hilt
 
                 _uiState.value = _uiState.value.copy(
                     isLoading = false,
