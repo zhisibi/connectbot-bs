@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sbssh.R
@@ -170,7 +171,7 @@ private fun VpsCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     val statusColor = when {
-                        isConnected -> MaterialTheme.colorScheme.tertiary
+                        isConnected -> Color(0xFF4CAF50)
                         isDisconnected -> MaterialTheme.colorScheme.outline
                         else -> MaterialTheme.colorScheme.outlineVariant
                     }
