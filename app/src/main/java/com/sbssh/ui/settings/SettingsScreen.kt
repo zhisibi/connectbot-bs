@@ -1,5 +1,6 @@
 package com.sbssh.ui.settings
 
+import android.content.Intent
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -35,22 +36,25 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
 
     // Backup: save directly to Downloads (no SAF picker)
     var isRestoring by remember { mutableStateOf(false) }
+
+    // Use StartActivityForResult for better device compatibility (some devices/providers don't reliably
+    // deliver OpenDocument results on first launch).
     val restoreLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenDocument()
-    ) { uri ->
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) { result ->
         isRestoring = false
+        val uri = result.data?.data
         if (uri == null) {
             Toast.makeText(context, "No file selected", Toast.LENGTH_SHORT).show()
             return@rememberLauncherForActivityResult
         }
-        // Persist read permission so the Uri remains accessible across process/rotation.
         try {
             context.contentResolver.takePersistableUriPermission(
                 uri,
-                android.content.Intent.FLAG_GRANT_READ_URI_PERMISSION
+                Intent.FLAG_GRANT_READ_URI_PERMISSION
             )
         } catch (_: Exception) {
-            // Some providers don't support persistable permissions; ignore.
+            // ignore
         }
         viewModel.restoreServers(uri)
     }
@@ -106,7 +110,15 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
                 onClick = {
                     if (isRestoring) return@SettingsCard
                     isRestoring = true
-                    restoreLauncher.launch(arrayOf("*/*"))
+                    val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+                        addCategory(Intent.CATEGORY_OPENABLE)
+                        type = "*/*"
+                        addFlags(
+                            Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                                Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
+                        )
+                    }
+                    restoreLauncher.launch(intent)
                 })
 
             SettingsCard(Icons.Default.Lock, stringResource(R.string.change_password),
