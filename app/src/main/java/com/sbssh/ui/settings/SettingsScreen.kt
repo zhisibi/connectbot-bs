@@ -27,7 +27,7 @@ import com.sbssh.BuildConfig
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}) {
+fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () -> Unit = {}) {
     val context = LocalContext.current
     val activity = context as? androidx.appcompat.app.AppCompatActivity
     val viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory(context, activity))
@@ -52,6 +52,11 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}) {
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.action_back))
+                    }
+                },
+                actions = {
+                    IconButton(onClick = { viewModel.logout(); onLogout() }) {
+                        Icon(Icons.Default.Logout, contentDescription = stringResource(R.string.action_logout))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer)

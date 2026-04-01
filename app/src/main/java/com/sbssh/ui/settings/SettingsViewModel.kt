@@ -162,6 +162,10 @@ class SettingsViewModel(
 
     fun onRestartConsumed() { _uiState.value = _uiState.value.copy(shouldRestart = false) }
 
+    fun logout() {
+        SessionKeyHolder.clear()
+    }
+
     // ========== Font Size ==========
     fun showFontSizeDialog() { _uiState.value = _uiState.value.copy(showFontSizeDialog = true) }
     fun dismissFontSizeDialog() { _uiState.value = _uiState.value.copy(showFontSizeDialog = false) }

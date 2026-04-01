@@ -121,7 +121,12 @@ fun NavGraph(
         composable(Routes.SETTINGS) {
             SettingsScreen(
                 onBack = { navController.popBackStack() },
-                onViewLog = { navController.navigate(Routes.LOG) }
+                onViewLog = { navController.navigate(Routes.LOG) },
+                onLogout = {
+                    navController.navigate(Routes.AUTH) {
+                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                    }
+                }
             )
         }
 

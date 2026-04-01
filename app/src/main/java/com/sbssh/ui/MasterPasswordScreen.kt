@@ -41,7 +41,6 @@ fun MasterPasswordScreen(
     var confirmPassword by remember { mutableStateOf("") }
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmVisible by remember { mutableStateOf(false) }
-    var usePasswordLogin by remember { mutableStateOf(false) }
 
     LaunchedEffect(uiState.isAuthenticated) {
         if (uiState.isAuthenticated) {
@@ -49,12 +48,6 @@ fun MasterPasswordScreen(
         }
     }
 
-    // Default to biometric when enabled; fall back to password when not available or first launch
-    LaunchedEffect(uiState.isFirstLaunch, uiState.biometricAvailable) {
-        if (uiState.isFirstLaunch || !uiState.biometricAvailable) {
-            usePasswordLogin = true
-        }
-    }
 
     Scaffold(
         topBar = {
@@ -72,65 +65,47 @@ fun MasterPasswordScreen(
                 .padding(padding)
                 .padding(horizontal = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
-            Text(
-                text = if (uiState.isFirstLaunch) stringResource(R.string.set_master_password) else stringResource(R.string.enter_master_password),
-                style = MaterialTheme.typography.headlineMedium
+            Spacer(modifier = Modifier.height(24.dp))
+
+            OutlinedTextField(
+                value = password,
+                onValueChange = { password = it },
+                label = { Text(stringResource(R.string.master_password)) },
+                singleLine = true,
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                            contentDescription = stringResource(R.string.toggle_visibility)
+                        )
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = if (uiState.isFirstLaunch)
-                    stringResource(R.string.create_password_desc)
-                else
-                    stringResource(R.string.unlock_password_desc),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            if (uiState.isFirstLaunch || usePasswordLogin) {
+            if (uiState.isFirstLaunch) {
+                Spacer(modifier = Modifier.height(16.dp))
                 OutlinedTextField(
-                    value = password,
-                    onValueChange = { password = it },
-                    label = { Text(stringResource(R.string.master_password)) },
+                    value = confirmPassword,
+                    onValueChange = { confirmPassword = it },
+                    label = { Text(stringResource(R.string.confirm_password)) },
                     singleLine = true,
-                    visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                    visualTransformation = if (confirmVisible) VisualTransformation.None else PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                     trailingIcon = {
-                        IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        IconButton(onClick = { confirmVisible = !confirmVisible }) {
                             Icon(
-                                imageVector = if (passwordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
+                                imageVector = if (confirmVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
                                 contentDescription = stringResource(R.string.toggle_visibility)
                             )
                         }
                     },
                     modifier = Modifier.fillMaxWidth()
                 )
-
-                if (uiState.isFirstLaunch) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    OutlinedTextField(
-                        value = confirmPassword,
-                        onValueChange = { confirmPassword = it },
-                        label = { Text(stringResource(R.string.confirm_password)) },
-                        singleLine = true,
-                        visualTransformation = if (confirmVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                        trailingIcon = {
-                            IconButton(onClick = { confirmVisible = !confirmVisible }) {
-                                Icon(
-                                    imageVector = if (confirmVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                                    contentDescription = stringResource(R.string.toggle_visibility)
-                                )
-                            }
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
             }
 
             if (uiState.error != null) {
@@ -142,34 +117,31 @@ fun MasterPasswordScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-            if (uiState.isFirstLaunch || usePasswordLogin) {
-                Button(
-                    onClick = {
-                        if (uiState.isFirstLaunch) {
-                            viewModel.setPassword(password, confirmPassword)
-                        } else {
-                            viewModel.unlock(password)
-                        }
-                    },
-                    enabled = !uiState.isLoading && password.isNotEmpty() &&
-                            (!uiState.isFirstLaunch || confirmPassword.isNotEmpty()),
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    if (uiState.isLoading) {
-                        Text(if (uiState.isFirstLaunch) stringResource(R.string.creating) else stringResource(R.string.unlocking))
+            Button(
+                onClick = {
+                    if (uiState.isFirstLaunch) {
+                        viewModel.setPassword(password, confirmPassword)
                     } else {
-                        Text(if (uiState.isFirstLaunch) stringResource(R.string.create) else stringResource(R.string.unlock))
+                        viewModel.unlock(password)
                     }
+                },
+                enabled = !uiState.isLoading && password.isNotEmpty() &&
+                        (!uiState.isFirstLaunch || confirmPassword.isNotEmpty()),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                if (uiState.isLoading) {
+                    Text(if (uiState.isFirstLaunch) stringResource(R.string.creating) else stringResource(R.string.unlocking))
+                } else {
+                    Text(if (uiState.isFirstLaunch) stringResource(R.string.create) else stringResource(R.string.unlock))
                 }
             }
 
-            if (!uiState.isFirstLaunch && uiState.biometricAvailable && !usePasswordLogin) {
-                Spacer(modifier = Modifier.height(16.dp))
-                OutlinedButton(
+            if (!uiState.isFirstLaunch && uiState.biometricAvailable) {
+                Spacer(modifier = Modifier.height(12.dp))
+                Button(
                     onClick = {
-                        // Simple biometric prompt (no CryptoObject, like WebSSH)
                         val executor = androidx.core.content.ContextCompat.getMainExecutor(context)
                         val callback = object : androidx.biometric.BiometricPrompt.AuthenticationCallback() {
                             override fun onAuthenticationSucceeded(result: androidx.biometric.BiometricPrompt.AuthenticationResult) {
@@ -200,17 +172,6 @@ fun MasterPasswordScreen(
                     Icon(Icons.Default.Fingerprint, contentDescription = null)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(stringResource(R.string.unlock_biometrics))
-                }
-                Spacer(modifier = Modifier.height(8.dp))
-                TextButton(onClick = { usePasswordLogin = true }) {
-                    Text(stringResource(R.string.label_use_password))
-                }
-            }
-
-            if (!uiState.isFirstLaunch && uiState.biometricAvailable && usePasswordLogin) {
-                Spacer(modifier = Modifier.height(8.dp))
-                TextButton(onClick = { usePasswordLogin = false }) {
-                    Text(stringResource(R.string.label_use_biometrics))
                 }
             }
         }

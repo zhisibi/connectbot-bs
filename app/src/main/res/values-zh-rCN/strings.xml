@@ -718,4 +718,6 @@
   <string name="create_password_desc">创建一个强主密码以加密你的数据</string>
   <string name="unlock_password_desc">请输入主密码以解锁</string>
   <string name="unlock_biometrics">使用生物识别解锁</string>
+  <string name="action_logout">退出登录</string>
+  <string name="unlock">解锁</string>
 </resources>

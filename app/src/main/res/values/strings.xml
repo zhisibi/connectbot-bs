@@ -1643,4 +1643,5 @@
     <string name="sftp_upload_failed">Upload failed</string>
     <string name="sftp_download_failed">Download failed</string>
     <string name="sftp_delete_failed">Failed to delete</string>
+    <string name="action_logout">Logout</string>
 </resources>
