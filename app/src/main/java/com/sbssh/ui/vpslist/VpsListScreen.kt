@@ -234,9 +234,9 @@ private fun VpsCard(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                val buttonWeight = 0.66f
+                val buttonWeight = 0.55f
                 if (isConnected) {
                     Button(
                         onClick = onConnectTerminal,
