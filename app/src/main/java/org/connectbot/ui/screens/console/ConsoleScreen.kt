@@ -116,7 +116,7 @@ import com.sbssh.R
 import com.sbssh.connectbot.data.entity.Host
 import com.sbssh.service.PromptRequest
 import org.connectbot.terminal.ProgressState
-import com.sbssh.terminal.SelectionController
+import org.connectbot.terminal.SelectionController
 import com.sbssh.terminal.Terminal
 import com.sbssh.ui.LoadingScreen
 import com.sbssh.ui.LocalTerminalManager
@@ -554,7 +554,7 @@ fun ConsoleScreen(
                             typeface = fontResult.typeface,
                             initialFontSize = fontSize.sp,
                             keyboardEnabled = true,
-                            showSoftKeyboard = showSoftwareKeyboard,
+                            showSoftKeyboard = true,
                             focusRequester = termFocusRequester,
                             forcedSize = forceSize,
                             modifierManager = bridge.keyHandler,
