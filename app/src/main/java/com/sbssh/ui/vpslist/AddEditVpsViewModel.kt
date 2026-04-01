@@ -135,6 +135,7 @@ class AddEditVpsViewModel @Inject constructor(
                 }
                 _uiState.value = _uiState.value.copy(isLoading = false, isSaved = true)
             } catch (e: Exception) {
+                if (e is kotlinx.coroutines.CancellationException) return@launch
                 _uiState.value = _uiState.value.copy(isLoading = false, error = e.message ?: "Save failed")
             }
         }

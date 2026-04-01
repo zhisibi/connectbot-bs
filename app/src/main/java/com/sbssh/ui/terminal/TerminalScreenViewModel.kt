@@ -3,7 +3,6 @@ package com.sbssh.ui.terminal
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.room.Room
 import com.sbssh.connectbot.data.ConnectBotDatabase
 import com.sbssh.connectbot.data.entity.Host
 import com.sbssh.connectbot.util.SecurePasswordStorage
@@ -29,7 +28,8 @@ sealed class TerminalUiState {
 @HiltViewModel
 class TerminalScreenViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val vpsDao: VpsDao
+    private val vpsDao: VpsDao,
+    private val cbDb: ConnectBotDatabase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<TerminalUiState>(TerminalUiState.Loading)
@@ -41,14 +41,6 @@ class TerminalScreenViewModel @Inject constructor(
             try {
                 val vps = withContext(Dispatchers.IO) { vpsDao.getVpsById(vpsId) }
                     ?: throw IllegalStateException("VPS not found")
-
-                val cbDb = Room.databaseBuilder(
-                    context.applicationContext,
-                    ConnectBotDatabase::class.java,
-                    "connectbot.db"
-                )
-                    .addMigrations(ConnectBotDatabase.MIGRATION_4_5)
-                    .build()
 
                 val hostId = withContext(Dispatchers.IO) {
                     val key = SessionKeyHolder.get()
