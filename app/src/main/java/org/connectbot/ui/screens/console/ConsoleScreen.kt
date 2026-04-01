@@ -99,6 +99,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -205,6 +206,7 @@ fun ConsoleScreen(
     var showSoftwareKeyboard by remember { mutableStateOf(!hasHardwareKeyboard) }
 
     val termFocusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     var forceSize: Pair<Int, Int>? by remember { mutableStateOf(null) }
 
@@ -255,6 +257,16 @@ fun ConsoleScreen(
     // Request focus on terminal when screen appears (e.g., returning from navigation)
     LaunchedEffect(Unit) {
         termFocusRequester.requestFocus()
+    }
+
+    // Drive IME show/hide when our state changes
+    LaunchedEffect(showSoftwareKeyboard) {
+        if (showSoftwareKeyboard) {
+            termFocusRequester.requestFocus()
+            keyboardController?.show()
+        } else {
+            keyboardController?.hide()
+        }
     }
 
     // Track actual IME visibility using WindowInsets to detect user dismissing with back button
@@ -401,6 +413,10 @@ fun ConsoleScreen(
         // Show emulated keyboard when terminal is tapped (unless always visible)
         if (!keyboardAlwaysVisible) {
             showExtraKeyboard = true
+        }
+        // Ensure soft keyboard can be shown again after hide
+        if (!hasHardwareKeyboard) {
+            showSoftwareKeyboard = true
         }
         // Show title bar temporarily when terminal is tapped (if auto-hide enabled)
         if (titleBarHide) {
@@ -554,7 +570,7 @@ fun ConsoleScreen(
                             typeface = fontResult.typeface,
                             initialFontSize = fontSize.sp,
                             keyboardEnabled = true,
-                            showSoftKeyboard = true,
+                            showSoftKeyboard = showSoftwareKeyboard,
                             focusRequester = termFocusRequester,
                             forcedSize = forceSize,
                             modifierManager = bridge.keyHandler,
@@ -598,6 +614,7 @@ fun ConsoleScreen(
                                 },
                                 onShowIme = {
                                     showSoftwareKeyboard = true
+                                    termFocusRequester.requestFocus()
                                 },
                                 onOpenTextInput = {
                                     showTextInputDialog = true
