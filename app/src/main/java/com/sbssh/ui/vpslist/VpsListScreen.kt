@@ -236,8 +236,7 @@ private fun VpsCard(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Make each action button about 2/3 of the available row width.
-                val buttonWeight = 0.66f
+                val buttonWeight = 0.55f
                 if (isConnected) {
                     Button(
                         onClick = onConnectTerminal,
