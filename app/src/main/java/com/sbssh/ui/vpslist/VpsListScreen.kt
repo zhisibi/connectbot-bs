@@ -16,6 +16,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.sbssh.R
 import com.sbssh.data.db.VpsEntity
+import com.sbssh.ui.LocalTerminalManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,6 +29,9 @@ fun VpsListScreen(
 ) {
     val viewModel: VpsListViewModel = hiltViewModel()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val terminalManager = LocalTerminalManager.current
+    val bridges by terminalManager?.bridgesFlow?.collectAsState() ?: remember { mutableStateOf(emptyList()) }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -98,12 +102,21 @@ fun VpsListScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(uiState.vpsList, key = { it.id }) { vps ->
+                    val bridge = bridges.firstOrNull { it.host?.id == vps.connectbotHostId }
+                    val isConnected = bridge?.isSessionOpen == true && bridge.isDisconnected.not()
+                    val isDisconnected = bridge?.isDisconnected == true
+
                     VpsCard(
                         vps = vps,
+                        isConnected = isConnected,
+                        isDisconnected = isDisconnected,
                         onEdit = { onEditVps(vps.id) },
                         onDelete = { viewModel.confirmDelete(vps.id) },
                         onConnectTerminal = { onConnectTerminal(vps.id) },
-                        onConnectSftp = { onConnectSftp(vps.id) }
+                        onConnectSftp = { onConnectSftp(vps.id) },
+                        onDisconnect = {
+                            bridge?.dispatchDisconnect(true)
+                        }
                     )
                 }
             }
@@ -132,10 +145,13 @@ fun VpsListScreen(
 @Composable
 private fun VpsCard(
     vps: VpsEntity,
+    isConnected: Boolean,
+    isDisconnected: Boolean,
     onEdit: () -> Unit,
     onDelete: () -> Unit,
     onConnectTerminal: () -> Unit,
-    onConnectSftp: () -> Unit
+    onConnectSftp: () -> Unit,
+    onDisconnect: () -> Unit
 ) {
     var showMenu by remember { mutableStateOf(false) }
 
@@ -150,12 +166,21 @@ private fun VpsCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = "🖥️  ${vps.alias}",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        val statusColor = when {
+                            isConnected -> MaterialTheme.colorScheme.tertiary
+                            isDisconnected -> MaterialTheme.colorScheme.outline
+                            else -> MaterialTheme.colorScheme.outlineVariant
+                        }
+                        Text(text = "●", color = statusColor, style = MaterialTheme.typography.titleMedium)
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "${vps.alias}",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
                     Spacer(modifier = Modifier.height(4.dp))
                     Text(
                         text = vps.username,
@@ -174,6 +199,13 @@ private fun VpsCard(
                         Icon(Icons.Default.MoreVert, contentDescription = "More")
                     }
                     DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
+                        if (isConnected || isDisconnected) {
+                            DropdownMenuItem(
+                                text = { Text("断开连接") },
+                                onClick = { showMenu = false; onDisconnect() },
+                                leadingIcon = { Icon(Icons.Default.LinkOff, contentDescription = null) }
+                            )
+                        }
                         DropdownMenuItem(
                             text = { Text(stringResource(R.string.edit)) },
                             onClick = { showMenu = false; onEdit() },
