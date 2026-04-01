@@ -159,7 +159,7 @@ private fun VpsCard(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        Column(modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp)) {
+        Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -177,7 +177,8 @@ private fun VpsCard(
                     Icon(
                         Icons.Default.Computer,
                         contentDescription = null,
-                        tint = statusColor
+                        tint = statusColor,
+                        modifier = Modifier.size(24.dp)
                     )
                     Spacer(modifier = Modifier.width(6.dp))
                     Text(
@@ -195,7 +196,7 @@ private fun VpsCard(
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text = if (vps.authType == "KEY") stringResource(R.string.ssh_key_auth) else stringResource(R.string.password_auth),
+                        text = if (vps.authType == "KEY") "私钥" else "Password",
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.primary,
                         fontWeight = FontWeight.SemiBold
@@ -228,18 +229,26 @@ private fun VpsCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(10.dp))
+            Spacer(modifier = Modifier.height(6.dp))
 
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(onClick = onConnectTerminal, modifier = Modifier.weight(1f)) {
-                    Icon(Icons.Default.Terminal, contentDescription = null, modifier = Modifier.size(18.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                Button(
+                    onClick = onConnectTerminal,
+                    modifier = Modifier.weight(1f),
+                    contentPadding = PaddingValues(vertical = 4.dp)
+                ) {
+                    Icon(Icons.Default.Terminal, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("SSH")
+                    Text("SSH", style = MaterialTheme.typography.labelMedium)
                 }
-                OutlinedButton(onClick = onConnectSftp, modifier = Modifier.weight(1f)) {
-                    Icon(Icons.Default.Folder, contentDescription = null, modifier = Modifier.size(18.dp))
+                OutlinedButton(
+                    onClick = onConnectSftp,
+                    modifier = Modifier.weight(1f),
+                    contentPadding = PaddingValues(vertical = 4.dp)
+                ) {
+                    Icon(Icons.Default.Folder, contentDescription = null, modifier = Modifier.size(16.dp))
                     Spacer(modifier = Modifier.width(4.dp))
-                    Text("SFTP")
+                    Text("SFTP", style = MaterialTheme.typography.labelMedium)
                 }
             }
         }
