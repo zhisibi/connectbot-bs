@@ -124,7 +124,7 @@ fun NavGraph(
                 onViewLog = { navController.navigate(Routes.LOG) },
                 onLogout = {
                     navController.navigate(Routes.AUTH) {
-                        popUpTo(navController.graph.startDestinationId) { inclusive = true }
+                        popUpTo(navController.graph.id) { inclusive = true }
                     }
                 }
             )
