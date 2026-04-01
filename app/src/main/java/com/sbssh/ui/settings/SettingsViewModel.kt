@@ -338,7 +338,7 @@ class SettingsViewModel(
                 val type = object : TypeToken<List<BackupItem>>() {}.type
                 val backupList: List<BackupItem> = gson.fromJson(json, type)
                 val now = System.currentTimeMillis()
-                val count = withContext(Dispatchers.IO) {
+                suspend fun insertOnce(): Int = withContext(Dispatchers.IO) {
                     var restored = 0
                     for (item in backupList) {
                         dao!!.insertVps(
@@ -358,6 +358,11 @@ class SettingsViewModel(
                         restored++
                     }
                     restored
+                }
+                var count = insertOnce()
+                if (count == 0 && backupList.isNotEmpty()) {
+                    AppLogger.log("RESTORE", "Restore returned 0, retrying once")
+                    count = insertOnce()
                 }
                 AppLogger.log("RESTORE", "Restored $count server(s)")
                 _uiState.value = _uiState.value.copy(success = context.getString(R.string.success_restored_servers, count))
