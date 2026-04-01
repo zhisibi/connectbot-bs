@@ -165,23 +165,30 @@ private fun VpsCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        val statusColor = when {
-                            isConnected -> MaterialTheme.colorScheme.tertiary
-                            isDisconnected -> MaterialTheme.colorScheme.outline
-                            else -> MaterialTheme.colorScheme.outlineVariant
-                        }
-                        Text(text = "●", color = statusColor, style = MaterialTheme.typography.titleMedium)
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text(
-                            text = "${vps.alias}",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurface
-                        )
+                Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    val statusColor = when {
+                        isConnected -> MaterialTheme.colorScheme.tertiary
+                        isDisconnected -> MaterialTheme.colorScheme.outline
+                        else -> MaterialTheme.colorScheme.outlineVariant
                     }
-                    Spacer(modifier = Modifier.height(4.dp))
+                    Icon(
+                        Icons.Default.Computer,
+                        contentDescription = null,
+                        tint = statusColor
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = "${vps.alias}",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                }
+
+                Column(modifier = Modifier.weight(1f)) {
                     Text(
                         text = vps.username,
                         style = MaterialTheme.typography.bodyMedium,
@@ -194,6 +201,7 @@ private fun VpsCard(
                         fontWeight = FontWeight.SemiBold
                     )
                 }
+
                 Box {
                     IconButton(onClick = { showMenu = true }) {
                         Icon(Icons.Default.MoreVert, contentDescription = "More")
