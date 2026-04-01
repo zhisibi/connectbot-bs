@@ -632,9 +632,22 @@ fun ConsoleScreen(
                                             val newValue = s?.toString() ?: ""
                                             if (newValue.isEmpty()) return
 
+                                            val keyHandler = bridge.keyHandler
+                                            val ctrlActive = keyHandler.isCtrlActive()
+
                                             // Newline/enter
                                             if (newValue.contains('\n') || newValue.contains('\r')) {
                                                 bridge.terminalEmulator.dispatchKey(0, VTermKey.ENTER)
+                                            } else if (ctrlActive) {
+                                                // Ctrl + key(s)
+                                                newValue.forEach { ch ->
+                                                    val code = keyHandler.keyAsControl(ch.code)
+                                                    bridge.injectString(code.toChar().toString())
+                                                }
+                                                // Clear transient ctrl after use
+                                                if (keyHandler.getModifierState().ctrlState == com.sbssh.service.ModifierLevel.TRANSIENT) {
+                                                    keyHandler.clearTransients()
+                                                }
                                             } else {
                                                 // Inject typed text
                                                 bridge.injectString(newValue)
