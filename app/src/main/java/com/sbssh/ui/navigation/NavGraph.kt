@@ -39,7 +39,7 @@ fun NavGraph(
 ) {
     NavHost(
         navController = navController,
-        startDestination = Routes.VPS_LIST
+        startDestination = Routes.AUTH
     ) {
         composable(Routes.AUTH) {
             MasterPasswordScreen(
