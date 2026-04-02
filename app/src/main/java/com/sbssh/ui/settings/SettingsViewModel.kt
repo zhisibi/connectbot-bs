@@ -55,7 +55,8 @@ data class SettingsUiState(
     val cloudSyncLoading: Boolean = false,
     val cloudSyncLoggedIn: Boolean = false,
     val cloudSyncLastSync: String? = null,
-    val cloudAutoSync: Boolean = false
+    val cloudAutoSync: Boolean = false,
+    val showRestorePasswordDialog: Boolean = false
 )
 
 // Backup format wrapper (v1)
@@ -63,6 +64,7 @@ data class BackupEnvelope(
     val format: String = "sbssh_backup_v1",
     val encrypted: Boolean = false,
     val payload: String = "",
+    val salt: String? = null,  // base64-encoded PBKDF2 salt for cross-device restore
     val createdAt: Long = System.currentTimeMillis()
 )
 
@@ -228,7 +230,12 @@ class SettingsViewModel(
             AppLogger.log("BACKUP", "Encryption failed, writing plain", e)
             false to json
         }
-        val envelope = BackupEnvelope(encrypted = encrypted, payload = payload)
+        // Include salt so other devices can derive the same key from password
+        val saltBase64 = try {
+            Base64.encodeToString(cryptoManager.getSalt(), Base64.NO_WRAP)
+        } catch (_: Exception) { null }
+
+        val envelope = BackupEnvelope(encrypted = encrypted, payload = payload, salt = saltBase64)
         val dataToWrite = gson.toJson(envelope)
         AppLogger.log("BACKUP", "Envelope size: ${dataToWrite.length}, encrypted=$encrypted")
         return dataToWrite
@@ -289,6 +296,9 @@ class SettingsViewModel(
     }
 
     // ========== Restore ==========
+    private var pendingRestoreUri: Uri? = null
+    private var pendingRestoreSalt: ByteArray? = null
+
     fun restoreServers(uri: Uri) {
         AppLogger.log("RESTORE", "restoreServers: uri=$uri")
         viewModelScope.launch {
@@ -305,106 +315,181 @@ class SettingsViewModel(
                     ?: throw Exception(context.getString(R.string.error_failed_read_backup))
                 AppLogger.log("RESTORE", "Read ${content.length} chars from file")
 
-                // Try to parse new envelope format first
+                // Try to parse envelope format
                 val envelope = try { gson.fromJson(content, BackupEnvelope::class.java) } catch (_: Exception) { null }
 
                 val payload: String
                 val encrypted: Boolean
+                val backupSalt: ByteArray? = if (envelope?.salt != null) {
+                    try { Base64.decode(envelope.salt, Base64.NO_WRAP) } catch (_: Exception) { null }
+                } else null
+
                 if (envelope != null && envelope.format == "sbssh_backup_v1") {
                     encrypted = envelope.encrypted
                     payload = envelope.payload
-                    AppLogger.log("RESTORE", "Envelope detected, encrypted=$encrypted")
+                    AppLogger.log("RESTORE", "Envelope detected, encrypted=$encrypted, backupSalt=${backupSalt?.size ?: 0}b")
                 } else {
-                    // Legacy format: raw encrypted string or raw JSON
                     encrypted = false
                     payload = content
                     AppLogger.log("RESTORE", "Legacy backup format detected")
                 }
 
-                val json = if (encrypted) {
-                    if (!SessionKeyHolder.isSet()) {
-                        AppLogger.log("RESTORE", "Session key NOT set, cannot decrypt")
-                        _uiState.value = _uiState.value.copy(error = context.getString(R.string.error_restore_unlock_required))
-                        return@launch
-                    }
-                    val key = SessionKeyHolder.get()
-                    AppLogger.log("RESTORE", "Decrypting payload...")
-                    fieldCrypto.decrypt(payload, key) ?: throw Exception("Decrypt failed")
-                } else {
-                    // If legacy content might be encrypted, try decrypt when key is available
-                    if (SessionKeyHolder.isSet()) {
-                        val key = SessionKeyHolder.get()
-                        try {
-                            fieldCrypto.decrypt(payload, key) ?: payload
-                        } catch (_: Exception) {
-                            payload
-                        }
+                if (!encrypted) {
+                    // Unencrypted - just parse and restore
+                    restoreFromJson(payload)
+                    return@launch
+                }
+
+                // Encrypted - need session key
+                if (!SessionKeyHolder.isSet()) {
+                    AppLogger.log("RESTORE", "Session key NOT set, cannot decrypt")
+                    _uiState.value = _uiState.value.copy(error = context.getString(R.string.error_restore_unlock_required))
+                    return@launch
+                }
+
+                // Check if backup salt matches local salt
+                val localSalt = try { cryptoManager.getSalt() } catch (_: Exception) { null }
+                val saltsMatch = backupSalt != null && localSalt != null && backupSalt.contentEquals(localSalt)
+
+                if (backupSalt != null && !saltsMatch) {
+                    AppLogger.log("RESTORE", "Backup salt differs from local salt - need password to re-derive key")
+                    // Store pending state and ask for password
+                    pendingRestoreUri = uri
+                    pendingRestoreSalt = backupSalt
+                    _uiState.value = _uiState.value.copy(
+                        showCloudSyncDialog = false,
+                        error = null
+                    )
+                    // Show a custom dialog for password entry
+                    _uiState.value = _uiState.value.copy(
+                        showBiometricPasswordDialog = false,
+                    )
+                    // Use a simple approach: prompt via error message with retry
+                    decryptAndRestoreWithBackupSalt(payload, backupSalt)
+                    return@launch
+                }
+
+                // Same salt - use current session key
+                val key = SessionKeyHolder.get()
+                AppLogger.log("RESTORE", "Decrypting payload with current key...")
+                try {
+                    val json = fieldCrypto.decrypt(payload, key) ?: throw Exception("Decrypt failed")
+                    restoreFromJson(json)
+                } catch (e: Exception) {
+                    AppLogger.log("RESTORE", "Decrypt with current key failed, trying backup salt if available", e)
+                    if (backupSalt != null) {
+                        decryptAndRestoreWithBackupSalt(payload, backupSalt)
                     } else {
-                        payload
+                        throw e
                     }
                 }
-
-                AppLogger.log("RESTORE", "JSON size: ${json.length}")
-                val type = object : TypeToken<List<BackupItem>>() {}.type
-                val backupList: List<BackupItem> = gson.fromJson(json, type)
-                val now = System.currentTimeMillis()
-                val count = withContext(Dispatchers.IO) {
-                    val allLocal = dao!!.getAllVpsAsList()
-
-                    // Step 1: Deduplicate local entries — keep newest per host:port:username, delete rest
-                    val groups = allLocal.groupBy { "${it.host}:${it.port}:${it.username}" }
-                    for ((_, entries) in groups) {
-                        if (entries.size > 1) {
-                            val sorted = entries.sortedByDescending { it.updatedAt }
-                            for (dup in sorted.drop(1)) {
-                                dao!!.deleteVps(dup)
-                                AppLogger.log("RESTORE", "Deleted duplicate: ${dup.alias} (id=${dup.id})")
-                            }
-                        }
-                    }
-
-                    // Step 2: Rebuild map after dedup
-                    val existing = dao!!.getAllVpsAsList()
-                        .associateBy { "${it.host}:${it.port}:${it.username}" }
-
-                    // Step 3: Upsert backup items
-                    var restored = 0
-                    for (item in backupList) {
-                        val key = "${item.host.ifBlank { "0.0.0.0" }}:${item.port}:${item.username.ifBlank { "root" }}"
-                        val existingVps = existing[key]
-                        if (existingVps != null) {
-                            dao!!.updateVps(existingVps.copy(
-                                alias = item.alias.ifBlank { "Unknown" },
-                                authType = item.authType,
-                                encryptedPassword = item.encryptedPassword,
-                                encryptedKeyContent = item.encryptedKeyContent,
-                                encryptedKeyPassphrase = item.encryptedKeyPassphrase,
-                                updatedAt = now
-                            ))
-                        } else {
-                            dao!!.insertVps(VpsEntity(
-                                alias = item.alias.ifBlank { "Unknown" },
-                                host = item.host.ifBlank { "0.0.0.0" },
-                                port = item.port,
-                                username = item.username.ifBlank { "root" },
-                                authType = item.authType,
-                                encryptedPassword = item.encryptedPassword,
-                                encryptedKeyContent = item.encryptedKeyContent,
-                                encryptedKeyPassphrase = item.encryptedKeyPassphrase,
-                                createdAt = if (item.createdAt > 0) item.createdAt else now,
-                                updatedAt = if (item.updatedAt > 0) item.updatedAt else now
-                            ))
-                        }
-                        restored++
-                    }
-                    restored
-                }
-                AppLogger.log("RESTORE", "Restored $count server(s)")
-                _uiState.value = _uiState.value.copy(success = context.getString(R.string.success_restored_servers, count))
             } catch (e: Exception) {
                 AppLogger.log("RESTORE", "Restore FAILED", e)
                 _uiState.value = _uiState.value.copy(error = context.getString(R.string.error_restore_failed, e.message ?: ""))
             }
+        }
+    }
+
+    /**
+     * When backup salt differs from local salt, we need the user's password to re-derive the key.
+     * We'll prompt the user for their master password.
+     */
+    private var _pendingPayload: String? = null
+    private var _pendingBackupSalt: ByteArray? = null
+
+    fun decryptAndRestoreWithBackupSalt(payload: String, backupSalt: ByteArray) {
+        // We need the password. Prompt user.
+        _pendingPayload = payload
+        _pendingBackupSalt = backupSalt
+        _uiState.value = _uiState.value.copy(
+            showRestorePasswordDialog = true
+        )
+    }
+
+    fun restoreWithPassword(password: String) {
+        val payload = _pendingPayload ?: return
+        val backupSalt = _pendingBackupSalt ?: return
+        _uiState.value = _uiState.value.copy(showRestorePasswordDialog = false, cloudSyncLoading = true)
+        viewModelScope.launch {
+            try {
+                val keyBytes = cryptoManager.deriveKey(password, backupSalt)
+                AppLogger.log("RESTORE", "Re-derived key from backup salt, decrypting...")
+                val json = withContext(Dispatchers.IO) {
+                    fieldCrypto.decrypt(payload, keyBytes) ?: throw Exception("Decrypt failed - wrong password?")
+                }
+                val count = restoreFromJson(json)
+                _uiState.value = _uiState.value.copy(
+                    cloudSyncLoading = false,
+                    success = context.getString(R.string.success_restored_servers, count)
+                )
+            } catch (e: Exception) {
+                AppLogger.log("RESTORE", "Restore with backup salt failed", e)
+                _uiState.value = _uiState.value.copy(
+                    cloudSyncLoading = false,
+                    error = context.getString(R.string.error_restore_failed, e.message ?: "")
+                )
+            } finally {
+                _pendingPayload = null
+                _pendingBackupSalt = null
+            }
+        }
+    }
+
+    private suspend fun restoreFromJson(json: String): Int {
+        val type = object : TypeToken<List<BackupItem>>() {}.type
+        val backupList: List<BackupItem> = gson.fromJson(json, type)
+        val now = System.currentTimeMillis()
+        if (dao == null) dao = runCatching { AppDatabase.getInstance(context).vpsDao() }.getOrNull()
+
+        return withContext(Dispatchers.IO) {
+            val allLocal = dao!!.getAllVpsAsList()
+
+            // Deduplicate local entries
+            val groups = allLocal.groupBy { "${it.host}:${it.port}:${it.username}" }
+            for ((_, entries) in groups) {
+                if (entries.size > 1) {
+                    val sorted = entries.sortedByDescending { it.updatedAt }
+                    for (dup in sorted.drop(1)) {
+                        dao!!.deleteVps(dup)
+                        AppLogger.log("RESTORE", "Deleted duplicate: ${dup.alias} (id=${dup.id})")
+                    }
+                }
+            }
+
+            val existing = dao!!.getAllVpsAsList()
+                .associateBy { "${it.host}:${it.port}:${it.username}" }
+
+            var restored = 0
+            for (item in backupList) {
+                val key = "${item.host.ifBlank { "0.0.0.0" }}:${item.port}:${item.username.ifBlank { "root" }}"
+                val existingVps = existing[key]
+                if (existingVps != null) {
+                    dao!!.updateVps(existingVps.copy(
+                        alias = item.alias.ifBlank { "Unknown" },
+                        authType = item.authType,
+                        encryptedPassword = item.encryptedPassword,
+                        encryptedKeyContent = item.encryptedKeyContent,
+                        encryptedKeyPassphrase = item.encryptedKeyPassphrase,
+                        updatedAt = now
+                    ))
+                } else {
+                    dao!!.insertVps(VpsEntity(
+                        alias = item.alias.ifBlank { "Unknown" },
+                        host = item.host.ifBlank { "0.0.0.0" },
+                        port = item.port,
+                        username = item.username.ifBlank { "root" },
+                        authType = item.authType,
+                        encryptedPassword = item.encryptedPassword,
+                        encryptedKeyContent = item.encryptedKeyContent,
+                        encryptedKeyPassphrase = item.encryptedKeyPassphrase,
+                        createdAt = if (item.createdAt > 0) item.createdAt else now,
+                        updatedAt = if (item.updatedAt > 0) item.updatedAt else now
+                    ))
+                }
+                restored++
+            }
+            AppLogger.log("RESTORE", "Restored $restored server(s)")
+            restored
         }
     }
 
@@ -579,7 +664,8 @@ class SettingsViewModel(
                             }
                         }
                         val envelope = BackupEnvelope(encrypted = true,
-                            payload = fieldCrypto.encrypt(gson.toJson(mergedList), SessionKeyHolder.get()) ?: "")
+                            payload = fieldCrypto.encrypt(gson.toJson(mergedList), SessionKeyHolder.get()) ?: "",
+                            salt = Base64.encodeToString(cryptoManager.getSalt(), Base64.NO_WRAP))
                         withContext(Dispatchers.IO) { cloudApi.upload(token, gson.toJson(envelope), android.os.Build.MODEL) }
                         settingsManager.setLastSyncedVpsIds(localList.map { it.id.toString() }.toSet())
                         _uiState.value = _uiState.value.copy(

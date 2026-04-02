@@ -300,6 +300,27 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
             dismissButton = { TextButton(onClick = { viewModel.dismissChangePasswordDialog() }) { Text(stringResource(R.string.cancel)) } })
     }
 
+    // Restore password dialog (when backup salt differs from local)
+    if (uiState.showRestorePasswordDialog) {
+        var restorePwd by remember { mutableStateOf("") }
+        var showRestorePwd by remember { mutableStateOf(false) }
+        AlertDialog(onDismissRequest = { /* don't dismiss - must enter password */ },
+            title = { Text("输入密码恢复") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text("此备份文件使用不同设备的密钥加密。请输入您在创建备份时使用的主密码来恢复数据。")
+                    OutlinedTextField(value = restorePwd, onValueChange = { restorePwd = it },
+                        label = { Text(stringResource(R.string.password)) }, singleLine = true,
+                        visualTransformation = if (showRestorePwd) VisualTransformation.None else PasswordVisualTransformation(),
+                        trailingIcon = { IconButton(onClick = { showRestorePwd = !showRestorePwd }) { Icon(if (showRestorePwd) Icons.Default.VisibilityOff else Icons.Default.Visibility, null) } },
+                        modifier = Modifier.fillMaxWidth())
+                }
+            },
+            confirmButton = { TextButton(onClick = { viewModel.restoreWithPassword(restorePwd) }, enabled = restorePwd.isNotEmpty()) {
+                Text("恢复") } },
+            dismissButton = { })
+    }
+
     // About dialog
     if (uiState.showAbout) {
         AlertDialog(onDismissRequest = { viewModel.dismissAbout() },
