@@ -24,6 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.sbssh.R
 import com.sbssh.BuildConfig
+import com.sbssh.ui.LocalTerminalManager
 import com.sbssh.util.AppLogger
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,6 +34,7 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
     val activity = context as? androidx.appcompat.app.AppCompatActivity
     val viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory(context, activity))
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val terminalManager = LocalTerminalManager.current
 
     // Backup: save directly to Downloads (no SAF picker)
     // Use GetContent for better device compatibility: some DocumentsUI flows return RESULT_OK
@@ -65,7 +67,14 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
                     }
                 },
                 actions = {
-                    IconButton(onClick = { viewModel.logout(); onLogout() }) {
+                    IconButton(onClick = {
+                        // Disconnect all active SSH sessions before logout
+                        terminalManager?.bridgesFlow?.value?.forEach { bridge ->
+                            bridge.dispatchDisconnect(true)
+                        }
+                        viewModel.logout()
+                        onLogout()
+                    }) {
                         Icon(Icons.Default.Logout, contentDescription = stringResource(R.string.action_logout))
                     }
                 },
