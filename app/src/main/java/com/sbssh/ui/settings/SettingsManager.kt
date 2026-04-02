@@ -17,6 +17,7 @@ class SettingsManager private constructor(context: Context) {
         val cloudSyncEnabled: Boolean = false,
         val cloudSyncUrl: String = "",
         val cloudSyncUsername: String = "",
+        val cloudAutoSync: Boolean = false,
         val fontScale: Float = 1.0f
     )
 
@@ -30,6 +31,7 @@ class SettingsManager private constructor(context: Context) {
             cloudSyncEnabled = prefs.getBoolean("cloud_sync_enabled", false),
             cloudSyncUrl = prefs.getString("cloud_sync_url", "") ?: "",
             cloudSyncUsername = prefs.getString("cloud_sync_username", "") ?: "",
+            cloudAutoSync = prefs.getBoolean("cloud_auto_sync", false),
             fontScale = prefs.getFloat("font_scale", 1.0f)
         )
     }
@@ -63,12 +65,26 @@ class SettingsManager private constructor(context: Context) {
         )
     }
 
+    fun setAutoSync(enabled: Boolean) {
+        prefs.edit().putBoolean("cloud_auto_sync", enabled).apply()
+        _settings.value = _settings.value.copy(cloudAutoSync = enabled)
+    }
+
     fun getCloudToken(): String? = prefs.getString("cloud_token", null)
     fun setCloudToken(token: String?) {
         prefs.edit().putString("cloud_token", token).apply()
     }
     fun clearCloudToken() {
         prefs.edit().remove("cloud_token").apply()
+    }
+
+    // Track which local VPS IDs were synced to cloud (for detecting deletions)
+    fun getLastSyncedVpsIds(): Set<String> {
+        val raw = prefs.getString("last_synced_vps_ids", "") ?: ""
+        return if (raw.isBlank()) emptySet() else raw.split(",").toSet()
+    }
+    fun setLastSyncedVpsIds(ids: Set<String>) {
+        prefs.edit().putString("last_synced_vps_ids", ids.joinToString(",")).apply()
     }
 
     companion object {

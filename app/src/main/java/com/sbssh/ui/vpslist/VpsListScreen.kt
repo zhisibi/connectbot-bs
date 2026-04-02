@@ -18,6 +18,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.sbssh.R
 import com.sbssh.data.db.VpsEntity
 import com.sbssh.ui.LocalTerminalManager
+import com.sbssh.ui.settings.SettingsManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -124,13 +125,28 @@ fun VpsListScreen(
         }
     }
 
+    val context = androidx.compose.ui.platform.LocalContext.current
+    val settingsManager = remember { SettingsManager.getInstance(context) }
+    var showCloudDeleteConfirm by remember { mutableStateOf(false) }
+    var pendingDeleteId by remember { mutableStateOf<Long?>(null) }
+
     uiState.showDeleteDialog?.let { vpsId ->
         AlertDialog(
             onDismissRequest = { viewModel.dismissDelete() },
             title = { Text(stringResource(R.string.delete_server)) },
             text = { Text(stringResource(R.string.delete_confirm)) },
             confirmButton = {
-                TextButton(onClick = { viewModel.deleteVps(vpsId) }) {
+                TextButton(onClick = {
+                    val autoSync = settingsManager.settings.value.cloudAutoSync
+                    val hasToken = settingsManager.getCloudToken() != null
+                    viewModel.dismissDelete()
+                    if (autoSync && hasToken) {
+                        pendingDeleteId = vpsId
+                        showCloudDeleteConfirm = true
+                    } else {
+                        viewModel.deleteVps(vpsId)
+                    }
+                }) {
                     Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error)
                 }
             },
@@ -138,6 +154,35 @@ fun VpsListScreen(
                 TextButton(onClick = { viewModel.dismissDelete() }) {
                     Text(stringResource(R.string.cancel))
                 }
+            }
+        )
+    }
+
+    // Cloud delete confirmation (auto-sync mode)
+    if (showCloudDeleteConfirm && pendingDeleteId != null) {
+        AlertDialog(
+            onDismissRequest = { showCloudDeleteConfirm = false; pendingDeleteId = null },
+            title = { Text(stringResource(R.string.cloud_sync)) },
+            text = { Text(stringResource(R.string.cloud_sync_delete_cloud_confirm, 1)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    val id = pendingDeleteId!!
+                    showCloudDeleteConfirm = false
+                    pendingDeleteId = null
+                    viewModel.deleteVps(id)
+                    // Note: Actual cloud deletion happens via next sync
+                }) {
+                    Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error)
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    val id = pendingDeleteId!!
+                    showCloudDeleteConfirm = false
+                    pendingDeleteId = null
+                    viewModel.deleteVps(id)
+                    // Keep cloud copy — next sync will be incremental
+                }) { Text(stringResource(R.string.cancel)) }
             }
         )
     }

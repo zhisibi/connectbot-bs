@@ -1,0 +1,82 @@
+# OpenClaw 配置文件示例：安卓开发自动化
+version: "1.0"
+
+# 1. 工具定义 (Tools): 赋予 Agent 操作安卓环境的能力
+tools:
+  # Gradle 编译工具：用于构建 APK 和运行 Lint 检查
+  - name: android_build
+    description: "使用 Gradle 执行安卓构建任务（如 assembleDebug, lint, clean）"
+    parameters:
+      type: object
+      properties:
+        task:
+          type: string
+          description: "Gradle 任务名称，例如 'assembleDebug' 或 'bundleRelease'"
+        project_path:
+          type: string
+          description: "项目根目录路径"
+          default: "."
+    command: "cd {{project_path}} && ./gradlew {{task}} --no-daemon"
+
+  # ADB 交互工具：用于安装、启动应用和获取截图
+  - name: adb_manager
+    description: "通过 ADB 与安卓设备或模拟器交互"
+    parameters:
+      type: object
+      properties:
+        action:
+          type: string
+          enum: ["install", "start", "screenshot", "tap", "text"]
+          description: "执行的操作类型"
+        package_name:
+          type: string
+          description: "应用包名（用于 install/start）"
+        extra_args:
+          type: string
+          description: "额外的参数（如坐标 x y 或文本内容）"
+    command: |
+      case "{{action}}" in
+        install) adb install -r app/build/outputs/apk/debug/app-debug.apk ;;
+        start) adb shell monkey -p {{package_name}} -c android.intent.category.LAUNCHER 1 ;;
+        screenshot) adb shell screencap -p /sdcard/s.png && adb pull /sdcard/s.png ./debug_screen.png ;;
+        tap) adb shell input tap {{extra_args}} ;;
+        text) adb shell input text "{{extra_args}}" ;;
+      esac
+
+  # 日志分析工具：用于捕获运行时崩溃信息
+  - name: fetch_crash_log
+    description: "获取最近的 Logcat 崩溃日志并过滤包名"
+    parameters:
+      type: object
+      properties:
+        package_name:
+          type: string
+          description: "过滤的包名"
+        lines:
+          type: integer
+          default: 100
+    command: "adb logcat -d | grep -E 'AndroidRuntime|{{package_name}}' | tail -n {{lines}}"
+
+  # UI 布局分析工具：让 Agent “看见” 界面结构
+  - name: analyze_ui_layout
+    description: "导出当前界面的 XML 布局文件以供分析元素坐标"
+    command: "adb shell uiautomator dump /sdcard/view.xml && adb pull /sdcard/view.xml . && cat view.xml"
+
+# 2. 代理定义 (Agents): 定义不同职责的角色
+agents:
+  - name: android_developer
+    role: "资深安卓开发工程师"
+    goal: "编写高质量的 Kotlin/Java 代码，并确保项目通过编译和 UI 测试"
+    backstory: "你精通 Android SDK、Jetpack Compose 和 Gradle 构建系统。你能根据报错日志自动修复代码 Bug。"
+    tools: ["android_build", "adb_manager", "fetch_crash_log", "analyze_ui_layout"]
+    memory: true
+
+# 3. 工作流示例 (Workflows): 自动化的闭环逻辑
+workflows:
+  - name: auto_fix_and_deploy
+    description: "自动修复编译错误并部署到设备"
+    steps:
+      - agent: android_developer
+        task: "执行 ./gradlew assembleDebug。如果失败，读取 stderr 中的错误行号，修改对应的源文件，直到构建成功。"
+      - agent: android_developer
+        task: "构建成功后，使用 adb_manager 安装并启动应用，截图确认首屏是否正常显示。"

@@ -53,7 +53,8 @@ data class SettingsUiState(
     val cloudSyncUsername: String = "",
     val cloudSyncLoading: Boolean = false,
     val cloudSyncLoggedIn: Boolean = false,
-    val cloudSyncLastSync: String? = null
+    val cloudSyncLastSync: String? = null,
+    val cloudAutoSync: Boolean = false
 )
 
 // Backup format wrapper (v1)
@@ -104,7 +105,8 @@ class SettingsViewModel(
             cloudSyncEnabled = settings.cloudSyncEnabled,
             cloudSyncUrl = settings.cloudSyncUrl,
             cloudSyncUsername = settings.cloudSyncUsername,
-            cloudSyncLoggedIn = settingsManager.getCloudToken() != null
+            cloudSyncLoggedIn = settingsManager.getCloudToken() != null,
+            cloudAutoSync = settings.cloudAutoSync
         )
     }
 
@@ -451,26 +453,136 @@ class SettingsViewModel(
 
     fun cloudLogout() {
         settingsManager.setCloudSync(false)
+        settingsManager.setAutoSync(false)
         settingsManager.clearCloudToken()
         _uiState.value = _uiState.value.copy(
             cloudSyncEnabled = false,
             cloudSyncUrl = "",
             cloudSyncUsername = "",
             cloudSyncLoggedIn = false,
+            cloudAutoSync = false,
             showCloudSyncDialog = false,
-            success = "Cloud sync disabled"
+            success = context.getString(R.string.success_cloud_sync_disabled)
         )
+    }
+
+    fun toggleAutoSync(enabled: Boolean) {
+        settingsManager.setAutoSync(enabled)
+        _uiState.value = _uiState.value.copy(cloudAutoSync = enabled)
+    }
+
+    /**
+     * Smart sync: upload local data to cloud, handling cloud-only servers.
+     * @param onDeleteCloudExtra callback to ask user whether to delete cloud-only servers.
+     *   Returns true = delete, false = keep. If null, always keep cloud-only.
+     */
+    fun cloudSmartSync(onDeleteCloudExtra: ((Int) -> Boolean)? = null) {
+        val token = settingsManager.getCloudToken() ?: return
+        val url = _uiState.value.cloudSyncUrl.ifBlank { return }
+        _uiState.value = _uiState.value.copy(cloudSyncLoading = true)
+        viewModelScope.launch {
+            try {
+                cloudApi.setBaseUrl(url)
+                // 1. Download current cloud data to compare
+                val cloudResp = withContext(Dispatchers.IO) { cloudApi.download(token) }
+                val cloudList: List<BackupItem> = if (!cloudResp.encryptedData.isNullOrBlank() && SessionKeyHolder.isSet()) {
+                    try {
+                        val envelope = gson.fromJson(cloudResp.encryptedData, BackupEnvelope::class.java)
+                        val json = if (envelope != null && envelope.format == "sbssh_backup_v1" && envelope.encrypted) {
+                            fieldCrypto.decrypt(envelope.payload, SessionKeyHolder.get())
+                        } else cloudResp.encryptedData
+                        if (json != null) {
+                            val type = object : com.google.gson.reflect.TypeToken<List<BackupItem>>() {}.type
+                            gson.fromJson(json, type) ?: emptyList()
+                        } else emptyList()
+                    } catch (_: Exception) { emptyList() }
+                } else emptyList()
+
+                // 2. Get local servers
+                if (dao == null) dao = runCatching { AppDatabase.getInstance(context).vpsDao() }.getOrNull()
+                val localList = dao?.getAllVpsAsList() ?: emptyList()
+                val localHosts = localList.map { "${it.host}:${it.port}:${it.username}" }.toSet()
+
+                // 3. Check cloud-only servers (in cloud but not in local)
+                val cloudOnlyCount = cloudList.count { item ->
+                    val key = "${item.host}:${item.port}:${item.username}"
+                    !localHosts.contains(key)
+                }
+
+                // 4. If cloud has extras, ask user
+                if (cloudOnlyCount > 0 && onDeleteCloudExtra != null) {
+                    val shouldDelete = onDeleteCloudExtra(cloudOnlyCount)
+                    if (!shouldDelete) {
+                        // User wants to keep cloud extras — do incremental: upload local, append to cloud
+                        val mergedList = mutableListOf<BackupItem>()
+                        mergedList.addAll(cloudList)
+                        for (item in localList) {
+                            val key = "${item.host}:${item.port}:${item.username}"
+                            if (cloudList.none { "${it.host}:${it.port}:${it.username}" == key }) {
+                                mergedList.add(BackupItem(
+                                    alias = item.alias, host = item.host, port = item.port,
+                                    username = item.username, authType = item.authType,
+                                    encryptedPassword = item.encryptedPassword,
+                                    encryptedKeyContent = item.encryptedKeyContent,
+                                    encryptedKeyPassphrase = item.encryptedKeyPassphrase,
+                                    createdAt = item.createdAt, updatedAt = item.updatedAt
+                                ))
+                            }
+                        }
+                        val envelope = BackupEnvelope(encrypted = true,
+                            payload = fieldCrypto.encrypt(gson.toJson(mergedList), SessionKeyHolder.get()) ?: "")
+                        withContext(Dispatchers.IO) { cloudApi.upload(token, gson.toJson(envelope), android.os.Build.MODEL) }
+                        settingsManager.setLastSyncedVpsIds(localList.map { it.id.toString() }.toSet())
+                        _uiState.value = _uiState.value.copy(
+                            cloudSyncLoading = false,
+                            cloudSyncLastSync = java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date()),
+                            success = context.getString(R.string.cloud_sync_synced, localList.size)
+                        )
+                        return@launch
+                    }
+                }
+
+                // 5. Normal upload (replace cloud with local)
+                val envelope = buildBackupEnvelope()
+                withContext(Dispatchers.IO) { cloudApi.upload(token, envelope, android.os.Build.MODEL) }
+                settingsManager.setLastSyncedVpsIds(localList.map { it.id.toString() }.toSet())
+                _uiState.value = _uiState.value.copy(
+                    cloudSyncLoading = false,
+                    cloudSyncLastSync = java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date()),
+                    success = context.getString(R.string.cloud_sync_synced, localList.size)
+                )
+            } catch (e: Exception) {
+                AppLogger.log("CLOUD", "Smart sync failed", e)
+                _uiState.value = _uiState.value.copy(
+                    cloudSyncLoading = false,
+                    error = context.getString(R.string.cloud_upload_failed, e.message ?: "")
+                )
+            }
+        }
+    }
+
+    /**
+     * Called when a server is deleted locally. If auto-sync is on, prompt whether to delete from cloud.
+     * @param onDeleteCloud true = delete from cloud, false = keep cloud copy
+     */
+    fun onServerDeletedLocally(onDeleteCloud: Boolean) {
+        if (!settingsManager.getCloudToken().isNullOrBlank() && _uiState.value.cloudAutoSync) {
+            if (onDeleteCloud) {
+                cloudSmartSync()
+            }
+            // If not deleting from cloud, just leave it — next sync will be incremental
+        }
     }
 
     fun cloudUpload() {
         val token = settingsManager.getCloudToken()
         if (token == null) {
-            _uiState.value = _uiState.value.copy(error = "Please login first")
+            _uiState.value = _uiState.value.copy(error = context.getString(R.string.please_login_first))
             return
         }
         val url = _uiState.value.cloudSyncUrl
         if (url.isBlank()) {
-            _uiState.value = _uiState.value.copy(error = "Server URL not configured")
+            _uiState.value = _uiState.value.copy(error = context.getString(R.string.server_url_not_configured))
             return
         }
         _uiState.value = _uiState.value.copy(cloudSyncLoading = true)
@@ -479,16 +591,17 @@ class SettingsViewModel(
                 cloudApi.setBaseUrl(url)
                 val envelope = buildBackupEnvelope()
                 withContext(Dispatchers.IO) { cloudApi.upload(token, envelope, android.os.Build.MODEL) }
+                settingsManager.setLastSyncedVpsIds((dao?.getAllVpsAsList() ?: emptyList()).map { it.id.toString() }.toSet())
                 _uiState.value = _uiState.value.copy(
                     cloudSyncLoading = false,
                     cloudSyncLastSync = java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date()),
-                    success = "Upload successful"
+                    success = context.getString(R.string.cloud_upload_success)
                 )
             } catch (e: Exception) {
                 AppLogger.log("CLOUD", "Upload failed", e)
                 _uiState.value = _uiState.value.copy(
                     cloudSyncLoading = false,
-                    error = "Upload failed: ${e.message}"
+                    error = context.getString(R.string.cloud_upload_failed, e.message ?: "")
                 )
             }
         }
@@ -497,12 +610,12 @@ class SettingsViewModel(
     fun cloudDownload() {
         val token = settingsManager.getCloudToken()
         if (token == null) {
-            _uiState.value = _uiState.value.copy(error = "Please login first")
+            _uiState.value = _uiState.value.copy(error = context.getString(R.string.please_login_first))
             return
         }
         val url = _uiState.value.cloudSyncUrl
         if (url.isBlank()) {
-            _uiState.value = _uiState.value.copy(error = "Server URL not configured")
+            _uiState.value = _uiState.value.copy(error = context.getString(R.string.server_url_not_configured))
             return
         }
         _uiState.value = _uiState.value.copy(cloudSyncLoading = true)
@@ -511,7 +624,7 @@ class SettingsViewModel(
                 cloudApi.setBaseUrl(url)
                 val resp = withContext(Dispatchers.IO) { cloudApi.download(token) }
                 if (resp.encryptedData.isNullOrBlank()) {
-                    _uiState.value = _uiState.value.copy(cloudSyncLoading = false, error = "No data on server")
+                    _uiState.value = _uiState.value.copy(cloudSyncLoading = false, error = context.getString(R.string.cloud_no_data_on_server))
                     return@launch
                 }
                 // Restore from the downloaded backup envelope
@@ -528,7 +641,7 @@ class SettingsViewModel(
                 }
                 val json = if (encrypted) {
                     if (!SessionKeyHolder.isSet()) {
-                        _uiState.value = _uiState.value.copy(cloudSyncLoading = false, error = "Please unlock app first")
+                        _uiState.value = _uiState.value.copy(cloudSyncLoading = false, error = context.getString(R.string.please_unlock_first))
                         return@launch
                     }
                     val key = SessionKeyHolder.get()
@@ -538,7 +651,7 @@ class SettingsViewModel(
                 val backupList: List<BackupItem> = gson.fromJson(json, type)
                 if (dao == null) dao = runCatching { AppDatabase.getInstance(context).vpsDao() }.getOrNull()
                 if (dao == null) {
-                    _uiState.value = _uiState.value.copy(cloudSyncLoading = false, error = "Database not initialized")
+                    _uiState.value = _uiState.value.copy(cloudSyncLoading = false, error = context.getString(R.string.database_not_initialized))
                     return@launch
                 }
                 val now = System.currentTimeMillis()
@@ -566,13 +679,13 @@ class SettingsViewModel(
                 _uiState.value = _uiState.value.copy(
                     cloudSyncLoading = false,
                     cloudSyncLastSync = java.text.SimpleDateFormat("HH:mm:ss", java.util.Locale.getDefault()).format(java.util.Date()),
-                    success = "Download successful: $count server(s) restored"
+                    success = context.getString(R.string.cloud_download_success, count)
                 )
             } catch (e: Exception) {
                 AppLogger.log("CLOUD", "Download failed", e)
                 _uiState.value = _uiState.value.copy(
                     cloudSyncLoading = false,
-                    error = "Download failed: ${e.message}"
+                    error = context.getString(R.string.cloud_download_failed, e.message ?: "")
                 )
             }
         }

@@ -170,15 +170,29 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
     // Cloud sync dialog
     if (uiState.showCloudSyncDialog) {
         if (uiState.cloudSyncLoggedIn) {
-            // Logged in — show sync actions
+            // Logged in — show sync actions + auto-sync toggle
             AlertDialog(onDismissRequest = { viewModel.dismissCloudSyncDialog() },
                 title = { Text(stringResource(R.string.cloud_sync)) },
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                         Text(stringResource(R.string.username) + ": " + uiState.cloudSyncUsername)
                         Text(stringResource(R.string.server_url) + ": " + uiState.cloudSyncUrl)
-                        if (uiState.cloudSyncLastSync != null) {
-                            Text("Last sync: ${uiState.cloudSyncLastSync}", style = MaterialTheme.typography.labelSmall)
+                        val lastSync = uiState.cloudSyncLastSync
+                        if (lastSync != null) {
+                            Text(stringResource(R.string.cloud_sync_last_sync, lastSync),
+                                style = MaterialTheme.typography.labelSmall)
+                        }
+                        // Auto-sync toggle
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            Arrangement.SpaceBetween,
+                            Alignment.CenterVertically
+                        ) {
+                            Text(if (uiState.cloudAutoSync) stringResource(R.string.cloud_sync_auto_sync) else stringResource(R.string.cloud_sync_manual_sync))
+                            Switch(
+                                checked = uiState.cloudAutoSync,
+                                onCheckedChange = { viewModel.toggleAutoSync(it) }
+                            )
                         }
                         if (uiState.cloudSyncLoading) {
                             LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
@@ -187,8 +201,8 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
                 },
                 confirmButton = {
                     Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        TextButton(onClick = { viewModel.cloudUpload() }, enabled = !uiState.cloudSyncLoading) {
-                            Text(stringResource(R.string.action_upload))
+                        TextButton(onClick = { viewModel.cloudSmartSync() }, enabled = !uiState.cloudSyncLoading) {
+                            Text(stringResource(R.string.action_sync))
                         }
                         TextButton(onClick = { viewModel.cloudDownload() }, enabled = !uiState.cloudSyncLoading) {
                             Text(stringResource(R.string.action_download))
@@ -209,7 +223,7 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
             var showPassword by remember { mutableStateOf(false) }
             var isRegister by remember { mutableStateOf(false) }
             AlertDialog(onDismissRequest = { viewModel.dismissCloudSyncDialog() },
-                title = { Text(if (isRegister) "Register" else stringResource(R.string.cloud_sync)) },
+                title = { Text(if (isRegister) stringResource(R.string.action_register) else stringResource(R.string.cloud_sync)) },
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         OutlinedTextField(value = url, onValueChange = { url = it },
@@ -227,7 +241,7 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
                                 Icon(if (showPassword) Icons.Default.VisibilityOff else Icons.Default.Visibility, null) } },
                             modifier = Modifier.fillMaxWidth())
                         if (isRegister) {
-                            Text("Register with your master password. Your PBKDF2 salt will be uploaded so other devices can sync.",
+                            Text(stringResource(R.string.prompt_register_hint),
                                 style = MaterialTheme.typography.labelSmall,
                                 color = MaterialTheme.colorScheme.onSurfaceVariant)
                         }
@@ -235,7 +249,7 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
                             LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                         }
                         TextButton(onClick = { isRegister = !isRegister }, modifier = Modifier.align(Alignment.End)) {
-                            Text(if (isRegister) "Already have account? Login" else "No account? Register")
+                            Text(if (isRegister) stringResource(R.string.prompt_login_have_account) else stringResource(R.string.prompt_register_no_account))
                         }
                     }
                 },
