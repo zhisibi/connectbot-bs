@@ -228,6 +228,30 @@ class SftpViewModel(private val vpsId: Long, private val context: Context) : Vie
         }
     }
 
+    fun downloadFileToUri(file: SftpFileInfo, uri: android.net.Uri) {
+        _uiState.value = _uiState.value.copy(uploadProgress = context.getString(R.string.sftp_downloading, file.name))
+        viewModelScope.launch {
+            try {
+                withContext(Dispatchers.IO) {
+                    val outputStream = context.contentResolver.openOutputStream(uri)
+                        ?: throw IllegalStateException("Cannot open output stream")
+                    outputStream.use { os ->
+                        manager.downloadFileToStream(file.path, os)
+                    }
+                }
+                _uiState.value = _uiState.value.copy(uploadProgress = null)
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Saved to Downloads: ${file.name}", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                _uiState.value = _uiState.value.copy(
+                    uploadProgress = null,
+                    error = e.message ?: context.getString(R.string.sftp_download_failed)
+                )
+            }
+        }
+    }
+
     fun clearError() { _uiState.value = _uiState.value.copy(error = null) }
 
     fun updateQuery(query: String) {

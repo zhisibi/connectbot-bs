@@ -101,6 +101,10 @@ class SftpManager {
         channel?.get(remotePath, FileOutputStream(localFile))
     }
 
+    suspend fun downloadFileToStream(remotePath: String, outputStream: java.io.OutputStream): Unit = withContext(Dispatchers.IO) {
+        channel?.get(remotePath, outputStream)
+    }
+
     suspend fun uploadFile(localFile: File, remotePath: String): Unit = withContext(Dispatchers.IO) {
         channel?.put(FileInputStream(localFile), remotePath, ChannelSftp.OVERWRITE)
     }

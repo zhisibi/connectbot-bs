@@ -231,8 +231,20 @@ fun SftpScreen(
                                 file = file,
                                 onClick = { viewModel.navigateTo(file) },
                                 onDownload = {
-                                    val downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-                                    viewModel.downloadFile(file, downloadsDir)
+                                    // Use MediaStore.Downloads for Android 10+ scoped storage compatibility
+                                    val contentValues = android.content.ContentValues().apply {
+                                        put(android.provider.MediaStore.Downloads.DISPLAY_NAME, file.name)
+                                        put(android.provider.MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS)
+                                    }
+                                    val uri = context.contentResolver.insert(
+                                        android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI,
+                                        contentValues
+                                    )
+                                    if (uri != null) {
+                                        viewModel.downloadFileToUri(file, uri)
+                                    } else {
+                                        android.widget.Toast.makeText(context, "Failed to create file", android.widget.Toast.LENGTH_SHORT).show()
+                                    }
                                 },
                                 onRename = { viewModel.showRename(file) },
                                 onChmod = { viewModel.showChmod(file) },
