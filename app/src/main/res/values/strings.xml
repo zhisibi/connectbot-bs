@@ -1370,7 +1370,7 @@
 	<!-- Subtitle shown in the biometric/device credential authentication prompt -->
 	<string name="auth_prompt_subtitle">Verify your identity to continue</string>
 
-    <string name="app_name">SbSSH</string>
+    <string name="app_name">BoshConnect</string>
 
     <!-- Master Password -->
     <string name="set_master_password">Set Master Password</string>
@@ -1529,7 +1529,7 @@
     <string name="cloud_sync_disabled">Cloud sync disabled</string>
 
     <!-- About -->
-    <string name="about_title">About SbSSH</string>
+    <string name="about_title">About BoshConnect</string>
     <string name="about_desc">A secure Android SSH/SFTP client with local encryption.</string>
     <string name="about_features">Features:</string>
     <string name="about_ssh">• SSH Terminal (password/key auth)</string>
@@ -1538,7 +1538,7 @@
     <string name="about_biometric">• Biometric unlock</string>
     <string name="about_backup">• Server backup/restore</string>
     <string name="ok">OK</string>
-    <!-- SbSSH custom UI -->
+    <!-- BoshConnect custom UI -->
     <string name="label_alias_server_nickname">Alias (Server Nickname)</string>
     <string name="label_host_ip_or_domain">Host (IP or Domain)</string>
     <string name="label_port">Port</string>

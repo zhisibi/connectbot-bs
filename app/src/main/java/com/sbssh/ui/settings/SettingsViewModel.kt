@@ -348,15 +348,30 @@ class SettingsViewModel(
                 val backupList: List<BackupItem> = gson.fromJson(json, type)
                 val now = System.currentTimeMillis()
                 val count = withContext(Dispatchers.IO) {
-                    // Build map of existing servers by host:port:username for upsert
+                    val allLocal = dao!!.getAllVpsAsList()
+
+                    // Step 1: Deduplicate local entries — keep newest per host:port:username, delete rest
+                    val groups = allLocal.groupBy { "${it.host}:${it.port}:${it.username}" }
+                    for ((_, entries) in groups) {
+                        if (entries.size > 1) {
+                            val sorted = entries.sortedByDescending { it.updatedAt }
+                            for (dup in sorted.drop(1)) {
+                                dao!!.deleteVps(dup)
+                                AppLogger.log("RESTORE", "Deleted duplicate: ${dup.alias} (id=${dup.id})")
+                            }
+                        }
+                    }
+
+                    // Step 2: Rebuild map after dedup
                     val existing = dao!!.getAllVpsAsList()
                         .associateBy { "${it.host}:${it.port}:${it.username}" }
+
+                    // Step 3: Upsert backup items
                     var restored = 0
                     for (item in backupList) {
                         val key = "${item.host.ifBlank { "0.0.0.0" }}:${item.port}:${item.username.ifBlank { "root" }}"
                         val existingVps = existing[key]
                         if (existingVps != null) {
-                            // Update existing entry (overwrite)
                             dao!!.updateVps(existingVps.copy(
                                 alias = item.alias.ifBlank { "Unknown" },
                                 authType = item.authType,
@@ -366,7 +381,6 @@ class SettingsViewModel(
                                 updatedAt = now
                             ))
                         } else {
-                            // Insert new entry
                             dao!!.insertVps(VpsEntity(
                                 alias = item.alias.ifBlank { "Unknown" },
                                 host = item.host.ifBlank { "0.0.0.0" },
@@ -671,15 +685,30 @@ class SettingsViewModel(
                 }
                 val now = System.currentTimeMillis()
                 val count = withContext(Dispatchers.IO) {
-                    // Build map of existing servers by host:port:username for upsert
+                    val allLocal = dao!!.getAllVpsAsList()
+
+                    // Step 1: Deduplicate local entries — keep newest per host:port:username, delete rest
+                    val groups = allLocal.groupBy { "${it.host}:${it.port}:${it.username}" }
+                    for ((_, entries) in groups) {
+                        if (entries.size > 1) {
+                            val sorted = entries.sortedByDescending { it.updatedAt }
+                            for (dup in sorted.drop(1)) {
+                                dao!!.deleteVps(dup)
+                                AppLogger.log("CLOUD", "Deleted duplicate: ${dup.alias} (id=${dup.id})")
+                            }
+                        }
+                    }
+
+                    // Step 2: Rebuild map after dedup
                     val existing = dao!!.getAllVpsAsList()
                         .associateBy { "${it.host}:${it.port}:${it.username}" }
+
+                    // Step 3: Upsert backup items
                     var restored = 0
                     for (item in backupList) {
                         val key = "${item.host.ifBlank { "0.0.0.0" }}:${item.port}:${item.username.ifBlank { "root" }}"
                         val existingVps = existing[key]
                         if (existingVps != null) {
-                            // Update existing entry (overwrite)
                             dao!!.updateVps(existingVps.copy(
                                 alias = item.alias.ifBlank { "Unknown" },
                                 authType = item.authType,
@@ -689,7 +718,6 @@ class SettingsViewModel(
                                 updatedAt = now
                             ))
                         } else {
-                            // Insert new entry
                             dao!!.insertVps(VpsEntity(
                                 alias = item.alias.ifBlank { "Unknown" },
                                 host = item.host.ifBlank { "0.0.0.0" },

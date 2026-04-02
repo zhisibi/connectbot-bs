@@ -10,6 +10,10 @@ android {
     namespace = "com.sbssh"
     compileSdk = 36
 
+    base {
+        archivesName.set("boshconnect")
+    }
+
     defaultConfig {
         applicationId = "com.sbssh"
         minSdk = 24

@@ -1,4 +1,4 @@
-# SbSSH
+# BoshConnect
 
 > 基于 ConnectBot 的 Android SSH/SFTP 客户端。本地加密存储，云端 E2EE 同步。
 
@@ -50,11 +50,13 @@ Kotlin · Jetpack Compose · Material 3 · MVVM · Hilt · Room · JSch · Conne
 # Debug
 ./gradlew :app:assembleDebug --no-daemon
 
-# Release（跳过 checkReleaseClasspath，AGP 8.6 兼容）
+# Release
 ./gradlew :app:assembleRelease --no-daemon
 ```
 
-**环境要求**：JDK 21 · compileSdk 36 · Build Tools 35.0.0（需离线安装）· 阿里云 Maven 镜像
+**环境要求**：JDK 21 · compileSdk 36 · Build Tools 35.0.0
+
+**APK 输出**：`app/build/outputs/apk/debug/boshconnect-debug.apk`
 
 ## 云同步服务端
 
