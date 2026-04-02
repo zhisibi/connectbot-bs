@@ -1,132 +1,77 @@
-# SbSSH — Android VPS SSH/SFTP 管理工具
+# SbSSH
 
-一款基于 ConnectBot 的 Android 原生 SSH/SFTP 客户端，支持本地加密存储、云同步、生物识别解锁。
+> 基于 ConnectBot 的 Android SSH/SFTP 客户端。本地加密存储，云端 E2EE 同步。
 
-## 核心功能
+## 功能一览
 
-### 🔐 安全架构
-- **主密码 + PBKDF2**：首次启动设置主密码，PBKDF2（100,000 次迭代）派生 256 位会话密钥
-- **AES-GCM 字段级加密**：密码、私钥、密钥口令等敏感字段加密存储
-- **生物识别解锁**：可选指纹/面部识别作为便捷解锁方式
-- **SessionKeyHolder**：会话密钥仅驻留内存，不持久化明文
+**SSH 终端**
+- 快捷键栏常驻（Ctrl / Esc / Tab / 方向键 / 功能键）
+- 密码 & 密钥认证，光标自动避让键盘
+- 退出时自动断开所有连接
 
-### 🖥️ SSH 终端
-- 基于 ConnectBot terminal 内核
-- 快捷键栏常驻（Ctrl、Esc、Tab、↑↓←→、Home、End、PgUp/PgDn 等）
-- 终端内容自动上移避免光标被键盘遮挡
-- 密码/密钥认证
+**SFTP 文件管理**
+- 远程目录浏览、上传、下载、删除、重命名、权限修改
+- 下载管理器：进度条 + 实时字节 + 取消下载
+- Android 10+ 分区存储兼容（MediaStore API）
 
-### 📁 SFTP 文件管理器
-- 远程文件浏览、上传、下载、删除、重命名、权限修改
-- 下载进度实时显示 + 取消下载
-- 下载管理器（角标 + 进度条 + 文件大小）
-- Android 10+ 兼容（MediaStore.Downloads API）
+**安全**
+- 主密码 + PBKDF2（100k 迭代）→ 256 位密钥
+- 敏感字段 AES-GCM 字段级加密（密码、私钥、口令）
+- 生物识别便捷解锁
+- 密钥仅驻留内存，不落盘明文
 
-### ☁️ 云同步（E2EE）
-- 注册/登录云账号（FastAPI 后端）
-- 端到端加密：服务器仅存密文
-- 上传/下载加密备份数据
-- 自动同步开关：本地增删操作自动触发同步
-- Smart Sync：增量合并，云端多余数据可选择保留或删除
-- 恢复时自动去重（按 host:port:username 合并，覆盖已有数据）
+**云同步**
+- 注册/登录 → JWT 认证
+- 端到端加密：服务端只存密文
+- 自动同步开关（增删服务器自动触发）
+- Smart Sync：增量合并，云端多余数据可选保留或删除
+- 恢复自动去重（按 host:port:username 合并覆盖）
 
-### 💾 备份/恢复
-- 加密备份导出到 Downloads
-- 从备份文件恢复（首次点击即可触发）
-- 恢复自动去重：同服务器不重复添加，覆盖已有配置
-- 云端下载恢复同样支持自动去重
+**备份/恢复**
+- 加密备份导出 & 恢复（首次点击即触发）
+- 本地恢复 & 云端下载均支持自动去重覆盖
 
-### 🔧 其他
-- 服务器列表管理（增删改查）
-- 多服务器连接状态实时显示
-- 语言切换（中文/英文）
-- 字体大小调整
-- Debug Log 查看
-- 应用退出时自动断开所有 SSH 连接
+**设置**
+- 语言切换（中文 / 英文）
+- 字体大小
+- 生物识别开关
+- 云同步管理
+- Debug Log
 
 ## 技术栈
 
-| 组件 | 技术 |
-|------|------|
-| 语言 | Kotlin |
-| UI | Jetpack Compose + Material 3 |
-| 架构 | MVVM + Hilt 依赖注入 |
-| 数据库 | Room (SQLite) |
-| SSH | JSch + ConnectBot sshlib |
-| 终端 | ConnectBot termlib |
-| 加密 | PBKDF2 + AES-GCM |
-| 云同步后端 | Python FastAPI + SQLite + JWT |
+Kotlin · Jetpack Compose · Material 3 · MVVM · Hilt · Room · JSch · ConnectBot sshlib · PBKDF2 · AES-GCM
 
-## 构建环境
+云同步后端：Python FastAPI · SQLite · JWT
 
-- Android Gradle Plugin: 8.6.0
-- Kotlin: 2.0.21
-- Compose Compiler: via `kotlin.plugin.compose`
-- compileSdk: 36, targetSdk: 35, minSdk: 24
-- JDK: 21
-- Build Tools: 35.0.0（需离线安装，见下方说明）
-
-### 国内构建注意事项
-
-服务器网络无法直连 `dl.google.com`，依赖已配置阿里云 Maven 镜像：
-
-```kotlin
-// settings.gradle.kts
-maven("https://maven.aliyun.com/repository/google")
-maven("https://maven.aliyun.com/repository/public")
-```
-
-Build Tools 35.0.0 需要离线安装到 `/opt/android-sdk/build-tools/35.0.0/`。
-
-### 编译
+## 构建
 
 ```bash
+# Debug
 ./gradlew :app:assembleDebug --no-daemon
-```
 
-Release 构建需跳过 `checkReleaseClasspath`（AGP 8.6.0 兼容问题，已配置）：
-
-```bash
+# Release（跳过 checkReleaseClasspath，AGP 8.6 兼容）
 ./gradlew :app:assembleRelease --no-daemon
 ```
 
+**环境要求**：JDK 21 · compileSdk 36 · Build Tools 35.0.0（需离线安装）· 阿里云 Maven 镜像
+
 ## 云同步服务端
-
-路径：`../sbssh-cloud-server/`
-
-### 启动
 
 ```bash
 cd sbssh-cloud-server
 pip install -r requirements.txt
-python3 server.py
+python3 server.py   # 启动 :9800
 ```
 
-默认端口：`9800`
-
-### API
-
-| 方法 | 路径 | 说明 |
-|------|------|------|
-| GET | `/health` | 健康检查 |
-| POST | `/api/v1/register` | 注册（username, password, encryptedSalt） |
-| POST | `/api/v1/login` | 登录，返回 JWT |
-| POST | `/api/v1/sync/upload` | 上传加密数据（需 Bearer Token） |
-| GET | `/api/v1/sync/download` | 下载加密数据（需 Bearer Token） |
-| GET | `/api/v1/user/info` | 用户信息（需 Bearer Token） |
-
-### 数据安全
-
-- 用户密码：PBKDF2 哈希存储
-- 同步数据：客户端 AES-GCM 加密后上传，服务端仅存密文
-- PBKDF2 Salt：注册时上传，新设备登录后获取可派生相同密钥
-- 通信：建议部署时使用 HTTPS
-
-## 已知问题
-
-- SSH 终端输入体验有改进空间（IME 遮挡、光标同步等）
-- 部分 deprecated API warnings（Icons.Filled、LocalClipboardManager 等，不影响功能）
+| 端点 | 说明 |
+|------|------|
+| `POST /api/v1/register` | 注册 |
+| `POST /api/v1/login` | 登录 → JWT |
+| `POST /api/v1/sync/upload` | 上传加密数据 |
+| `GET  /api/v1/sync/download` | 下载加密数据 |
+| `GET  /health` | 健康检查 |
 
 ## License
 
-基于 ConnectBot（Apache License 2.0）。
+Apache 2.0（基于 ConnectBot）
