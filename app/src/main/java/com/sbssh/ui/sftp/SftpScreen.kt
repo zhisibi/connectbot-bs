@@ -91,6 +91,19 @@ fun SftpScreen(
                     }
                 },
                 actions = {
+                    // Download list button (shows badge if active downloads)
+                    val downloadCount = uiState.downloadTasks.count { !it.isCompleted && !it.isCancelled && it.error == null }
+                    IconButton(onClick = { viewModel.toggleDownloadList() }) {
+                        BadgedBox(
+                            badge = {
+                                if (downloadCount > 0) {
+                                    Badge { Text("$downloadCount") }
+                                }
+                            }
+                        ) {
+                            Icon(Icons.Default.Download, contentDescription = "Downloads")
+                        }
+                    }
                     IconButton(onClick = { showSearch = !showSearch }) {
                         Icon(Icons.Default.Search, contentDescription = stringResource(R.string.content_desc_search))
                     }
@@ -368,6 +381,92 @@ fun SftpScreen(
             },
             dismissButton = {
                 TextButton(onClick = { viewModel.dismissDelete() }) { Text(stringResource(R.string.action_cancel)) }
+            }
+        )
+    }
+
+    // Download list dialog
+    if (uiState.showDownloadList) {
+        AlertDialog(
+            onDismissRequest = { viewModel.dismissDownloadList() },
+            title = {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    Arrangement.SpaceBetween,
+                    Alignment.CenterVertically
+                ) {
+                    Text("Downloads")
+                    if (uiState.downloadTasks.any { it.isCompleted || it.isCancelled || it.error != null }) {
+                        TextButton(onClick = { viewModel.clearCompletedDownloads() }) {
+                            Text("Clear", style = MaterialTheme.typography.labelSmall)
+                        }
+                    }
+                }
+            },
+            text = {
+                if (uiState.downloadTasks.isEmpty()) {
+                    Text("No downloads", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                } else {
+                    Column(
+                        modifier = Modifier.heightIn(max = 300.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        for (task in uiState.downloadTasks.reversed()) {
+                            Card(
+                                colors = CardDefaults.cardColors(
+                                    containerColor = when {
+                                        task.error != null -> MaterialTheme.colorScheme.errorContainer
+                                        task.isCancelled -> MaterialTheme.colorScheme.surfaceVariant
+                                        task.isCompleted -> MaterialTheme.colorScheme.primaryContainer
+                                        else -> MaterialTheme.colorScheme.surface
+                                    }
+                                )
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().padding(12.dp),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Column(modifier = Modifier.weight(1f)) {
+                                        Text(
+                                            task.fileName,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            maxLines = 1,
+                                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                                        )
+                                        Text(
+                                            when {
+                                                task.error != null -> "Error: ${task.error}"
+                                                task.isCancelled -> "Cancelled"
+                                                task.isCompleted -> "Completed"
+                                                else -> "Downloading..."
+                                            },
+                                            style = MaterialTheme.typography.labelSmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                                        )
+                                    }
+                                    if (!task.isCompleted && !task.isCancelled && task.error == null) {
+                                        IconButton(
+                                            onClick = { viewModel.cancelDownload(task.id) },
+                                            modifier = Modifier.size(32.dp)
+                                        ) {
+                                            Icon(
+                                                Icons.Default.Close,
+                                                contentDescription = "Cancel",
+                                                modifier = Modifier.size(18.dp)
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { viewModel.dismissDownloadList() }) {
+                    Text(stringResource(R.string.action_cancel))
+                }
             }
         )
     }
