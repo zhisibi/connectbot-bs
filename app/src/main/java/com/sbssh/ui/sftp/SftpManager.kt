@@ -105,6 +105,29 @@ class SftpManager {
         channel?.get(remotePath, outputStream)
     }
 
+    suspend fun downloadFileWithProgress(
+        remotePath: String,
+        outputStream: java.io.OutputStream,
+        onProgress: (Long, Long) -> Unit // (bytesDownloaded, totalBytes)
+    ): Unit = withContext(Dispatchers.IO) {
+        val entry = channel?.stat(remotePath)
+        val totalBytes = entry?.size ?: -1L
+        var bytesDownloaded = 0L
+        val countingStream = object : java.io.FilterOutputStream(outputStream) {
+            override fun write(b: Int) {
+                super.write(b)
+                bytesDownloaded++
+                onProgress(bytesDownloaded, totalBytes)
+            }
+            override fun write(b: ByteArray, off: Int, len: Int) {
+                super.write(b, off, len)
+                bytesDownloaded += len
+                onProgress(bytesDownloaded, totalBytes)
+            }
+        }
+        channel?.get(remotePath, countingStream)
+    }
+
     suspend fun uploadFile(localFile: File, remotePath: String): Unit = withContext(Dispatchers.IO) {
         channel?.put(FileInputStream(localFile), remotePath, ChannelSftp.OVERWRITE)
     }

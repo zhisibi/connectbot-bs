@@ -261,10 +261,21 @@ class SftpViewModel(private val vpsId: Long, private val context: Context) : Vie
                     val outputStream = context.contentResolver.openOutputStream(uri)
                         ?: throw IllegalStateException("Cannot open output stream")
                     outputStream.use { os ->
-                        manager.downloadFileToStream(file.path, os)
+                        manager.downloadFileWithProgress(file.path, os) { downloaded, total ->
+                            val pct = if (total > 0) "${(downloaded * 100 / total)}%" else "$downloaded B"
+                            val tasks = _uiState.value.downloadTasks.toMutableList()
+                            val idx = tasks.indexOfFirst { it.id == task.id }
+                            if (idx >= 0) {
+                                tasks[idx] = tasks[idx].copy(
+                                    progress = pct,
+                                    bytesDownloaded = downloaded,
+                                    totalBytes = total
+                                )
+                                _uiState.value = _uiState.value.copy(downloadTasks = tasks)
+                            }
+                        }
                     }
                 }
-                // Mark as completed
                 val tasks = _uiState.value.downloadTasks.toMutableList()
                 val idx = tasks.indexOfFirst { it.id == task.id }
                 if (idx >= 0) {

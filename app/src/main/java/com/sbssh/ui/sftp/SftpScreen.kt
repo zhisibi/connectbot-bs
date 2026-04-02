@@ -395,7 +395,7 @@ fun SftpScreen(
                     Arrangement.SpaceBetween,
                     Alignment.CenterVertically
                 ) {
-                    Text("Downloads")
+                    Text("Downloads (${uiState.downloadTasks.size})")
                     if (uiState.downloadTasks.any { it.isCompleted || it.isCancelled || it.error != null }) {
                         TextButton(onClick = { viewModel.clearCompletedDownloads() }) {
                             Text("Clear", style = MaterialTheme.typography.labelSmall)
@@ -408,8 +408,8 @@ fun SftpScreen(
                     Text("No downloads", color = MaterialTheme.colorScheme.onSurfaceVariant)
                 } else {
                     Column(
-                        modifier = Modifier.heightIn(max = 300.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                        modifier = Modifier.heightIn(max = 450.dp).widthIn(min = 300.dp),
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
                     ) {
                         for (task in uiState.downloadTasks.reversed()) {
                             Card(
@@ -422,38 +422,69 @@ fun SftpScreen(
                                     }
                                 )
                             ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth().padding(12.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
+                                Column(
+                                    modifier = Modifier.fillMaxWidth().padding(14.dp),
+                                    verticalArrangement = Arrangement.spacedBy(6.dp)
                                 ) {
-                                    Column(modifier = Modifier.weight(1f)) {
+                                    // File name + cancel button
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween,
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
                                         Text(
                                             task.fileName,
                                             style = MaterialTheme.typography.bodyMedium,
+                                            fontWeight = FontWeight.SemiBold,
                                             maxLines = 1,
-                                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                                            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+                                            modifier = Modifier.weight(1f)
                                         )
+                                        if (!task.isCompleted && !task.isCancelled && task.error == null) {
+                                            IconButton(
+                                                onClick = { viewModel.cancelDownload(task.id) },
+                                                modifier = Modifier.size(32.dp)
+                                            ) {
+                                                Icon(
+                                                    Icons.Default.Close,
+                                                    contentDescription = "Cancel",
+                                                    modifier = Modifier.size(18.dp),
+                                                    tint = MaterialTheme.colorScheme.error
+                                                )
+                                            }
+                                        }
+                                    }
+                                    // Progress bar (only for active downloads)
+                                    if (!task.isCompleted && !task.isCancelled && task.error == null) {
+                                        val fraction = if (task.totalBytes > 0) {
+                                            (task.bytesDownloaded.toFloat() / task.totalBytes.toFloat()).coerceIn(0f, 1f)
+                                        } else 0f
+                                        LinearProgressIndicator(
+                                            progress = { fraction },
+                                            modifier = Modifier.fillMaxWidth().height(6.dp),
+                                            trackColor = MaterialTheme.colorScheme.surfaceVariant
+                                        )
+                                    }
+                                    // Status row: progress text + bytes
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
                                         Text(
                                             when {
                                                 task.error != null -> "Error: ${task.error}"
                                                 task.isCancelled -> "Cancelled"
-                                                task.isCompleted -> "Completed"
-                                                else -> "Downloading..."
+                                                task.isCompleted -> "Completed ✓"
+                                                else -> task.progress
                                             },
                                             style = MaterialTheme.typography.labelSmall,
                                             color = MaterialTheme.colorScheme.onSurfaceVariant
                                         )
-                                    }
-                                    if (!task.isCompleted && !task.isCancelled && task.error == null) {
-                                        IconButton(
-                                            onClick = { viewModel.cancelDownload(task.id) },
-                                            modifier = Modifier.size(32.dp)
-                                        ) {
-                                            Icon(
-                                                Icons.Default.Close,
-                                                contentDescription = "Cancel",
-                                                modifier = Modifier.size(18.dp)
+                                        if (task.totalBytes > 0 && !task.isCancelled && task.error == null) {
+                                            Text(
+                                                "${formatBytes(task.bytesDownloaded)} / ${formatBytes(task.totalBytes)}",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = MaterialTheme.colorScheme.onSurfaceVariant
                                             )
                                         }
                                     }
@@ -470,6 +501,13 @@ fun SftpScreen(
             }
         )
     }
+}
+
+private fun formatBytes(bytes: Long): String = when {
+    bytes < 1024 -> "$bytes B"
+    bytes < 1024 * 1024 -> "${bytes / 1024} KB"
+    bytes < 1024 * 1024 * 1024 -> "${"%.1f".format(bytes / 1024.0 / 1024.0)} MB"
+    else -> "${"%.2f".format(bytes / 1024.0 / 1024.0 / 1024.0)} GB"
 }
 
 @Composable
