@@ -207,7 +207,7 @@ fun ConsoleScreen(
 
     // Read preferences
     val prefs = remember { PreferenceManager.getDefaultSharedPreferences(context) }
-    val keyboardAlwaysVisible = remember { prefs.getBoolean("alwaysvisible", false) }
+    val keyboardAlwaysVisible = remember { prefs.getBoolean("alwaysvisible", true) }
     var fullscreen by remember { mutableStateOf(prefs.getBoolean("fullscreen", false)) }
     var titleBarHide by remember { mutableStateOf(prefs.getBoolean("titlebarhide", false)) }
     val volumeKeysChangeFontSize = remember { prefs.getBoolean(PreferenceConstants.VOLUME_FONT, true) }
@@ -328,22 +328,14 @@ fun ConsoleScreen(
         wasBiometricPromptActive = isBiometricPromptActive
     }
 
-    // Unified auto-hide timer for both keyboard and title bar
-    LaunchedEffect(lastInteractionTime, keyboardAlwaysVisible, titleBarHide, keyboardScrollInProgress) {
-        // Only run the timer if there's something to auto-hide and not actively scrolling
-        if ((!keyboardAlwaysVisible || titleBarHide) && !keyboardScrollInProgress) {
+    // Auto-hide timer for title bar only (keyboard is always visible by default)
+    LaunchedEffect(lastInteractionTime, titleBarHide, keyboardScrollInProgress) {
+        if (titleBarHide && !keyboardScrollInProgress) {
             delay(3000)
-            // Hide keyboard if not always visible
-            if (!keyboardAlwaysVisible) {
-                showExtraKeyboard = false
-            }
-            // Hide title bar if auto-hide is enabled
-            if (titleBarHide) {
-                showTitleBar = false
-            }
-            // Mark animation as played after first timeout
-            hasPlayedKeyboardAnimation = true
+            showTitleBar = false
         }
+        // Mark animation as played after first timeout
+        hasPlayedKeyboardAnimation = true
     }
 
     val currentBridge = uiState.bridges.getOrNull(uiState.currentBridgeIndex)
@@ -434,10 +426,8 @@ fun ConsoleScreen(
     }
 
     fun handleTerminalInteraction() {
-        // Show emulated keyboard when terminal is tapped (unless always visible)
-        if (!keyboardAlwaysVisible) {
-            showExtraKeyboard = true
-        }
+        // Always show keyboard on terminal interaction
+        showExtraKeyboard = true
         // Ensure soft keyboard can be shown again after hide
         if (!hasHardwareKeyboard) {
             showSoftwareKeyboard = true
@@ -693,7 +683,7 @@ fun ConsoleScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .padding(
-                                    bottom = if (keyboardAlwaysVisible) TERMINAL_KEYBOARD_HEIGHT_DP.dp else 0.dp
+                                    bottom = if (showExtraKeyboard) TERMINAL_KEYBOARD_HEIGHT_DP.dp else 0.dp
                                 ),
                             typeface = fontResult.typeface,
                             initialFontSize = fontSize.sp,
