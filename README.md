@@ -40,9 +40,8 @@
 
 ## 技术栈
 
-Kotlin · Jetpack Compose · Material 3 · MVVM · Hilt · Room · JSch · ConnectBot sshlib · PBKDF2 · AES-GCM
-
-云同步后端：Python FastAPI · SQLite · JWT
+- **客户端**：Kotlin · Jetpack Compose · Material 3 · MVVM · Hilt · Room · JSch · ConnectBot sshlib · PBKDF2 · AES-GCM
+- **服务端**：Python FastAPI · SQLite · JWT（详见 [cloud-server/](cloud-server/)）
 
 ## 构建
 
@@ -60,20 +59,33 @@ Kotlin · Jetpack Compose · Material 3 · MVVM · Hilt · Room · JSch · Conne
 
 ## 云同步服务端
 
+服务端代码位于 [cloud-server/](cloud-server/) 目录。
+
+快速启动：
+
 ```bash
-cd sbssh-cloud-server
+cd cloud-server
 pip install -r requirements.txt
-python3 server.py   # 启动 :9800
+python3 server.py   # 默认启动在 :9800
 ```
 
-| 端点 | 说明 |
+### API 接口
+
+| 端点 | 方法 | 说明 |
+|------|------|------|
+| `/api/v1/register` | POST | 用户注册 |
+| `/api/v1/login` | POST | 登录，返回 JWT Token |
+| `/api/v1/sync/upload` | POST | 上传加密数据 |
+| `/api/v1/sync/download` | GET | 下载加密数据 |
+| `/health` | GET | 健康检查 |
+
+### 相关文件
+
+| 文件 | 说明 |
 |------|------|
-| `POST /api/v1/register` | 注册 |
-| `POST /api/v1/login` | 登录 → JWT |
-| `POST /api/v1/sync/upload` | 上传加密数据 |
-| `GET  /api/v1/sync/download` | 下载加密数据 |
-| `GET  /health` | 健康检查 |
+| [cloud-server/server.py](cloud-server/server.py) | FastAPI 服务端主程序 |
+| [cloud-server/requirements.txt](cloud-server/requirements.txt) | Python 依赖 |
 
 ## License
 
-Apache 2.0（基于 ConnectBot）
+Apache 2.0（基于 [ConnectBot](https://github.com/connectbot/connectbot)）
