@@ -1,85 +1,132 @@
-[![Build Status](https://github.com/connectbot/connectbot/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/connectbot/connectbot/actions/workflows/ci.yml)
+# SbSSH — Android VPS SSH/SFTP 管理工具
 
-# ConnectBot
+一款基于 ConnectBot 的 Android 原生 SSH/SFTP 客户端，支持本地加密存储、云同步、生物识别解锁。
 
-ConnectBot is a [Secure Shell](https://en.wikipedia.org/wiki/Secure_Shell)
-client for Android that lets you connect to remote servers over a
-cryptographically secure link.
+## 核心功能
 
+### 🔐 安全架构
+- **主密码 + PBKDF2**：首次启动设置主密码，PBKDF2（100,000 次迭代）派生 256 位会话密钥
+- **AES-GCM 字段级加密**：密码、私钥、密钥口令等敏感字段加密存储
+- **生物识别解锁**：可选指纹/面部识别作为便捷解锁方式
+- **SessionKeyHolder**：会话密钥仅驻留内存，不持久化明文
 
-## How to Install
+### 🖥️ SSH 终端
+- 基于 ConnectBot terminal 内核
+- 快捷键栏常驻（Ctrl、Esc、Tab、↑↓←→、Home、End、PgUp/PgDn 等）
+- 终端内容自动上移避免光标被键盘遮挡
+- 密码/密钥认证
 
-### Google Play
+### 📁 SFTP 文件管理器
+- 远程文件浏览、上传、下载、删除、重命名、权限修改
+- 下载进度实时显示 + 取消下载
+- 下载管理器（角标 + 进度条 + 文件大小）
+- Android 10+ 兼容（MediaStore.Downloads API）
 
-[![Get it on Google Play][2]][1]
+### ☁️ 云同步（E2EE）
+- 注册/登录云账号（FastAPI 后端）
+- 端到端加密：服务器仅存密文
+- 上传/下载加密备份数据
+- 自动同步开关：本地增删操作自动触发同步
+- Smart Sync：增量合并，云端多余数据可选择保留或删除
+- 恢复时自动去重（按 host:port:username 合并，覆盖已有数据）
 
-  [1]: https://play.google.com/store/apps/details?id=org.connectbot
-  [2]: https://developer.android.com/images/brand/en_generic_rgb_wo_60.png
+### 💾 备份/恢复
+- 加密备份导出到 Downloads
+- 从备份文件恢复（首次点击即可触发）
+- 恢复自动去重：同服务器不重复添加，覆盖已有配置
+- 云端下载恢复同样支持自动去重
 
-The easiest way to get ConnectBot is to [install from Google Play Store][1].
-If you have installed from a downloaded APK, Google Play Store can upgrade
-your installed version to the latest version. However, once it has upgraded
-*you can't install a version from the releases on GitHub anymore.*
+### 🔧 其他
+- 服务器列表管理（增删改查）
+- 多服务器连接状态实时显示
+- 语言切换（中文/英文）
+- 字体大小调整
+- Debug Log 查看
+- 应用退出时自动断开所有 SSH 连接
 
+## 技术栈
 
-### Download a release
+| 组件 | 技术 |
+|------|------|
+| 语言 | Kotlin |
+| UI | Jetpack Compose + Material 3 |
+| 架构 | MVVM + Hilt 依赖注入 |
+| 数据库 | Room (SQLite) |
+| SSH | JSch + ConnectBot sshlib |
+| 终端 | ConnectBot termlib |
+| 加密 | PBKDF2 + AES-GCM |
+| 云同步后端 | Python FastAPI + SQLite + JWT |
 
-ConnectBot can be downloaded from [releases](
-https://github.com/connectbot/connectbot/releases) on GitHub. There are
-two versions:
+## 构建环境
 
--  "`google`" &mdash; for a version that uses Google Play Services
-to handle upgrading the cryptography provider
--  "`oss`" &mdash; includes the cryptography provider in the APK which
-   increases its size by a few megabytes.
-## Compiling
+- Android Gradle Plugin: 8.6.0
+- Kotlin: 2.0.21
+- Compose Compiler: via `kotlin.plugin.compose`
+- compileSdk: 36, targetSdk: 35, minSdk: 24
+- JDK: 21
+- Build Tools: 35.0.0（需离线安装，见下方说明）
 
-### Android Studio
+### 国内构建注意事项
 
-ConnectBot is most easily developed in [Android Studio](
-https://developer.android.com/studio/). You can import this project
-directly from its project creation screen by importing from the GitHub URL.
+服务器网络无法直连 `dl.google.com`，依赖已配置阿里云 Maven 镜像：
 
-### Command line
-
-To compile using `gradlew`, you must first specify where your
-Android SDK is via the `ANDROID_SDK_HOME` environment variable. Then
-you can invoke the Gradle wrapper to build:
-
-```sh
-./gradlew build
+```kotlin
+// settings.gradle.kts
+maven("https://maven.aliyun.com/repository/google")
+maven("https://maven.aliyun.com/repository/public")
 ```
 
-#### Proxy for Google SDK downloads (CN networks)
+Build Tools 35.0.0 需要离线安装到 `/opt/android-sdk/build-tools/35.0.0/`。
 
-If Google SDK downloads are blocked, use proxy with `sdkmanager`:
+### 编译
 
-```sh
-sdkmanager --proxy=http --proxy_host=192.168.100.1 --proxy_port=7890 "platforms;android-36"
+```bash
+./gradlew :app:assembleDebug --no-daemon
 ```
 
-### Continuous Integration
+Release 构建需跳过 `checkReleaseClasspath`（AGP 8.6.0 兼容问题，已配置）：
 
-ConnectBot uses [GitHub Actions](https://github.com/connectbot/connectbot/actions)
-for continuous integration. The workflow is defined in
-`.github/workflows/ci.yml`.
-
-#### Running Workflows Locally with act
-
-In general, simply running `./gradlew build` should cover all the
-checks run in the GitHub Actions continuous integration workflow, but you can
-run GitHub Actions workflows locally using [`nektos/act`](https://github.com/nektos/act).
-This requires Docker to be installed and running.
-
-To run the main CI workflow (`ci.yml`):
-
-```sh
-act -W .github/workflows/ci.yml
+```bash
+./gradlew :app:assembleRelease --no-daemon
 ```
 
+## 云同步服务端
 
-## Translations
+路径：`../sbssh-cloud-server/`
 
-If you'd like to correct or contribute new translations to ConnectBot,
-then head on over to [ConnectBot's translations project](
-https://translations.launchpad.net/connectbot/trunk/+pots/fortune)
+### 启动
+
+```bash
+cd sbssh-cloud-server
+pip install -r requirements.txt
+python3 server.py
+```
+
+默认端口：`9800`
+
+### API
+
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| GET | `/health` | 健康检查 |
+| POST | `/api/v1/register` | 注册（username, password, encryptedSalt） |
+| POST | `/api/v1/login` | 登录，返回 JWT |
+| POST | `/api/v1/sync/upload` | 上传加密数据（需 Bearer Token） |
+| GET | `/api/v1/sync/download` | 下载加密数据（需 Bearer Token） |
+| GET | `/api/v1/user/info` | 用户信息（需 Bearer Token） |
+
+### 数据安全
+
+- 用户密码：PBKDF2 哈希存储
+- 同步数据：客户端 AES-GCM 加密后上传，服务端仅存密文
+- PBKDF2 Salt：注册时上传，新设备登录后获取可派生相同密钥
+- 通信：建议部署时使用 HTTPS
+
+## 已知问题
+
+- SSH 终端输入体验有改进空间（IME 遮挡、光标同步等）
+- 部分 deprecated API warnings（Icons.Filled、LocalClipboardManager 等，不影响功能）
+
+## License
+
+基于 ConnectBot（Apache License 2.0）。
