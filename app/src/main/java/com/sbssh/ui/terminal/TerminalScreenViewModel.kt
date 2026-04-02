@@ -86,8 +86,16 @@ class TerminalScreenViewModel @Inject constructor(
                     if (existingHostId != null) {
                         val existingHost = cbDb.hostDao().getById(existingHostId)
                         if (existingHost != null) {
+                            // Don't blindly set nickname to alias — another host may already use it.
+                            val desiredNickname = vps.alias
+                            val conflict = cbDb.hostDao().getByNickname(desiredNickname)
+                            val finalNickname = if (conflict != null && conflict.id != existingHost.id) {
+                                "${desiredNickname}_${System.currentTimeMillis()}"
+                            } else {
+                                desiredNickname
+                            }
                             val updatedHost = existingHost.copy(
-                                nickname = vps.alias,
+                                nickname = finalNickname,
                                 hostname = vps.host,
                                 port = vps.port,
                                 username = vps.username,
