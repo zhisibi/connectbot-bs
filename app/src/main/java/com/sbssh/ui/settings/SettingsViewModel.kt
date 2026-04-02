@@ -5,6 +5,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Base64
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -421,6 +422,25 @@ class SettingsViewModel(
             try {
                 cloudApi.setBaseUrl(url)
                 val resp = withContext(Dispatchers.IO) { cloudApi.login(username, password) }
+
+                // Fetch server salt and derive key from it (critical for multi-device sync)
+                try {
+                    val saltResp = withContext(Dispatchers.IO) { cloudApi.getSalt(username, resp.token) }
+                    if (!saltResp.encryptedSalt.isNullOrBlank()) {
+                        val serverSalt = Base64.decode(saltResp.encryptedSalt, Base64.NO_WRAP)
+                        AppLogger.log("CLOUD", "Fetched server salt, len=${serverSalt.size}")
+                        // Save server salt locally (overwrites any local salt)
+                        cryptoManager.saveSalt(serverSalt)
+                        // Derive key using server salt
+                        val keyBytes = cryptoManager.deriveKey(password, serverSalt)
+                        cryptoManager.setPasswordVerification(password, serverSalt)
+                        SessionKeyHolder.set(keyBytes)
+                        AppLogger.log("CLOUD", "Key derived from server salt")
+                    }
+                } catch (e: Exception) {
+                    AppLogger.log("CLOUD", "Failed to fetch server salt, using local", e)
+                }
+
                 settingsManager.setCloudSync(true, url, username)
                 settingsManager.setCloudToken(resp.token)
                 _uiState.value = _uiState.value.copy(

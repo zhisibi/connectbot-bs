@@ -26,6 +26,7 @@ class CloudSyncApi(private var baseUrl: String) {
     data class TokenResponse(val token: String, val userId: Int, val username: String)
     data class UploadRequest(val encryptedData: String, val deviceId: String? = null)
     data class DownloadResponse(val encryptedData: String?, val updatedAt: String?)
+    data class SaltResponse(val encryptedSalt: String?)
 
     // --- API ---
     fun register(username: String, password: String, encryptedSalt: String): TokenResponse {
@@ -65,6 +66,10 @@ class CloudSyncApi(private var baseUrl: String) {
 
     fun download(token: String): DownloadResponse {
         return getJsonAuth("/api/v1/sync/download", token)
+    }
+
+    fun getSalt(username: String, token: String): SaltResponse {
+        return getJsonAuth("/api/v1/sync/salt?username=$username", token)
     }
 
     fun healthCheck(): Boolean {
