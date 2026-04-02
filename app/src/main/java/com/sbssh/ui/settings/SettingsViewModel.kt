@@ -347,11 +347,27 @@ class SettingsViewModel(
                 val type = object : TypeToken<List<BackupItem>>() {}.type
                 val backupList: List<BackupItem> = gson.fromJson(json, type)
                 val now = System.currentTimeMillis()
-                suspend fun insertOnce(): Int = withContext(Dispatchers.IO) {
+                val count = withContext(Dispatchers.IO) {
+                    // Build map of existing servers by host:port:username for upsert
+                    val existing = dao!!.getAllVpsAsList()
+                        .associateBy { "${it.host}:${it.port}:${it.username}" }
                     var restored = 0
                     for (item in backupList) {
-                        dao!!.insertVps(
-                            VpsEntity(
+                        val key = "${item.host.ifBlank { "0.0.0.0" }}:${item.port}:${item.username.ifBlank { "root" }}"
+                        val existingVps = existing[key]
+                        if (existingVps != null) {
+                            // Update existing entry (overwrite)
+                            dao!!.updateVps(existingVps.copy(
+                                alias = item.alias.ifBlank { "Unknown" },
+                                authType = item.authType,
+                                encryptedPassword = item.encryptedPassword,
+                                encryptedKeyContent = item.encryptedKeyContent,
+                                encryptedKeyPassphrase = item.encryptedKeyPassphrase,
+                                updatedAt = now
+                            ))
+                        } else {
+                            // Insert new entry
+                            dao!!.insertVps(VpsEntity(
                                 alias = item.alias.ifBlank { "Unknown" },
                                 host = item.host.ifBlank { "0.0.0.0" },
                                 port = item.port,
@@ -362,13 +378,12 @@ class SettingsViewModel(
                                 encryptedKeyPassphrase = item.encryptedKeyPassphrase,
                                 createdAt = if (item.createdAt > 0) item.createdAt else now,
                                 updatedAt = if (item.updatedAt > 0) item.updatedAt else now
-                            )
-                        )
+                            ))
+                        }
                         restored++
                     }
                     restored
                 }
-                val count = insertOnce()
                 AppLogger.log("RESTORE", "Restored $count server(s)")
                 _uiState.value = _uiState.value.copy(success = context.getString(R.string.success_restored_servers, count))
             } catch (e: Exception) {
@@ -656,10 +671,26 @@ class SettingsViewModel(
                 }
                 val now = System.currentTimeMillis()
                 val count = withContext(Dispatchers.IO) {
+                    // Build map of existing servers by host:port:username for upsert
+                    val existing = dao!!.getAllVpsAsList()
+                        .associateBy { "${it.host}:${it.port}:${it.username}" }
                     var restored = 0
                     for (item in backupList) {
-                        dao!!.insertVps(
-                            VpsEntity(
+                        val key = "${item.host.ifBlank { "0.0.0.0" }}:${item.port}:${item.username.ifBlank { "root" }}"
+                        val existingVps = existing[key]
+                        if (existingVps != null) {
+                            // Update existing entry (overwrite)
+                            dao!!.updateVps(existingVps.copy(
+                                alias = item.alias.ifBlank { "Unknown" },
+                                authType = item.authType,
+                                encryptedPassword = item.encryptedPassword,
+                                encryptedKeyContent = item.encryptedKeyContent,
+                                encryptedKeyPassphrase = item.encryptedKeyPassphrase,
+                                updatedAt = now
+                            ))
+                        } else {
+                            // Insert new entry
+                            dao!!.insertVps(VpsEntity(
                                 alias = item.alias.ifBlank { "Unknown" },
                                 host = item.host.ifBlank { "0.0.0.0" },
                                 port = item.port,
@@ -670,8 +701,8 @@ class SettingsViewModel(
                                 encryptedKeyPassphrase = item.encryptedKeyPassphrase,
                                 createdAt = if (item.createdAt > 0) item.createdAt else now,
                                 updatedAt = if (item.updatedAt > 0) item.updatedAt else now
-                            )
-                        )
+                            ))
+                        }
                         restored++
                     }
                     restored
