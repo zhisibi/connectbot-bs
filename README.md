@@ -20,22 +20,24 @@
 - 生物识别便捷解锁
 - 密钥仅驻留内存，不落盘明文
 
-**云同步**
+**云同步**（SbSSH Server）
 - 注册/登录 → JWT 认证
 - 端到端加密：服务端只存密文
 - 自动同步开关（增删服务器自动触发）
 - Smart Sync：增量合并，云端多余数据可选保留或删除
 - 恢复自动去重（按 host:port:username 合并覆盖）
 
-**备份/恢复**
-- 加密备份导出 & 恢复（首次点击即触发）
-- 本地恢复 & 云端下载均支持自动去重覆盖
+**备份与恢复**
+- 本地加密备份导出 & 恢复（备份密码独立于云同步密码）
+- 支持多设备恢复（备份文件内嵌 salt）
+- ⏳ v1.1.0: GitHub 私有仓库备份（PAT 认证）
 
 **设置**
 - 语言切换（中文 / 英文）
 - 字体大小
 - 生物识别开关
 - 云同步管理
+- 备份密码设置
 - Debug Log
 
 ## 技术栈
@@ -49,24 +51,22 @@
 # Debug
 ./gradlew :app:assembleDebug --no-daemon
 
-# Release
+# Release（需要 keystore/boshconnect.jks）
 ./gradlew :app:assembleRelease --no-daemon
 ```
 
 **环境要求**：JDK 21 · compileSdk 36 · Build Tools 35.0.0
 
-**APK 输出**：`app/build/outputs/apk/debug/boshconnect-debug.apk`
+**APK 输出**：`app/build/outputs/apk/release/boshconnect-release.apk`
 
 ## 云同步服务端
 
 服务端代码位于 [cloud-server/](cloud-server/) 目录。
 
-快速启动：
-
 ```bash
 cd cloud-server
 pip install -r requirements.txt
-python3 server.py   # 默认启动在 :9800
+python3 server.py   # :9800
 ```
 
 ### API 接口
@@ -74,7 +74,8 @@ python3 server.py   # 默认启动在 :9800
 | 端点 | 方法 | 说明 |
 |------|------|------|
 | `/api/v1/register` | POST | 用户注册 |
-| `/api/v1/login` | POST | 登录，返回 JWT Token |
+| `/api/v1/login` | POST | 登录 → JWT |
+| `/api/v1/sync/salt` | GET | 获取 salt（多端同步） |
 | `/api/v1/sync/upload` | POST | 上传加密数据 |
 | `/api/v1/sync/download` | GET | 下载加密数据 |
 | `/health` | GET | 健康检查 |
@@ -85,6 +86,7 @@ python3 server.py   # 默认启动在 :9800
 |------|------|
 | [cloud-server/server.py](cloud-server/server.py) | FastAPI 服务端主程序 |
 | [cloud-server/requirements.txt](cloud-server/requirements.txt) | Python 依赖 |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | 项目架构文档 |
 
 ## License
 
