@@ -36,19 +36,12 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x ./gradlew
 
-      - name: Build release APK
-        run: ./gradlew assembleRelease --no-daemon --stacktrace
+      - name: Build debug APK
+        run: ./gradlew assembleDebug --no-daemon --stacktrace
 
-      - name: Upload release APK
+      - name: Upload debug APK
         uses: actions/upload-artifact@v4
         with:
-          name: boshconnect-release-apk
-          path: app/build/outputs/apk/release/*.apk
+          name: boshconnect-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
           if-no-files-found: error
-
-      - name: Upload mapping files
-        uses: actions/upload-artifact@v4
-        with:
-          name: boshconnect-release-mapping
-          path: app/build/outputs/mapping/release/**
-          if-no-files-found: warn
