@@ -47,7 +47,8 @@ android {
             isMinifyEnabled = false
             isShrinkResources = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            signingConfig = signingConfigs.getByName("release")
+            // Use debug signing to allow GitHub Actions to build without keystore
+            signingConfig = signingConfigs.getByName("debug")
             manifestPlaceholders["memtagMode"] = "async"
         }
     }
