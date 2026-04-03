@@ -25,8 +25,8 @@ import com.boshconnect.service.TerminalManager
 import com.boshconnect.ui.cloud.CloudSyncApi
 import com.boshconnect.ui.cloud.CloudException
 import com.boshconnect.ui.cloud.GitHubApi
-import com.boshconnect.util.AppLogger
 import com.boshconnect.service.TerminalManager
+import com.boshconnect.util.AppLogger
 import com.boshconnect.util.BiometricHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -1155,7 +1155,7 @@ class SettingsViewModel(
         }
     }
 
-    fun clearMessages() { _uiState.value = _uiState.value.copy(error = null, success = null) }
+
 
     class Factory(private val context: Context, private val activity: AppCompatActivity? = null, private val terminalManager: TerminalManager) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
