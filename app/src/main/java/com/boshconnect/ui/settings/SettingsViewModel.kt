@@ -204,6 +204,35 @@ class SettingsViewModel(
     }
 
     // ========== Backup helpers ==========
+    /**
+     * Build envelope for cloud sync - uses device key (portable for same device).
+     * Fields in BackupItem are kept as-is (already encrypted with device key).
+     */
+    private suspend fun buildCloudEnvelope(): String {
+        if (dao == null) throw IllegalStateException("Database not initialized")
+        val vpsList = try { dao!!.getAllVpsAsList() } catch (e: Exception) { throw e }
+        if (vpsList.isEmpty()) throw IllegalStateException("No servers to sync")
+
+        val backupList = vpsList.map { v ->
+            BackupItem(
+                alias = v.alias, host = v.host, port = v.port, username = v.username,
+                authType = v.authType, encryptedPassword = v.encryptedPassword,
+                encryptedKeyContent = v.encryptedKeyContent,
+                encryptedKeyPassphrase = v.encryptedKeyPassphrase,
+                createdAt = v.createdAt, updatedAt = v.updatedAt
+            )
+        }
+        val json = gson.toJson(backupList)
+        val deviceKey = SessionKeyHolder.get()
+        val payload = fieldCrypto.encrypt(json, deviceKey) ?: throw Exception("Encrypt failed")
+        val saltBase64 = try { Base64.encodeToString(cryptoManager.getSalt(), Base64.NO_WRAP) } catch (_: Exception) { null }
+        return gson.toJson(BackupEnvelope(encrypted = true, payload = payload, salt = saltBase64))
+    }
+
+    /**
+     * Build envelope for local/GitHub backup - uses backup password + random salt (portable across devices).
+     * Fields in BackupItem are decrypted to plaintext first.
+     */
     private suspend fun buildBackupEnvelope(): String {
         if (dao == null) throw IllegalStateException(context.getString(R.string.error_database_not_initialized))
         // Step 1: Read VPS data
@@ -704,7 +733,7 @@ class SettingsViewModel(
                 }
 
                 // 5. Normal upload (replace cloud with local)
-                val envelope = buildBackupEnvelope()
+                val envelope = buildCloudEnvelope()
                 withContext(Dispatchers.IO) { cloudApi.upload(token, envelope, android.os.Build.MODEL) }
                 settingsManager.setLastSyncedVpsIds(localList.map { it.id.toString() }.toSet())
                 _uiState.value = _uiState.value.copy(
@@ -750,7 +779,8 @@ class SettingsViewModel(
         viewModelScope.launch {
             try {
                 cloudApi.setBaseUrl(url)
-                val envelope = buildBackupEnvelope()
+                // Cloud sync uses device key (not backup password)
+                val envelope = buildCloudEnvelope()
                 withContext(Dispatchers.IO) { cloudApi.upload(token, envelope, android.os.Build.MODEL) }
                 settingsManager.setLastSyncedVpsIds((dao?.getAllVpsAsList() ?: emptyList()).map { it.id.toString() }.toSet())
                 _uiState.value = _uiState.value.copy(
@@ -805,8 +835,22 @@ class SettingsViewModel(
                         _uiState.value = _uiState.value.copy(cloudSyncLoading = false, error = context.getString(R.string.please_unlock_first))
                         return@launch
                     }
+                    // Cloud sync uses device key
                     val key = SessionKeyHolder.get()
-                    fieldCrypto.decrypt(payload, key) ?: throw Exception("Decrypt failed")
+                    try {
+                        fieldCrypto.decrypt(payload, key) ?: throw Exception("Decrypt failed")
+                    } catch (e: Exception) {
+                        // If device key fails, try backup password if available
+                        val backupSalt = if (envelope?.salt != null) try { Base64.decode(envelope.salt, Base64.NO_WRAP) } catch (_: Exception) { null } else null
+                        if (backupSalt != null && settingsManager.isBackupPasswordSet()) {
+                            val encPwd = settingsManager.getBackupPasswordEncrypted()
+                            val backupPwd = encPwd?.let { fieldCrypto.decrypt(it, key) }
+                            if (backupPwd != null) {
+                                val backupKey = deriveBackupKey(backupPwd, backupSalt)
+                                fieldCrypto.decrypt(payload, backupKey) ?: throw Exception("Decrypt failed")
+                            } else throw e
+                        } else throw e
+                    }
                 } else payload
                 val type = object : com.google.gson.reflect.TypeToken<List<BackupItem>>() {}.type
                 val backupList: List<BackupItem> = gson.fromJson(json, type)
