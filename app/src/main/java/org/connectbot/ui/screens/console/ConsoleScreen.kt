@@ -208,8 +208,8 @@ fun ConsoleScreen(
     // Read preferences
     val prefs = remember { PreferenceManager.getDefaultSharedPreferences(context) }
     val keyboardAlwaysVisible = remember { prefs.getBoolean("alwaysvisible", true) }
-    var fullscreen by remember { mutableStateOf(prefs.getBoolean("fullscreen", false)) }
-    var titleBarHide by remember { mutableStateOf(prefs.getBoolean("titlebarhide", false)) }
+    var fullscreen by remember { mutableStateOf(prefs.getBoolean("fullscreen", true)) }
+    var titleBarHide by remember { mutableStateOf(prefs.getBoolean("titlebarhide", true)) }
     val volumeKeysChangeFontSize = remember { prefs.getBoolean(PreferenceConstants.VOLUME_FONT, true) }
 
     // Keyboard state
@@ -1065,24 +1065,24 @@ fun ConsoleScreen(
                 }
             )
 
-            // SSH connection log panel (always visible)
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xAA000000))
-                    .padding(8.dp)
-            ) {
-                Text("SSH LOG", color = Color.White, fontSize = 12.sp)
-                logLines.takeLast(8).forEach { line ->
-                    Text(
-                        line,
-                        color = Color.White,
-                        fontSize = 10.sp,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-            }
+            // SSH connection log panel (always visible) - HIDDEN
+            // Column(
+            //     modifier = Modifier
+            //         .fillMaxWidth()
+            //         .background(Color(0xAA000000))
+            //         .padding(8.dp)
+            // ) {
+            //     Text("SSH LOG", color = Color.White, fontSize = 12.sp)
+            //     logLines.takeLast(8).forEach { line ->
+            //         Text(
+            //             line,
+            //             color = Color.White,
+            //             fontSize = 10.sp,
+            //             maxLines = 1,
+            //             overflow = TextOverflow.Ellipsis
+            //         )
+            //     }
+            // }
 
             // Progress indicator for OSC 9;4 progress reporting
             val progressState = uiState.progressState

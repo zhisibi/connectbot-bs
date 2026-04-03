@@ -64,6 +64,7 @@ data class SettingsUiState(
     val githubToken: String = "",
     val githubLoading: Boolean = false,
     val showGithubDialog: Boolean = false,
+    val showLocalBackupDialog: Boolean = false,
     // Backup password
     val backupPasswordSet: Boolean = false,
     val showBackupPasswordDialog: Boolean = false
@@ -290,6 +291,11 @@ class SettingsViewModel(
 
     // ========== Backup — save directly to Downloads via MediaStore ==========
     fun saveBackupToDownloads() {
+        if (!settingsManager.isBackupPasswordSet()) {
+            _uiState.value = _uiState.value.copy(error = "请先设置备份密码")
+            showBackupPasswordDialog()
+            return
+        }
         AppLogger.log("BACKUP", "saveBackupToDownloads")
         viewModelScope.launch {
             try {
@@ -1010,6 +1016,9 @@ class SettingsViewModel(
     fun showGithubDialog() { _uiState.value = _uiState.value.copy(showGithubDialog = true) }
     fun dismissGithubDialog() { _uiState.value = _uiState.value.copy(showGithubDialog = false) }
 
+    fun showLocalBackupDialog() { _uiState.value = _uiState.value.copy(showLocalBackupDialog = true) }
+    fun dismissLocalBackupDialog() { _uiState.value = _uiState.value.copy(showLocalBackupDialog = false) }
+
     fun saveGithubConfig(repo: String, token: String) {
         if (repo.isBlank() || token.isBlank()) {
             _uiState.value = _uiState.value.copy(error = "仓库地址和 Token 不能为空")
@@ -1042,7 +1051,8 @@ class SettingsViewModel(
             return
         }
         if (!settingsManager.isBackupPasswordSet()) {
-            _uiState.value = _uiState.value.copy(error = "请先在设置中设置备份密码")
+            _uiState.value = _uiState.value.copy(error = "请先设置备份密码")
+            showBackupPasswordDialog()
             return
         }
         _uiState.value = _uiState.value.copy(githubLoading = true)

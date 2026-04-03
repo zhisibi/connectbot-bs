@@ -86,11 +86,6 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
             modifier = Modifier.fillMaxSize().padding(padding).verticalScroll(rememberScrollState()).padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            SettingsCard(Icons.Default.Fingerprint, stringResource(R.string.biometric_login),
-                if (uiState.biometricEnabled) stringResource(R.string.enabled) else stringResource(R.string.disabled),
-                onClick = { viewModel.toggleBiometric("") }
-            ) { Switch(checked = uiState.biometricEnabled, onCheckedChange = { viewModel.toggleBiometric("") }) }
-
             SettingsCard(Icons.Default.Language, stringResource(R.string.language),
                 if (uiState.language == "zh") stringResource(R.string.language_zh) else stringResource(R.string.language_en),
                 onClick = { viewModel.showLanguageDialog() })
@@ -99,40 +94,25 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
                 when (uiState.fontSize) { "small" -> stringResource(R.string.font_small); "large" -> stringResource(R.string.font_large); else -> stringResource(R.string.font_medium) },
                 onClick = { viewModel.showFontSizeDialog() })
 
-            SettingsCard(Icons.Default.Backup, stringResource(R.string.server_backup),
-                stringResource(R.string.export_encrypted),
-                onClick = { viewModel.saveBackupToDownloads() })
-
-            SettingsCard(Icons.Default.Restore, stringResource(R.string.server_restore),
-                stringResource(R.string.restore_from_backup),
-                onClick = {
-                    AppLogger.log("RESTORE_UI", "click restore")
-                    restoreLauncher.launch("*/*")
-                })
-
-            // Backup Password (before cloud sync)
-            SettingsCard(Icons.Default.VpnKey, "备份密码",
-                if (uiState.backupPasswordSet) "已设置" else "未设置",
+            // Backup Password (MUST be before server backup)
+            SettingsCard(Icons.Default.VpnKey, stringResource(R.string.backup_password),
+                if (uiState.backupPasswordSet) stringResource(R.string.backup_password_set) else stringResource(R.string.backup_password_not_set),
                 onClick = { viewModel.showBackupPasswordDialog() })
+
+            // Local Backup (Unified Page: Backup + Restore)
+            SettingsCard(Icons.Default.Backup, stringResource(R.string.local_backup),
+                stringResource(R.string.local_backup_desc),
+                onClick = { viewModel.showLocalBackupDialog() })
 
             // Cloud Sync (SbSSH Server)
             SettingsCard(Icons.Default.CloudSync, stringResource(R.string.cloud_sync),
                 if (uiState.cloudSyncEnabled) stringResource(R.string.cloud_sync_enabled) else stringResource(R.string.cloud_sync_not_enabled),
                 onClick = { viewModel.showCloudSyncDialog() })
 
-            // GitHub Backup
-            SettingsCard(Icons.Default.Code, "GitHub 备份",
-                if (uiState.githubBackupEnabled) "已配置: ${uiState.githubRepo}" else "未配置",
+            // GitHub Backup (Unified Card)
+            SettingsCard(Icons.Default.Code, stringResource(R.string.github_backup),
+                if (uiState.githubBackupEnabled) stringResource(R.string.github_backup_configured, uiState.githubRepo) else stringResource(R.string.github_backup_not_configured),
                 onClick = { viewModel.showGithubDialog() })
-
-            if (uiState.githubBackupEnabled) {
-                SettingsCard(Icons.Default.CloudUpload, "备份到 GitHub",
-                    "上传加密备份到私有仓库",
-                    onClick = { viewModel.githubBackup() })
-                SettingsCard(Icons.Default.CloudDownload, "从 GitHub 恢复",
-                    "下载最新备份并恢复",
-                    onClick = { viewModel.githubRestore() })
-            }
 
             SettingsCard(Icons.Default.BugReport, stringResource(R.string.title_debug_log), stringResource(R.string.subtitle_view_app_logs),
                 onClick = { onViewLog() })
@@ -296,10 +276,10 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
         var restorePwd by remember { mutableStateOf("") }
         var showRestorePwd by remember { mutableStateOf(false) }
         AlertDialog(onDismissRequest = { /* don't dismiss - must enter password */ },
-            title = { Text("输入密码恢复") },
+            title = { Text(stringResource(R.string.enter_password_restore)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("此备份文件使用不同设备的密钥加密。请输入您在创建备份时使用的主密码来恢复数据。")
+                    Text(stringResource(R.string.restore_password_hint))
                     OutlinedTextField(value = restorePwd, onValueChange = { restorePwd = it },
                         label = { Text(stringResource(R.string.password)) }, singleLine = true,
                         visualTransformation = if (showRestorePwd) VisualTransformation.None else PasswordVisualTransformation(),
@@ -312,30 +292,62 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
             dismissButton = { })
     }
 
-    // GitHub config dialog
+    // GitHub config dialog (Integrated Page)
     if (uiState.showGithubDialog) {
         var ghRepo by remember { mutableStateOf(uiState.githubRepo) }
         var ghToken by remember { mutableStateOf(uiState.githubToken) }
         var showGhToken by remember { mutableStateOf(false) }
+        
         AlertDialog(onDismissRequest = { viewModel.dismissGithubDialog() },
-            title = { Text("GitHub 备份配置") },
+            title = { Text(stringResource(R.string.github_backup_title)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("备份将保存到 GitHub 私有仓库的 boshconnect/ 目录下", style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.github_backup_desc), style = MaterialTheme.typography.bodySmall)
                     OutlinedTextField(value = ghRepo, onValueChange = { ghRepo = it },
-                        label = { Text("仓库 (owner/repo)") }, singleLine = true,
-                        placeholder = { Text("username/backup-repo") },
+                        label = { Text(stringResource(R.string.github_repo_label)) }, singleLine = true,
+                        placeholder = { Text(stringResource(R.string.github_repo_placeholder)) },
                         modifier = Modifier.fillMaxWidth())
                     OutlinedTextField(value = ghToken, onValueChange = { ghToken = it },
-                        label = { Text("PAT Token") }, singleLine = true,
+                        label = { Text(stringResource(R.string.github_pat_label)) }, singleLine = true,
                         visualTransformation = if (showGhToken) VisualTransformation.None else PasswordVisualTransformation(),
                         trailingIcon = { IconButton(onClick = { showGhToken = !showGhToken }) { Icon(if (showGhToken) Icons.Default.VisibilityOff else Icons.Default.Visibility, null) } },
                         modifier = Modifier.fillMaxWidth())
+                    
+                    if (uiState.githubBackupEnabled) {
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Button(
+                                onClick = { viewModel.githubBackup() },
+                                modifier = Modifier.weight(1f),
+                                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp)
+                            ) {
+                                Icon(Icons.Default.CloudUpload, null, modifier = Modifier.size(18.dp))
+                                Spacer(Modifier.width(4.dp))
+                                Text(stringResource(R.string.backup_to_github), style = MaterialTheme.typography.labelSmall)
+                            }
+                            Button(
+                                onClick = { viewModel.githubRestore() },
+                                modifier = Modifier.weight(1f),
+                                contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp)
+                            ) {
+                                Icon(Icons.Default.CloudDownload, null, modifier = Modifier.size(18.dp))
+                                Spacer(Modifier.width(4.dp))
+                                Text(stringResource(R.string.restore_from_github), style = MaterialTheme.typography.labelSmall)
+                            }
+                        }
+                    }
                 }
             },
-            confirmButton = { TextButton(onClick = { viewModel.saveGithubConfig(ghRepo, ghToken) }, enabled = ghRepo.isNotEmpty() && ghToken.isNotEmpty()) {
-                Text("保存") } },
-            dismissButton = { TextButton(onClick = { viewModel.dismissGithubDialog() }) { Text(stringResource(R.string.cancel)) } })
+            confirmButton = { 
+                TextButton(onClick = { viewModel.saveGithubConfig(ghRepo, ghToken) }, enabled = ghRepo.isNotEmpty() && ghToken.isNotEmpty()) {
+                    Text("保存") 
+                } 
+            },
+            dismissButton = { 
+                TextButton(onClick = { viewModel.dismissGithubDialog() }) { 
+                    Text(stringResource(R.string.cancel)) 
+                } 
+            })
     }
 
     // Backup password dialog
@@ -344,28 +356,73 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
         var bp2 by remember { mutableStateOf("") }
         var showBp by remember { mutableStateOf(false) }
         AlertDialog(onDismissRequest = { viewModel.dismissBackupPasswordDialog() },
-            title = { Text("设置备份密码") },
+            title = { Text(stringResource(R.string.set_backup_password)) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    Text("备份密码用于加密本地文件和 GitHub 备份。与云同步密码独立。恢复备份时需要此密码。", style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.backup_password_warning), 
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error)
+                    Text(stringResource(R.string.backup_password_desc), style = MaterialTheme.typography.bodySmall)
                     OutlinedTextField(value = bp1, onValueChange = { bp1 = it },
-                        label = { Text("备份密码") }, singleLine = true,
+                        label = { Text(stringResource(R.string.enter_backup_password)) }, singleLine = true,
                         visualTransformation = if (showBp) VisualTransformation.None else PasswordVisualTransformation(),
                         trailingIcon = { IconButton(onClick = { showBp = !showBp }) { Icon(if (showBp) Icons.Default.VisibilityOff else Icons.Default.Visibility, null) } },
                         modifier = Modifier.fillMaxWidth())
                     OutlinedTextField(value = bp2, onValueChange = { bp2 = it },
-                        label = { Text("确认密码") }, singleLine = true,
+                        label = { Text(stringResource(R.string.confirm_backup_password)) }, singleLine = true,
                         visualTransformation = if (showBp) VisualTransformation.None else PasswordVisualTransformation(),
                         modifier = Modifier.fillMaxWidth())
                     if (uiState.backupPasswordSet) {
                         TextButton(onClick = { viewModel.clearBackupPassword() }) {
-                            Text("清除备份密码", color = MaterialTheme.colorScheme.error) }
+                            Text(stringResource(R.string.clear_backup_password), color = MaterialTheme.colorScheme.error) }
                     }
                 }
             },
             confirmButton = { TextButton(onClick = { viewModel.setBackupPassword(bp1, bp2) }, enabled = bp1.isNotEmpty() && bp2.isNotEmpty()) {
                 Text("设置") } },
             dismissButton = { TextButton(onClick = { viewModel.dismissBackupPasswordDialog() }) { Text(stringResource(R.string.cancel)) } })
+    }
+
+    // Local Backup dialog (Unified Page)
+    if (uiState.showLocalBackupDialog) {
+        AlertDialog(
+            onDismissRequest = { viewModel.dismissLocalBackupDialog() },
+            title = { Text(stringResource(R.string.local_backup)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(12.dp), modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.local_backup_desc), style = MaterialTheme.typography.bodySmall)
+                    
+                    // Backup Button
+                    Button(
+                        onClick = {
+                            viewModel.dismissLocalBackupDialog()
+                            viewModel.saveBackupToDownloads()
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        enabled = uiState.backupPasswordSet
+                    ) {
+                        Icon(Icons.Default.CloudUpload, null, modifier = Modifier.size(20.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text(stringResource(R.string.server_backup))
+                    }
+                    
+                    // Restore Button
+                    OutlinedButton(
+                        onClick = {
+                            viewModel.dismissLocalBackupDialog()
+                            restoreLauncher.launch("*/*")
+                        },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Icon(Icons.Default.CloudDownload, null, modifier = Modifier.size(20.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text(stringResource(R.string.server_restore))
+                    }
+                }
+            },
+            confirmButton = { },
+            dismissButton = { TextButton(onClick = { viewModel.dismissLocalBackupDialog() }) { Text(stringResource(R.string.cancel)) } }
+        )
     }
 
     // About dialog

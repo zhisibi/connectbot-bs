@@ -1385,13 +1385,12 @@
     <string name="unlocking">Unlocking...</string>
     <string name="unlock_biometrics">Unlock with Biometrics</string>
     <string name="password_min_chars">Password must be at least 6 characters</string>
-    <string name="passwords_not_match">Passwords do not match</string>
     <string name="incorrect_password">Incorrect password</string>
 
     <!-- VPS List -->
-    <string name="my_servers">My Servers</string>
-    <string name="no_servers_yet">No servers yet</string>
-    <string name="tap_add_server">Tap + to add your first server</string>
+    <string name="my_servers">我的服务器</string>
+    <string name="no_servers_yet">还没有服务器</string>
+    <string name="tap_add_server">点击 + 添加你的第一台服务器</string>
     <string name="ssh_key_auth">SSH Key Authentication</string>
     <string name="password_auth">Password Authentication</string>
     <string name="edit">Edit</string>
@@ -1453,6 +1452,8 @@
     <string name="disabled">Disabled</string>
     <string name="language">Language</string>
     <string name="font_size">Font Size</string>
+    <string name="local_backup">Local Backup</string>
+    <string name="local_backup_desc">Backup and restore servers to local</string>
     <string name="server_backup">Server Backup</string>
     <string name="export_encrypted">Export encrypted backup</string>
     <string name="server_restore">Server Restore</string>
@@ -1591,6 +1592,7 @@
     <string name="sftp_file_label">File: %1$s</string>
     <string name="action_apply">Apply</string>
     <string name="action_delete">Delete</string>
+    <string name="action_edit">Edit</string>
     <string name="sftp_delete_confirm">Delete "%1$s"?</string>
     <string name="action_permissions">Permissions</string>
     <string name="about_version">%1$s %2$s</string>
@@ -1672,4 +1674,49 @@
     <string name="sftp_download_failed">Download failed</string>
     <string name="sftp_delete_failed">Failed to delete</string>
     <string name="action_logout">Logout</string>
+
+    <!-- Backup Password -->
+    <string name="backup_password">Backup Password</string>
+    <string name="backup_password_set">Set</string>
+    <string name="backup_password_not_set">Not set</string>
+    <string name="backup_password_warning">⚠️ Important: Set your backup password and remember it. Lost password = lost backups!</string>
+    <string name="backup_password_desc">Used to encrypt local and GitHub backups. Independent from cloud sync password.</string>
+    <string name="enter_backup_password">Backup Password</string>
+    <string name="confirm_backup_password">Confirm Password</string>
+    <string name="clear_backup_password">Clear Backup Password</string>
+    <string name="set_backup_password">Set Backup Password</string>
+    <string name="backup_password_required">Please set backup password first</string>
+
+    <!-- GitHub Backup -->
+    <string name="github_backup">GitHub Backup</string>
+    <string name="github_backup_configured">Configured: %s</string>
+    <string name="github_backup_not_configured">Not configured</string>
+    <string name="github_backup_title">GitHub Backup Config</string>
+    <string name="github_backup_desc">Backups saved to boshconnect/ in your private GitHub repo</string>
+    <string name="github_repo_label">Repository (owner/repo)</string>
+    <string name="github_repo_placeholder">username/backup-repo</string>
+    <string name="github_pat_label">PAT Token</string>
+    <string name="backup_to_github">Backup to GitHub</string>
+    <string name="backup_to_github_desc">Upload encrypted backup to private repo</string>
+    <string name="restore_from_github">Restore from GitHub</string>
+    <string name="restore_from_github_desc">Download latest backup and restore</string>
+    <string name="github_config_saved">GitHub backup configured</string>
+    <string name="github_backup_disabled">GitHub backup disabled</string>
+    <string name="please_config_github">Please configure GitHub repo first</string>
+
+    <!-- Restore -->
+    <string name="enter_password_restore">Enter Password to Restore</string>
+    <string name="restore_password_hint">This backup was encrypted with a different device key. Enter backup password to restore.</string>
+    <string name="restore_success">Restored %d server(s)</string>
+    <string name="backup_password_min_length">Backup password must be at least 6 characters</string>
+    <string name="passwords_not_match">Passwords do not match</string>
+    <string name="backup_password_set_success">Backup password set</string>
+    <string name="backup_password_cleared">Backup password cleared</string>
+    <string name="no_backups_on_github">No backups on GitHub</string>
+    <string name="github_backup_success">Backed up to GitHub</string>
+    <string name="github_restore_success">Restored %d server(s) from GitHub</string>
+    <string name="github_backup_failed">GitHub backup failed: %s</string>
+    <string name="github_restore_failed">GitHub restore failed: %s</string>
+    <string name="decrypt_wrong_password">Decrypt failed - wrong password?</string>
+    <string name="restore_failed_msg">Restore failed: %s</string>
 </resources>

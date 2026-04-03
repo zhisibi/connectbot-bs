@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -22,6 +23,7 @@ import com.boshconnect.ui.settings.SettingsManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
+
 fun VpsListScreen(
     onAddVps: () -> Unit,
     onEditVps: (Long) -> Unit,
@@ -39,6 +41,12 @@ fun VpsListScreen(
             TopAppBar(
                 title = { Text(stringResource(R.string.my_servers)) },
                 actions = {
+                    IconButton(onClick = { viewModel.toggleCompactMode() }) {
+                        Icon(
+                            if (uiState.compactMode) Icons.Default.ViewList else Icons.Default.ViewModule,
+                            contentDescription = "Toggle compact mode"
+                        )
+                    }
                     IconButton(onClick = onSettings) {
                         Icon(Icons.Default.Settings, contentDescription = stringResource(R.string.content_desc_settings))
                     }
@@ -110,6 +118,7 @@ fun VpsListScreen(
 
                     VpsCard(
                         vps = vps,
+                        compactMode = uiState.compactMode,
                         isConnected = isConnected,
                         isDisconnected = isDisconnected,
                         onEdit = { onEditVps(vps.id) },
@@ -188,9 +197,11 @@ fun VpsListScreen(
     }
 }
 
+
 @Composable
 private fun VpsCard(
     vps: VpsEntity,
+    compactMode: Boolean,
     isConnected: Boolean,
     isDisconnected: Boolean,
     onEdit: () -> Unit,
@@ -205,116 +216,195 @@ private fun VpsCard(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface)
     ) {
-        Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)) {
+        if (compactMode) {
+            // Compact Mode: Single line (Icon, Name, SSH, SFTP, Menu)
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Row(
+                val statusColor = when {
+                    isConnected -> Color(0xFF4CAF50)
+                    isDisconnected -> MaterialTheme.colorScheme.outline
+                    else -> MaterialTheme.colorScheme.outlineVariant
+                }
+                Icon(
+                    Icons.Default.Computer,
+                    contentDescription = null,
+                    tint = statusColor,
+                    modifier = Modifier.size(20.dp)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = vps.alias,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.weight(1f),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    val statusColor = when {
-                        isConnected -> Color(0xFF4CAF50)
-                        isDisconnected -> MaterialTheme.colorScheme.outline
-                        else -> MaterialTheme.colorScheme.outlineVariant
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
+                )
+                
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    IconButton(onClick = onConnectTerminal, modifier = Modifier.size(36.dp)) {
+                        Icon(Icons.Default.Terminal, contentDescription = "SSH", modifier = Modifier.size(20.dp))
                     }
-                    Icon(
-                        Icons.Default.Computer,
-                        contentDescription = null,
-                        tint = statusColor,
-                        modifier = Modifier.size(24.dp)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = "${vps.alias}",
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
-                }
-
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text = vps.username,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        text = if (vps.authType == "KEY") stringResource(R.string.auth_type_private_key) else stringResource(R.string.auth_type_password),
-                        style = MaterialTheme.typography.labelSmall,
-                        color = MaterialTheme.colorScheme.primary,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                }
-
-                Box {
-                    IconButton(onClick = { showMenu = true }) {
-                        Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.content_desc_more))
+                    IconButton(onClick = onConnectSftp, modifier = Modifier.size(36.dp)) {
+                        Icon(Icons.Default.Folder, contentDescription = "SFTP", modifier = Modifier.size(20.dp))
                     }
-                    DropdownMenu(expanded = showMenu, onDismissRequest = { showMenu = false }) {
-                        if (isConnected || isDisconnected) {
-                            DropdownMenuItem(
-                                text = { Text(stringResource(R.string.action_disconnect)) },
-                                onClick = { showMenu = false; onDisconnect() },
-                                leadingIcon = { Icon(Icons.Default.LinkOff, contentDescription = null) }
-                            )
+                    Box {
+                        IconButton(onClick = { showMenu = true }, modifier = Modifier.size(36.dp)) {
+                            Icon(Icons.Default.MoreVert, contentDescription = null, modifier = Modifier.size(20.dp))
                         }
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.edit)) },
-                            onClick = { showMenu = false; onEdit() },
-                            leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null) }
-                        )
-                        DropdownMenuItem(
-                            text = { Text(stringResource(R.string.delete)) },
-                            onClick = { showMenu = false; onDelete() },
-                            leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error) }
+                        VpsCardMenu(
+                            expanded = showMenu,
+                            onDismiss = { showMenu = false },
+                            isConnected = isConnected,
+                            isDisconnected = isDisconnected,
+                            onDisconnect = onDisconnect,
+                            onEdit = onEdit,
+                            onDelete = onDelete
                         )
                     }
                 }
             }
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                val buttonWeight = 0.55f
-                if (isConnected) {
-                    Button(
-                        onClick = onConnectTerminal,
-                        modifier = Modifier.weight(buttonWeight),
-                        contentPadding = PaddingValues(vertical = 4.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
+        } else {
+            // Full Mode
+            Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Row(
+                        modifier = Modifier.weight(1f),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(Icons.Default.Terminal, contentDescription = null, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(4.dp))
-                        Text(stringResource(R.string.label_ssh), style = MaterialTheme.typography.labelMedium, color = Color.White)
+                        val statusColor = when {
+                            isConnected -> Color(0xFF4CAF50)
+                            isDisconnected -> MaterialTheme.colorScheme.outline
+                            else -> MaterialTheme.colorScheme.outlineVariant
+                        }
+                        Icon(
+                            Icons.Default.Computer,
+                            contentDescription = null,
+                            tint = statusColor,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text(
+                            text = "${vps.alias}",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
                     }
-                } else {
-                    Button(
-                        onClick = onConnectTerminal,
+
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = vps.username,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                        Text(
+                            text = if (vps.authType == "KEY") stringResource(R.string.auth_type_private_key) else stringResource(R.string.auth_type_password),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = FontWeight.SemiBold
+                        )
+                    }
+
+                    Box {
+                        IconButton(onClick = { showMenu = true }) {
+                            Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.content_desc_more))
+                        }
+                        VpsCardMenu(
+                            expanded = showMenu,
+                            onDismiss = { showMenu = false },
+                            isConnected = isConnected,
+                            isDisconnected = isDisconnected,
+                            onDisconnect = onDisconnect,
+                            onEdit = onEdit,
+                            onDelete = onDelete
+                        )
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(6.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    val buttonWeight = 0.55f
+                    if (isConnected) {
+                        Button(
+                            onClick = onConnectTerminal,
+                            modifier = Modifier.weight(buttonWeight),
+                            contentPadding = PaddingValues(vertical = 4.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF4CAF50))
+                        ) {
+                            Icon(Icons.Default.Terminal, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(stringResource(R.string.label_ssh), style = MaterialTheme.typography.labelMedium, color = Color.White)
+                        }
+                    } else {
+                        Button(
+                            onClick = onConnectTerminal,
+                            modifier = Modifier.weight(buttonWeight),
+                            contentPadding = PaddingValues(vertical = 4.dp)
+                        ) {
+                            Icon(Icons.Default.Terminal, contentDescription = null, modifier = Modifier.size(16.dp))
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(stringResource(R.string.label_ssh), style = MaterialTheme.typography.labelMedium)
+                        }
+                    }
+
+                    OutlinedButton(
+                        onClick = onConnectSftp,
                         modifier = Modifier.weight(buttonWeight),
                         contentPadding = PaddingValues(vertical = 4.dp)
                     ) {
-                        Icon(Icons.Default.Terminal, contentDescription = null, modifier = Modifier.size(16.dp))
+                        Icon(Icons.Default.Folder, contentDescription = null, modifier = Modifier.size(16.dp))
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text(stringResource(R.string.label_ssh), style = MaterialTheme.typography.labelMedium)
+                        Text(stringResource(R.string.label_sftp), style = MaterialTheme.typography.labelMedium)
                     }
-                }
-
-                OutlinedButton(
-                    onClick = onConnectSftp,
-                    modifier = Modifier.weight(buttonWeight),
-                    contentPadding = PaddingValues(vertical = 4.dp)
-                ) {
-                    Icon(Icons.Default.Folder, contentDescription = null, modifier = Modifier.size(16.dp))
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Text(stringResource(R.string.label_sftp), style = MaterialTheme.typography.labelMedium)
                 }
             }
         }
+    }
+}
+
+
+
+@Composable
+private fun VpsCardMenu(
+    expanded: Boolean,
+    onDismiss: () -> Unit,
+    isConnected: Boolean,
+    isDisconnected: Boolean,
+    onDisconnect: () -> Unit,
+    onEdit: () -> Unit,
+    onDelete: () -> Unit
+) {
+    DropdownMenu(expanded = expanded, onDismissRequest = onDismiss) {
+        if (isConnected || isDisconnected) {
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.action_disconnect)) },
+                onClick = { onDismiss(); onDisconnect() },
+                leadingIcon = { Icon(Icons.Default.LinkOff, contentDescription = null) }
+            )
+        }
+        DropdownMenuItem(
+            text = { Text(stringResource(R.string.action_edit)) },
+            onClick = { onDismiss(); onEdit() },
+            leadingIcon = { Icon(Icons.Default.Edit, contentDescription = null) }
+        )
+        DropdownMenuItem(
+            text = { Text(stringResource(R.string.action_delete)) },
+            onClick = { onDismiss(); onDelete() },
+            leadingIcon = { Icon(Icons.Default.Delete, contentDescription = null, tint = MaterialTheme.colorScheme.error) }
+        )
     }
 }

@@ -1,22 +1,25 @@
 package com.boshconnect.ui.vpslist
 
 import android.content.Context
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.boshconnect.R
 import com.boshconnect.data.db.VpsDao
 import com.boshconnect.data.db.VpsEntity
+import com.boshconnect.ui.settings.SettingsManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import com.boshconnect.R
 
 data class VpsListUiState(
     val vpsList: List<VpsEntity> = emptyList(),
     val isLoading: Boolean = true,
     val error: String? = null,
-    val showDeleteDialog: Long? = null
+    val showDeleteDialog: Long? = null,
+    val compactMode: Boolean = true
 )
 
 @HiltViewModel
@@ -25,7 +28,8 @@ class VpsListViewModel @Inject constructor(
     @ApplicationContext private val context: Context
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(VpsListUiState())
+    private val prefs: SharedPreferences = context.getSharedPreferences("vps_list_prefs", Context.MODE_PRIVATE)
+    private val _uiState = MutableStateFlow(VpsListUiState(compactMode = prefs.getBoolean("compact_mode", true)))
     val uiState: StateFlow<VpsListUiState> = _uiState.asStateFlow()
 
     init {
@@ -40,6 +44,12 @@ class VpsListViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    fun toggleCompactMode() {
+        val newValue = !_uiState.value.compactMode
+        prefs.edit().putBoolean("compact_mode", newValue).apply()
+        _uiState.value = _uiState.value.copy(compactMode = newValue)
     }
 
     fun retry() {

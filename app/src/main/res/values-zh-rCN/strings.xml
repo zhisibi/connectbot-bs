@@ -584,6 +584,7 @@
   <string name="sftp_file_label">文件：%1$s</string>
   <string name="action_apply">应用</string>
   <string name="action_delete">删除</string>
+    <string name="action_edit">编辑</string>
   <string name="sftp_delete_confirm">删除“%1$s”？</string>
   <string name="action_download">下载</string>
   <string name="action_permissions">权限</string>
@@ -626,7 +627,7 @@
   <string name="error_restore_unlock_required">请先解锁应用再恢复</string>
   <string name="success_restored_servers">已恢复 %1$d 台服务器</string>
   <string name="error_restore_failed">恢复失败：%1$s</string>
-  <string name="success_cloud_sync_configured">云同步已配置（即将支持）</string>
+  <string name="success_cloud_sync_configured">云同步已配置</string>
   <string name="success_cloud_sync_disabled">云同步已关闭</string>
   <string name="error_new_password_too_short">新密码至少 6 位</string>
   <string name="success_password_changed">密码修改成功</string>
@@ -703,7 +704,9 @@
   <string name="disabled">已禁用</string>
   <string name="language">语言</string>
   <string name="font_size">字体大小</string>
-  <string name="server_backup">服务器备份</string>
+  <string name="local_backup">本地备份</string>
+    <string name="local_backup_desc">备份和恢复服务器数据到本地</string>
+    <string name="server_backup">服务器备份</string>
   <string name="export_encrypted">导出加密备份</string>
   <string name="server_restore">服务器恢复</string>
   <string name="restore_from_backup">从备份恢复</string>
@@ -748,4 +751,49 @@
   <string name="unlock_biometrics">使用生物识别解锁</string>
   <string name="action_logout">退出登录</string>
   <string name="unlock">解锁</string>
+
+    <!-- Backup Password -->
+    <string name="backup_password">备份密码</string>
+    <string name="backup_password_set">已设置</string>
+    <string name="backup_password_not_set">未设置</string>
+    <string name="backup_password_warning">⚠️ 重要：请设置备份密码并牢记。忘记密码将无法恢复备份数据！</string>
+    <string name="backup_password_desc">备份密码用于加密本地文件和 GitHub 备份。与云同步密码独立。</string>
+    <string name="enter_backup_password">备份密码</string>
+    <string name="confirm_backup_password">确认密码</string>
+    <string name="clear_backup_password">清除备份密码</string>
+    <string name="set_backup_password">设置备份密码</string>
+    <string name="backup_password_required">请先设置备份密码</string>
+
+    <!-- GitHub Backup -->
+    <string name="github_backup">GitHub 备份</string>
+    <string name="github_backup_configured">已配置: %s</string>
+    <string name="github_backup_not_configured">未配置</string>
+    <string name="github_backup_title">GitHub 备份配置</string>
+    <string name="github_backup_desc">备份将保存到 GitHub 私有仓库的 boshconnect/ 目录下</string>
+    <string name="github_repo_label">仓库 (owner/repo)</string>
+    <string name="github_repo_placeholder">username/backup-repo</string>
+    <string name="github_pat_label">PAT Token</string>
+    <string name="backup_to_github">备份到 GitHub</string>
+    <string name="backup_to_github_desc">上传加密备份到私有仓库</string>
+    <string name="restore_from_github">从 GitHub 恢复</string>
+    <string name="restore_from_github_desc">下载最新备份并恢复</string>
+    <string name="github_config_saved">GitHub 备份已配置</string>
+    <string name="github_backup_disabled">GitHub 备份已关闭</string>
+    <string name="please_config_github">请先配置 GitHub 仓库</string>
+
+    <!-- Restore -->
+    <string name="enter_password_restore">输入密码恢复</string>
+    <string name="restore_password_hint">此备份文件使用不同设备的密钥加密。请输入备份密码来恢复数据。</string>
+    <string name="restore_success">恢复了 %d 台服务器</string>
+    <string name="backup_password_min_length">备份密码至少 6 位</string>
+    <string name="passwords_not_match">两次密码不一致</string>
+    <string name="backup_password_set_success">备份密码已设置</string>
+    <string name="backup_password_cleared">备份密码已清除</string>
+    <string name="no_backups_on_github">GitHub 上没有备份文件</string>
+    <string name="github_backup_success">已备份到 GitHub</string>
+    <string name="github_restore_success">从 GitHub 恢复了 %d 台服务器</string>
+    <string name="github_backup_failed">GitHub 备份失败: %s</string>
+    <string name="github_restore_failed">GitHub 恢复失败: %s</string>
+    <string name="decrypt_wrong_password">解密失败 - 密码错误？</string>
+    <string name="restore_failed_msg">恢复失败: %s</string>
 </resources>
