@@ -21,7 +21,6 @@ import com.boshconnect.data.crypto.FieldCryptoManager
 import com.boshconnect.data.crypto.SessionKeyHolder
 import com.boshconnect.data.db.AppDatabase
 import com.boshconnect.data.db.VpsEntity
-import com.boshconnect.service.TerminalManager
 import com.boshconnect.ui.cloud.CloudSyncApi
 import com.boshconnect.ui.cloud.CloudException
 import com.boshconnect.ui.cloud.GitHubApi
@@ -98,7 +97,7 @@ data class BackupItem(
 class SettingsViewModel(
     private val context: Context,
     private val activity: AppCompatActivity? = null,
-    private val terminalManager: TerminalManager // Injected TerminalManager
+    private val terminalManager: TerminalManager? // Changed to nullable
 ) : ViewModel() {
 
     private val cryptoManager = CryptoManager(context)
@@ -196,7 +195,7 @@ class SettingsViewModel(
     fun onRestartConsumed() { _uiState.value = _uiState.value.copy(shouldRestart = false) }
 
     fun logout() {
-        terminalManager.disconnectAll(immediate = true, excludeLocal = false) // Disconnect all SSH sessions
+        terminalManager?.disconnectAll(immediate = true, excludeLocal = false) // Disconnect all SSH sessions
         SessionKeyHolder.clear()
         _uiState.value = _uiState.value.copy(logoutMessage = context.getString(R.string.all_ssh_disconnected))
     }
@@ -1157,7 +1156,7 @@ class SettingsViewModel(
 
 
 
-    class Factory(private val context: Context, private val activity: AppCompatActivity? = null, private val terminalManager: TerminalManager) : ViewModelProvider.Factory {
+    class Factory(private val context: Context, private val activity: AppCompatActivity? = null, private val terminalManager: TerminalManager?) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
         override fun <T : ViewModel> create(modelClass: Class<T>): T = SettingsViewModel(context, activity, terminalManager) as T
     }
