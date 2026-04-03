@@ -27,13 +27,25 @@ android {
         buildConfigField("boolean", "HAS_DOWNLOADABLE_FONTS", "false")
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = file("../keystore/boshconnect.jks")
+            storePassword = "boshconnect2026"
+            keyAlias = "boshconnect"
+            keyPassword = "boshconnect2026"
+        }
+    }
+
     buildTypes {
         debug {
             isMinifyEnabled = false
             manifestPlaceholders["memtagMode"] = "sync"
         }
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("release")
             manifestPlaceholders["memtagMode"] = "async"
         }
     }
