@@ -110,10 +110,12 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
                     restoreLauncher.launch("*/*")
                 })
 
-            SettingsCard(Icons.Default.Lock, stringResource(R.string.change_password),
-                stringResource(R.string.change_password_desc),
-                onClick = { viewModel.showChangePasswordDialog() })
+            // Backup Password (before cloud sync)
+            SettingsCard(Icons.Default.VpnKey, "备份密码",
+                if (uiState.backupPasswordSet) "已设置" else "未设置",
+                onClick = { viewModel.showBackupPasswordDialog() })
 
+            // Cloud Sync (SbSSH Server)
             SettingsCard(Icons.Default.CloudSync, stringResource(R.string.cloud_sync),
                 if (uiState.cloudSyncEnabled) stringResource(R.string.cloud_sync_enabled) else stringResource(R.string.cloud_sync_not_enabled),
                 onClick = { viewModel.showCloudSyncDialog() })
@@ -131,11 +133,6 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
                     "下载最新备份并恢复",
                     onClick = { viewModel.githubRestore() })
             }
-
-            // Backup Password
-            SettingsCard(Icons.Default.VpnKey, "备份密码",
-                if (uiState.backupPasswordSet) "已设置" else "未设置（备份将使用主密码）",
-                onClick = { viewModel.showBackupPasswordDialog() })
 
             SettingsCard(Icons.Default.BugReport, stringResource(R.string.title_debug_log), stringResource(R.string.subtitle_view_app_logs),
                 onClick = { onViewLog() })
@@ -292,31 +289,6 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
                 },
                 dismissButton = { TextButton(onClick = { viewModel.dismissCloudSyncDialog() }) { Text(stringResource(R.string.cancel)) } })
         }
-    }
-
-    // Change password dialog
-    if (uiState.showChangePasswordDialog) {
-        var oldPwd by remember { mutableStateOf("") }; var newPwd by remember { mutableStateOf("") }; var confirmPwd by remember { mutableStateOf("") }
-        var showOld by remember { mutableStateOf(false) }; var showNew by remember { mutableStateOf(false) }
-        AlertDialog(onDismissRequest = { viewModel.dismissChangePasswordDialog() },
-            title = { Text(stringResource(R.string.change_password)) },
-            text = {
-                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedTextField(value = oldPwd, onValueChange = { oldPwd = it }, label = { Text(stringResource(R.string.old_password)) }, singleLine = true,
-                        visualTransformation = if (showOld) VisualTransformation.None else PasswordVisualTransformation(),
-                        trailingIcon = { IconButton(onClick = { showOld = !showOld }) { Icon(if (showOld) Icons.Default.VisibilityOff else Icons.Default.Visibility, null) } },
-                        modifier = Modifier.fillMaxWidth())
-                    OutlinedTextField(value = newPwd, onValueChange = { newPwd = it }, label = { Text(stringResource(R.string.new_password)) }, singleLine = true,
-                        visualTransformation = if (showNew) VisualTransformation.None else PasswordVisualTransformation(),
-                        trailingIcon = { IconButton(onClick = { showNew = !showNew }) { Icon(if (showNew) Icons.Default.VisibilityOff else Icons.Default.Visibility, null) } },
-                        modifier = Modifier.fillMaxWidth())
-                    OutlinedTextField(value = confirmPwd, onValueChange = { confirmPwd = it }, label = { Text(stringResource(R.string.confirm_new_password)) }, singleLine = true,
-                        visualTransformation = PasswordVisualTransformation(), modifier = Modifier.fillMaxWidth())
-                }
-            },
-            confirmButton = { TextButton(onClick = { viewModel.changePassword(oldPwd, newPwd, confirmPwd) }, enabled = oldPwd.isNotEmpty() && newPwd.isNotEmpty() && confirmPwd.isNotEmpty()) {
-                Text(stringResource(R.string.change)) } },
-            dismissButton = { TextButton(onClick = { viewModel.dismissChangePasswordDialog() }) { Text(stringResource(R.string.cancel)) } })
     }
 
     // Restore password dialog (when backup salt differs from local)

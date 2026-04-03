@@ -212,7 +212,8 @@ class SettingsViewModel(
         AppLogger.log("BACKUP", "VPS count: ${vpsList.size}")
         if (vpsList.isEmpty()) throw IllegalStateException(context.getString(R.string.error_no_servers_to_backup))
 
-        // Step 2: Serialize
+        // Step 2: Serialize - decrypt fields with device key first so backup is portable
+        val deviceKey = if (SessionKeyHolder.isSet()) SessionKeyHolder.get() else null
         val backupList = vpsList.map { v ->
             BackupItem(
                 alias = v.alias,
@@ -220,9 +221,9 @@ class SettingsViewModel(
                 port = v.port,
                 username = v.username,
                 authType = v.authType,
-                encryptedPassword = v.encryptedPassword,
-                encryptedKeyContent = v.encryptedKeyContent,
-                encryptedKeyPassphrase = v.encryptedKeyPassphrase,
+                encryptedPassword = deviceKey?.let { fieldCrypto.decrypt(v.encryptedPassword, it) } ?: v.encryptedPassword,
+                encryptedKeyContent = deviceKey?.let { fieldCrypto.decrypt(v.encryptedKeyContent, it) } ?: v.encryptedKeyContent,
+                encryptedKeyPassphrase = deviceKey?.let { fieldCrypto.decrypt(v.encryptedKeyPassphrase, it) } ?: v.encryptedKeyPassphrase,
                 createdAt = v.createdAt,
                 updatedAt = v.updatedAt
             )
@@ -230,24 +231,27 @@ class SettingsViewModel(
         val json = gson.toJson(backupList)
         AppLogger.log("BACKUP", "JSON size: ${json.length}")
 
-        // Step 3: Encrypt (if session key available) and wrap in envelope
-        val (encrypted, payload) = try {
-            if (SessionKeyHolder.isSet()) {
-                val key = SessionKeyHolder.get()
-                AppLogger.log("BACKUP", "Session key set, encrypting payload...")
-                true to (fieldCrypto.encrypt(json, key) ?: json)
+        // Step 3: Generate backup salt and derive backup key
+        val backupSalt = ByteArray(16).also { java.security.SecureRandom().nextBytes(it) }
+        val backupKey = if (settingsManager.isBackupPasswordSet() && deviceKey != null) {
+            // Decrypt stored backup password
+            val encryptedPwd = settingsManager.getBackupPasswordEncrypted()
+            val backupPassword = encryptedPwd?.let { fieldCrypto.decrypt(it, deviceKey) }
+            if (backupPassword != null) {
+                AppLogger.log("BACKUP", "Using backup password for encryption")
+                deriveBackupKey(backupPassword, backupSalt)
             } else {
-                AppLogger.log("BACKUP", "Session key NOT set, writing plain payload")
-                false to json
+                AppLogger.log("BACKUP", "Cannot decrypt backup password, using device key")
+                deviceKey
             }
-        } catch (e: Exception) {
-            AppLogger.log("BACKUP", "Encryption failed, writing plain", e)
-            false to json
+        } else {
+            // No backup password set - use device key
+            deviceKey ?: throw IllegalStateException("No encryption key available")
         }
-        // Include salt so other devices can derive the same key from password
-        val saltBase64 = try {
-            Base64.encodeToString(cryptoManager.getSalt(), Base64.NO_WRAP)
-        } catch (_: Exception) { null }
+
+        val encrypted = true
+        val payload = fieldCrypto.encrypt(json, backupKey) ?: throw Exception("Encryption failed")
+        val saltBase64 = android.util.Base64.encodeToString(backupSalt, android.util.Base64.NO_WRAP)
 
         val envelope = BackupEnvelope(encrypted = encrypted, payload = payload, salt = saltBase64)
         val dataToWrite = gson.toJson(envelope)
@@ -426,21 +430,21 @@ class SettingsViewModel(
         _uiState.value = _uiState.value.copy(showRestorePasswordDialog = false, cloudSyncLoading = true)
         viewModelScope.launch {
             try {
-                val keyBytes = cryptoManager.deriveKey(password, backupSalt)
-                AppLogger.log("RESTORE", "Re-derived key from backup salt, decrypting...")
+                val keyBytes = deriveBackupKey(password, backupSalt)
+                AppLogger.log("RESTORE", "Re-derived backup key from password + salt, decrypting...")
                 val json = withContext(Dispatchers.IO) {
-                    fieldCrypto.decrypt(payload, keyBytes) ?: throw Exception("Decrypt failed - wrong password?")
+                    fieldCrypto.decrypt(payload, keyBytes) ?: throw Exception("解密失败 - 密码错误？")
                 }
                 val count = restoreFromJson(json)
                 _uiState.value = _uiState.value.copy(
                     cloudSyncLoading = false,
-                    success = context.getString(R.string.success_restored_servers, count)
+                    success = "恢复了 $count 台服务器"
                 )
             } catch (e: Exception) {
-                AppLogger.log("RESTORE", "Restore with backup salt failed", e)
+                AppLogger.log("RESTORE", "Restore with backup password failed", e)
                 _uiState.value = _uiState.value.copy(
                     cloudSyncLoading = false,
-                    error = context.getString(R.string.error_restore_failed, e.message ?: "")
+                    error = "恢复失败: ${e.message}"
                 )
             } finally {
                 _pendingPayload = null
@@ -454,6 +458,9 @@ class SettingsViewModel(
         val backupList: List<BackupItem> = gson.fromJson(json, type)
         val now = System.currentTimeMillis()
         if (dao == null) dao = runCatching { AppDatabase.getInstance(context).vpsDao() }.getOrNull()
+
+        // Get device key for re-encrypting fields
+        val deviceKey = if (SessionKeyHolder.isSet()) SessionKeyHolder.get() else null
 
         return withContext(Dispatchers.IO) {
             val allLocal = dao!!.getAllVpsAsList()
@@ -475,15 +482,20 @@ class SettingsViewModel(
 
             var restored = 0
             for (item in backupList) {
+                // Re-encrypt fields with device key (backup contains plaintext)
+                val encPw = deviceKey?.let { fieldCrypto.encrypt(item.encryptedPassword, it) } ?: item.encryptedPassword
+                val encKc = deviceKey?.let { fieldCrypto.encrypt(item.encryptedKeyContent, it) } ?: item.encryptedKeyContent
+                val encKp = deviceKey?.let { fieldCrypto.encrypt(item.encryptedKeyPassphrase, it) } ?: item.encryptedKeyPassphrase
+
                 val key = "${item.host.ifBlank { "0.0.0.0" }}:${item.port}:${item.username.ifBlank { "root" }}"
                 val existingVps = existing[key]
                 if (existingVps != null) {
                     dao!!.updateVps(existingVps.copy(
                         alias = item.alias.ifBlank { "Unknown" },
                         authType = item.authType,
-                        encryptedPassword = item.encryptedPassword,
-                        encryptedKeyContent = item.encryptedKeyContent,
-                        encryptedKeyPassphrase = item.encryptedKeyPassphrase,
+                        encryptedPassword = encPw,
+                        encryptedKeyContent = encKc,
+                        encryptedKeyPassphrase = encKp,
                         updatedAt = now
                     ))
                 } else {
@@ -919,10 +931,15 @@ class SettingsViewModel(
             _uiState.value = _uiState.value.copy(error = "两次密码不一致")
             return
         }
-        // Store hash for verification
+        // Store hash for verification display
         val hash = java.security.MessageDigest.getInstance("SHA-256")
             .digest(password.toByteArray()).joinToString("") { "%02x".format(it) }
         settingsManager.setBackupPasswordHash(hash)
+        // Store the backup password encrypted with device key (for backup use)
+        if (SessionKeyHolder.isSet()) {
+            val encryptedPwd = fieldCrypto.encrypt(password, SessionKeyHolder.get())
+            settingsManager.setBackupPasswordEncrypted(encryptedPwd ?: "")
+        }
         _uiState.value = _uiState.value.copy(
             showBackupPasswordDialog = false,
             backupPasswordSet = true,

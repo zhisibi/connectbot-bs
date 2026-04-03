@@ -120,9 +120,15 @@ class SettingsManager private constructor(context: Context) {
     }
 
     fun clearBackupPassword() {
-        prefs.edit().remove("backup_password_hash").apply()
+        prefs.edit().remove("backup_password_hash").remove("backup_password_encrypted").apply()
         _settings.value = _settings.value.copy(backupPasswordHash = "")
     }
+
+    fun setBackupPasswordEncrypted(encrypted: String) {
+        prefs.edit().putString("backup_password_encrypted", encrypted).apply()
+    }
+
+    fun getBackupPasswordEncrypted(): String? = prefs.getString("backup_password_encrypted", null)
 
     companion object {
         @Volatile
