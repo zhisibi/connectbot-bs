@@ -42,6 +42,7 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import com.boshconnect.R
+import com.boshconnect.connectbot.data.ColorSchemePresets
 import com.boshconnect.connectbot.data.entity.Host
 import com.boshconnect.connectbot.data.entity.PortForward
 import com.boshconnect.di.CoroutineDispatchers
@@ -225,10 +226,36 @@ class TerminalBridge {
 
         // Load color scheme from profile
         currentColorSchemeId = profile.colorSchemeId
-        fullColorPalette = manager.colorRepository.getColorsForSchemeBlocking(profile.colorSchemeId)
-        val defaults = manager.colorRepository.getDefaultColorsForSchemeBlocking(profile.colorSchemeId)
-        defaultFg = defaults[0]
-        defaultBg = defaults[1]
+        
+        // Use try-catch to prevent crash from color repository errors
+        try {
+            fullColorPalette = manager.colorRepository.getColorsForSchemeBlocking(profile.colorSchemeId)
+            val defaults = manager.colorRepository.getDefaultColorsForSchemeBlocking(profile.colorSchemeId)
+            
+            // Safety check: ensure defaults array has at least 2 elements
+            if (defaults.size >= 2) {
+                defaultFg = defaults[0]
+                defaultBg = defaults[1]
+            }
+        } catch (e: Exception) {
+            Timber.e(e, "Error loading color scheme, using defaults")
+        }
+
+        // Safety check: ensure palette has at least 16 colors
+        if (fullColorPalette.size < 16) {
+            Timber.w("Color palette has only ${fullColorPalette.size} colors, using default palette")
+            fullColorPalette = ColorSchemePresets.default.colors.copyOf()
+        }
+
+        // Safety check: ensure default indices are valid
+        if (defaultFg < 0 || defaultFg >= 16) {
+            Timber.w("Invalid default foreground index: $defaultFg, using 7")
+            defaultFg = 7
+        }
+        if (defaultBg < 0 || defaultBg >= 16) {
+            Timber.w("Invalid default background index: $defaultBg, using 0")
+            defaultBg = 0
+        }
 
         // Get actual RGB colors for the default foreground/background indices
         val defaultFgColor = fullColorPalette[defaultFg]
@@ -381,10 +408,36 @@ class TerminalBridge {
         // Apply color scheme if changed
         if (profile.colorSchemeId != currentColorSchemeId) {
             currentColorSchemeId = profile.colorSchemeId
-            fullColorPalette = manager.colorRepository.getColorsForSchemeBlocking(profile.colorSchemeId)
-            val defaults = manager.colorRepository.getDefaultColorsForSchemeBlocking(profile.colorSchemeId)
-            defaultFg = defaults[0]
-            defaultBg = defaults[1]
+            
+            // Use try-catch to prevent crash from color repository errors
+            try {
+                fullColorPalette = manager.colorRepository.getColorsForSchemeBlocking(profile.colorSchemeId)
+                val defaults = manager.colorRepository.getDefaultColorsForSchemeBlocking(profile.colorSchemeId)
+                
+                // Safety check: ensure defaults array has at least 2 elements
+                if (defaults.size >= 2) {
+                    defaultFg = defaults[0]
+                    defaultBg = defaults[1]
+                }
+            } catch (e: Exception) {
+                Timber.e(e, "Error loading color scheme, using defaults")
+            }
+
+            // Safety check: ensure palette has at least 16 colors
+            if (fullColorPalette.size < 16) {
+                Timber.w("Color palette has only ${fullColorPalette.size} colors, using default palette")
+                fullColorPalette = ColorSchemePresets.default.colors.copyOf()
+            }
+
+            // Safety check: ensure default indices are valid
+            if (defaultFg < 0 || defaultFg >= 16) {
+                Timber.w("Invalid default foreground index: $defaultFg, using 7")
+                defaultFg = 7
+            }
+            if (defaultBg < 0 || defaultBg >= 16) {
+                Timber.w("Invalid default background index: $defaultBg, using 0")
+                defaultBg = 0
+            }
 
             // Apply to terminal emulator
             val defaultFgColor = fullColorPalette[defaultFg]
