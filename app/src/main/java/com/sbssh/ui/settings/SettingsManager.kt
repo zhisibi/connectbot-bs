@@ -18,7 +18,11 @@ class SettingsManager private constructor(context: Context) {
         val cloudSyncUrl: String = "",
         val cloudSyncUsername: String = "",
         val cloudAutoSync: Boolean = false,
-        val fontScale: Float = 1.0f
+        val fontScale: Float = 1.0f,
+        val githubBackupEnabled: Boolean = false,
+        val githubRepo: String = "",
+        val githubToken: String = "",
+        val backupPasswordHash: String = ""
     )
 
     private val _settings = MutableStateFlow(loadSettings())
@@ -32,7 +36,11 @@ class SettingsManager private constructor(context: Context) {
             cloudSyncUrl = prefs.getString("cloud_sync_url", "") ?: "",
             cloudSyncUsername = prefs.getString("cloud_sync_username", "") ?: "",
             cloudAutoSync = prefs.getBoolean("cloud_auto_sync", false),
-            fontScale = prefs.getFloat("font_scale", 1.0f)
+            fontScale = prefs.getFloat("font_scale", 1.0f),
+            githubBackupEnabled = prefs.getBoolean("github_backup_enabled", false),
+            githubRepo = prefs.getString("github_repo", "") ?: "",
+            githubToken = prefs.getString("github_token", "") ?: "",
+            backupPasswordHash = prefs.getString("backup_password_hash", "") ?: ""
         )
     }
 
@@ -85,6 +93,35 @@ class SettingsManager private constructor(context: Context) {
     }
     fun setLastSyncedVpsIds(ids: Set<String>) {
         prefs.edit().putString("last_synced_vps_ids", ids.joinToString(",")).apply()
+    }
+
+    // GitHub backup
+    fun setGitHubBackup(enabled: Boolean, repo: String = "", token: String = "") {
+        prefs.edit()
+            .putBoolean("github_backup_enabled", enabled)
+            .putString("github_repo", repo)
+            .putString("github_token", token)
+            .apply()
+        _settings.value = _settings.value.copy(
+            githubBackupEnabled = enabled,
+            githubRepo = repo,
+            githubToken = token
+        )
+    }
+
+    // Backup password (stored as PBKDF2 hash for verification)
+    fun setBackupPasswordHash(hash: String) {
+        prefs.edit().putString("backup_password_hash", hash).apply()
+        _settings.value = _settings.value.copy(backupPasswordHash = hash)
+    }
+
+    fun isBackupPasswordSet(): Boolean {
+        return prefs.getString("backup_password_hash", null)?.isNotBlank() == true
+    }
+
+    fun clearBackupPassword() {
+        prefs.edit().remove("backup_password_hash").apply()
+        _settings.value = _settings.value.copy(backupPasswordHash = "")
     }
 
     companion object {

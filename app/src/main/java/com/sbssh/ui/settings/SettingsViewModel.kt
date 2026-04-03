@@ -23,6 +23,7 @@ import com.sbssh.data.db.AppDatabase
 import com.sbssh.data.db.VpsEntity
 import com.sbssh.ui.cloud.CloudSyncApi
 import com.sbssh.ui.cloud.CloudException
+import com.sbssh.ui.cloud.GitHubApi
 import com.sbssh.util.AppLogger
 import com.sbssh.util.BiometricHelper
 import kotlinx.coroutines.Dispatchers
@@ -56,7 +57,16 @@ data class SettingsUiState(
     val cloudSyncLoggedIn: Boolean = false,
     val cloudSyncLastSync: String? = null,
     val cloudAutoSync: Boolean = false,
-    val showRestorePasswordDialog: Boolean = false
+    val showRestorePasswordDialog: Boolean = false,
+    // GitHub backup
+    val githubBackupEnabled: Boolean = false,
+    val githubRepo: String = "",
+    val githubToken: String = "",
+    val githubLoading: Boolean = false,
+    val showGithubDialog: Boolean = false,
+    // Backup password
+    val backupPasswordSet: Boolean = false,
+    val showBackupPasswordDialog: Boolean = false
 )
 
 // Backup format wrapper (v1)
@@ -109,7 +119,11 @@ class SettingsViewModel(
             cloudSyncUrl = settings.cloudSyncUrl,
             cloudSyncUsername = settings.cloudSyncUsername,
             cloudSyncLoggedIn = settingsManager.getCloudToken() != null,
-            cloudAutoSync = settings.cloudAutoSync
+            cloudAutoSync = settings.cloudAutoSync,
+            githubBackupEnabled = settings.githubBackupEnabled,
+            githubRepo = settings.githubRepo,
+            githubToken = settings.githubToken,
+            backupPasswordSet = settingsManager.isBackupPasswordSet()
         )
     }
 
@@ -892,6 +906,174 @@ class SettingsViewModel(
     // ========== About ==========
     fun showAbout() { _uiState.value = _uiState.value.copy(showAbout = true) }
     fun dismissAbout() { _uiState.value = _uiState.value.copy(showAbout = false) }
+    // ========== Backup Password ==========
+    fun showBackupPasswordDialog() { _uiState.value = _uiState.value.copy(showBackupPasswordDialog = true) }
+    fun dismissBackupPasswordDialog() { _uiState.value = _uiState.value.copy(showBackupPasswordDialog = false) }
+
+    fun setBackupPassword(password: String, confirmPassword: String) {
+        if (password.length < 6) {
+            _uiState.value = _uiState.value.copy(error = "备份密码至少 6 位")
+            return
+        }
+        if (password != confirmPassword) {
+            _uiState.value = _uiState.value.copy(error = "两次密码不一致")
+            return
+        }
+        // Store hash for verification
+        val hash = java.security.MessageDigest.getInstance("SHA-256")
+            .digest(password.toByteArray()).joinToString("") { "%02x".format(it) }
+        settingsManager.setBackupPasswordHash(hash)
+        _uiState.value = _uiState.value.copy(
+            showBackupPasswordDialog = false,
+            backupPasswordSet = true,
+            success = "备份密码已设置"
+        )
+    }
+
+    fun clearBackupPassword() {
+        settingsManager.clearBackupPassword()
+        _uiState.value = _uiState.value.copy(backupPasswordSet = false, success = "备份密码已清除")
+    }
+
+    /**
+     * Derive backup encryption key from backup password.
+     * Uses a fixed salt prefix + password for simplicity (backup salt is in the envelope).
+     */
+    private fun deriveBackupKey(password: String, salt: ByteArray): ByteArray {
+        val spec = javax.crypto.spec.PBEKeySpec(password.toCharArray(), salt, 100_000, 256)
+        val factory = javax.crypto.SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256")
+        return factory.generateSecret(spec).encoded
+    }
+
+    // ========== GitHub Backup ==========
+    fun showGithubDialog() { _uiState.value = _uiState.value.copy(showGithubDialog = true) }
+    fun dismissGithubDialog() { _uiState.value = _uiState.value.copy(showGithubDialog = false) }
+
+    fun saveGithubConfig(repo: String, token: String) {
+        if (repo.isBlank() || token.isBlank()) {
+            _uiState.value = _uiState.value.copy(error = "仓库地址和 Token 不能为空")
+            return
+        }
+        settingsManager.setGitHubBackup(true, repo, token)
+        _uiState.value = _uiState.value.copy(
+            githubBackupEnabled = true,
+            githubRepo = repo,
+            githubToken = token,
+            showGithubDialog = false,
+            success = "GitHub 备份已配置"
+        )
+    }
+
+    fun toggleGithubBackup(enabled: Boolean) {
+        if (enabled) {
+            showGithubDialog()
+        } else {
+            settingsManager.setGitHubBackup(false)
+            _uiState.value = _uiState.value.copy(githubBackupEnabled = false, success = "GitHub 备份已关闭")
+        }
+    }
+
+    fun githubBackup() {
+        val repo = _uiState.value.githubRepo
+        val token = _uiState.value.githubToken
+        if (repo.isBlank() || token.isBlank()) {
+            _uiState.value = _uiState.value.copy(error = "请先配置 GitHub 仓库")
+            return
+        }
+        if (!settingsManager.isBackupPasswordSet()) {
+            _uiState.value = _uiState.value.copy(error = "请先在设置中设置备份密码")
+            return
+        }
+        _uiState.value = _uiState.value.copy(githubLoading = true)
+        viewModelScope.launch {
+            try {
+                val envelope = buildBackupEnvelope()
+                val content = android.util.Base64.encodeToString(envelope.toByteArray(Charsets.UTF_8), android.util.Base64.NO_WRAP)
+                val sdf = java.text.SimpleDateFormat("yyyyMMdd_HHmmss", java.util.Locale.getDefault())
+                val path = "boshconnect/backup_${sdf.format(java.util.Date())}.enc"
+                val githubApi = GitHubApi()
+                withContext(Dispatchers.IO) {
+                    githubApi.uploadFile(repo, path, content, "BoshConnect backup", token)
+                }
+                _uiState.value = _uiState.value.copy(
+                    githubLoading = false,
+                    success = "已备份到 GitHub: $path"
+                )
+            } catch (e: Exception) {
+                AppLogger.log("GITHUB", "Backup failed", e)
+                _uiState.value = _uiState.value.copy(
+                    githubLoading = false,
+                    error = "GitHub 备份失败: ${e.message}"
+                )
+            }
+        }
+    }
+
+    fun githubRestore() {
+        val repo = _uiState.value.githubRepo
+        val token = _uiState.value.githubToken
+        if (repo.isBlank() || token.isBlank()) {
+            _uiState.value = _uiState.value.copy(error = "请先配置 GitHub 仓库")
+            return
+        }
+        _uiState.value = _uiState.value.copy(githubLoading = true)
+        viewModelScope.launch {
+            try {
+                val githubApi = GitHubApi()
+                // List backup files
+                val files = withContext(Dispatchers.IO) {
+                    githubApi.listFiles(repo, "boshconnect", token)
+                }.filter { it.name.endsWith(".enc") }.sortedByDescending { it.name }
+                if (files.isEmpty()) {
+                    _uiState.value = _uiState.value.copy(githubLoading = false, error = "GitHub 上没有备份文件")
+                    return@launch
+                }
+                // Get latest backup
+                val latest = files.first()
+                val fileData = withContext(Dispatchers.IO) {
+                    githubApi.getFile(repo, latest.path, token)
+                } ?: throw Exception("无法获取文件")
+                val content = String(android.util.Base64.decode(fileData.content, android.util.Base64.NO_WRAP), Charsets.UTF_8)
+                // Parse and restore (same as local restore)
+                val envelope = try { gson.fromJson(content, BackupEnvelope::class.java) } catch (_: Exception) { null }
+                if (envelope != null && envelope.format == "sbssh_backup_v1" && envelope.encrypted) {
+                    val backupSalt = if (envelope.salt != null) {
+                        try { android.util.Base64.decode(envelope.salt, android.util.Base64.NO_WRAP) } catch (_: Exception) { null }
+                    } else null
+                    if (backupSalt != null) {
+                        _pendingPayload = envelope.payload
+                        _pendingBackupSalt = backupSalt
+                        _uiState.value = _uiState.value.copy(
+                            githubLoading = false,
+                            showRestorePasswordDialog = true
+                        )
+                    } else {
+                        // Try with current session key
+                        if (SessionKeyHolder.isSet()) {
+                            val json = fieldCrypto.decrypt(envelope.payload, SessionKeyHolder.get())
+                                ?: throw Exception("解密失败")
+                            val count = restoreFromJson(json)
+                            _uiState.value = _uiState.value.copy(
+                                githubLoading = false,
+                                success = "从 GitHub 恢复了 $count 台服务器"
+                            )
+                        } else {
+                            _uiState.value = _uiState.value.copy(githubLoading = false, error = "请先解锁应用")
+                        }
+                    }
+                } else {
+                    _uiState.value = _uiState.value.copy(githubLoading = false, error = "备份格式不正确")
+                }
+            } catch (e: Exception) {
+                AppLogger.log("GITHUB", "Restore failed", e)
+                _uiState.value = _uiState.value.copy(
+                    githubLoading = false,
+                    error = "GitHub 恢复失败: ${e.message}"
+                )
+            }
+        }
+    }
+
     fun clearMessages() { _uiState.value = _uiState.value.copy(error = null, success = null) }
 
     class Factory(private val context: Context, private val activity: AppCompatActivity? = null) : ViewModelProvider.Factory {

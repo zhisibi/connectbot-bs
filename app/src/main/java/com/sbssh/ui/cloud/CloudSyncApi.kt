@@ -172,3 +172,97 @@ class CloudSyncApi(private var baseUrl: String) {
 }
 
 class CloudException(val statusCode: Int, message: String) : Exception(message)
+
+/**
+ * GitHub API client for backup to private repos.
+ */
+class GitHubApi {
+    private val gson = Gson()
+
+    data class GitHubFile(
+        val name: String,
+        val path: String,
+        val sha: String,
+        val content: String? = null
+    )
+
+    data class GitHubUploadRequest(
+        val message: String,
+        val content: String,  // base64
+        val sha: String? = null
+    )
+
+    /**
+     * Get file content from repo. Returns null if file doesn't exist.
+     */
+    fun getFile(repo: String, path: String, token: String): GitHubFile? {
+        val url = URL("https://api.github.com/repos/$repo/contents/$path")
+        val conn = url.openConnection() as HttpURLConnection
+        try {
+            conn.requestMethod = "GET"
+            conn.setRequestProperty("Authorization", "token $token")
+            conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
+            conn.connectTimeout = 10000
+            conn.readTimeout = 10000
+            val code = conn.responseCode
+            if (code == 404) return null
+            if (code !in 200..299) {
+                val err = conn.errorStream?.bufferedReader()?.readText() ?: "HTTP $code"
+                throw Exception("GitHub GET failed: $err")
+            }
+            val resp = conn.inputStream.bufferedReader().readText()
+            return gson.fromJson(resp, GitHubFile::class.java)
+        } finally {
+            conn.disconnect()
+        }
+    }
+
+    /**
+     * Upload/update file in repo.
+     */
+    fun uploadFile(repo: String, path: String, content: String, message: String, token: String, existingSha: String? = null) {
+        val url = URL("https://api.github.com/repos/$repo/contents/$path")
+        val conn = url.openConnection() as HttpURLConnection
+        try {
+            conn.requestMethod = "PUT"
+            conn.doOutput = true
+            conn.setRequestProperty("Authorization", "token $token")
+            conn.setRequestProperty("Content-Type", "application/json")
+            conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
+            conn.connectTimeout = 15000
+            conn.readTimeout = 15000
+            val body = gson.toJson(GitHubUploadRequest(message, content, existingSha))
+            OutputStreamWriter(conn.outputStream, Charsets.UTF_8).use { it.write(body) }
+            val code = conn.responseCode
+            if (code !in 200..299) {
+                val err = conn.errorStream?.bufferedReader()?.readText() ?: "HTTP $code"
+                throw Exception("GitHub PUT failed: $err")
+            }
+        } finally {
+            conn.disconnect()
+        }
+    }
+
+    /**
+     * List files in a directory.
+     */
+    fun listFiles(repo: String, path: String, token: String): List<GitHubFile> {
+        val url = URL("https://api.github.com/repos/$repo/contents/$path")
+        val conn = url.openConnection() as HttpURLConnection
+        try {
+            conn.requestMethod = "GET"
+            conn.setRequestProperty("Authorization", "token $token")
+            conn.setRequestProperty("Accept", "application/vnd.github.v3+json")
+            conn.connectTimeout = 10000
+            conn.readTimeout = 10000
+            val code = conn.responseCode
+            if (code == 404) return emptyList()
+            if (code !in 200..299) throw Exception("GitHub list failed: HTTP $code")
+            val resp = conn.inputStream.bufferedReader().readText()
+            val type = object : com.google.gson.reflect.TypeToken<List<GitHubFile>>() {}.type
+            return gson.fromJson(resp, type) ?: emptyList()
+        } finally {
+            conn.disconnect()
+        }
+    }
+}
