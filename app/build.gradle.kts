@@ -42,8 +42,10 @@ android {
             manifestPlaceholders["memtagMode"] = "sync"
         }
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
+            // Temporarily disable R8/resource shrinking because release-only crashes and
+            // build instability are coming from minification/optimization on this project.
+            isMinifyEnabled = false
+            isShrinkResources = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release")
             manifestPlaceholders["memtagMode"] = "async"
