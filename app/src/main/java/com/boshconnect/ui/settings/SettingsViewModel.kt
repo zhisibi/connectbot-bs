@@ -21,10 +21,12 @@ import com.boshconnect.data.crypto.FieldCryptoManager
 import com.boshconnect.data.crypto.SessionKeyHolder
 import com.boshconnect.data.db.AppDatabase
 import com.boshconnect.data.db.VpsEntity
+import com.boshconnect.service.TerminalManager
 import com.boshconnect.ui.cloud.CloudSyncApi
 import com.boshconnect.ui.cloud.CloudException
 import com.boshconnect.ui.cloud.GitHubApi
 import com.boshconnect.util.AppLogger
+import com.boshconnect.service.TerminalManager
 import com.boshconnect.util.BiometricHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -67,7 +69,8 @@ data class SettingsUiState(
     val showLocalBackupDialog: Boolean = false,
     // Backup password
     val backupPasswordSet: Boolean = false,
-    val showBackupPasswordDialog: Boolean = false
+    val showBackupPasswordDialog: Boolean = false,
+    val logoutMessage: String? = null
 )
 
 // Backup format wrapper (v1)
@@ -94,7 +97,8 @@ data class BackupItem(
 
 class SettingsViewModel(
     private val context: Context,
-    private val activity: AppCompatActivity? = null
+    private val activity: AppCompatActivity? = null,
+    private val terminalManager: TerminalManager // Injected TerminalManager
 ) : ViewModel() {
 
     private val cryptoManager = CryptoManager(context)
@@ -192,7 +196,13 @@ class SettingsViewModel(
     fun onRestartConsumed() { _uiState.value = _uiState.value.copy(shouldRestart = false) }
 
     fun logout() {
+        terminalManager.disconnectAll(immediate = true, excludeLocal = false) // Disconnect all SSH sessions
         SessionKeyHolder.clear()
+        _uiState.value = _uiState.value.copy(logoutMessage = context.getString(R.string.all_ssh_disconnected))
+    }
+
+    fun clearMessages() {
+        _uiState.value = _uiState.value.copy(error = null, success = null, logoutMessage = null)
     }
 
     // ========== Font Size ==========
@@ -1147,8 +1157,8 @@ class SettingsViewModel(
 
     fun clearMessages() { _uiState.value = _uiState.value.copy(error = null, success = null) }
 
-    class Factory(private val context: Context, private val activity: AppCompatActivity? = null) : ViewModelProvider.Factory {
+    class Factory(private val context: Context, private val activity: AppCompatActivity? = null, private val terminalManager: TerminalManager) : ViewModelProvider.Factory {
         @Suppress("UNCHECKED_CAST")
-        override fun <T : ViewModel> create(modelClass: Class<T>): T = SettingsViewModel(context, activity) as T
+        override fun <T : ViewModel> create(modelClass: Class<T>): T = SettingsViewModel(context, activity, terminalManager) as T
     }
 }

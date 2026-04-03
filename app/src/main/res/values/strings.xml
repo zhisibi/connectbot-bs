@@ -43,6 +43,7 @@
 	<string name="title_settings">Settings</string>
 	<!-- Window title when generating a new pubkey. -->
 	<string name="title_pubkey_generate">Generate</string>
+    <string name="all_ssh_disconnected">已断开了所有 SSH 连接</string>
 
 	<!-- Title for the help page with the terms & conditions of the app. -->
 	<string name="terms_and_conditions">"Terms &amp; Conditions"</string>

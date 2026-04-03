@@ -32,9 +32,9 @@ import com.boshconnect.util.AppLogger
 fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () -> Unit = {}) {
     val context = LocalContext.current
     val activity = context as? androidx.appcompat.app.AppCompatActivity
-    val viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory(context, activity))
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val terminalManager = LocalTerminalManager.current
+    val viewModel: SettingsViewModel = viewModel(factory = SettingsViewModel.Factory(context, activity, terminalManager))
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     // Backup: save directly to Downloads (no SAF picker)
     // Use GetContent for better device compatibility: some DocumentsUI flows return RESULT_OK
@@ -56,6 +56,9 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
     LaunchedEffect(uiState.success) {
         uiState.success?.let { Toast.makeText(context, it, Toast.LENGTH_SHORT).show(); viewModel.clearMessages() }
     }
+    LaunchedEffect(uiState.logoutMessage) {
+        uiState.logoutMessage?.let { Toast.makeText(context, it, Toast.LENGTH_SHORT).show(); viewModel.clearMessages() }
+    }
 
     Scaffold(
         topBar = {
@@ -68,10 +71,6 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
                 },
                 actions = {
                     IconButton(onClick = {
-                        // Disconnect all active SSH sessions before logout
-                        terminalManager?.bridgesFlow?.value?.forEach { bridge ->
-                            bridge.dispatchDisconnect(true)
-                        }
                         viewModel.logout()
                         onLogout()
                     }) {
