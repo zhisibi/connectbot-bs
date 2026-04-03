@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package com.sbssh.connectbot.data
+package com.boshconnect.connectbot.data
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import com.sbssh.connectbot.data.dao.ProfileDao
-import com.sbssh.connectbot.data.entity.Profile
-import com.sbssh.di.CoroutineDispatchers
+import com.boshconnect.connectbot.data.dao.ProfileDao
+import com.boshconnect.connectbot.data.entity.Profile
+import com.boshconnect.di.CoroutineDispatchers
 import javax.inject.Inject
 import javax.inject.Singleton
 

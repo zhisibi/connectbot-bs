@@ -17,7 +17,7 @@
 
 @file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 
-package com.sbssh.ui.screens.pubkeylist
+package com.boshconnect.ui.screens.pubkeylist
 
 import android.net.Uri
 import androidx.activity.compose.BackHandler
@@ -57,8 +57,8 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import com.sbssh.ui.components.FloatingActionButtonMenu
-import com.sbssh.ui.components.FloatingActionButtonMenuItem
+import com.boshconnect.ui.components.FloatingActionButtonMenu
+import com.boshconnect.ui.components.FloatingActionButtonMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -70,8 +70,8 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import com.sbssh.ui.components.ToggleFloatingActionButton
-import com.sbssh.ui.components.ToggleFloatingActionButtonDefaults.animateIcon
+import com.boshconnect.ui.components.ToggleFloatingActionButton
+import com.boshconnect.ui.components.ToggleFloatingActionButtonDefaults.animateIcon
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -93,12 +93,12 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.sbssh.R
-import com.sbssh.connectbot.data.entity.Pubkey
-import com.sbssh.ui.LocalTerminalManager
-import com.sbssh.ui.PreviewScreen
-import com.sbssh.ui.components.rememberBiometricPromptState
-import com.sbssh.ui.theme.ConnectBotTheme
+import com.boshconnect.R
+import com.boshconnect.connectbot.data.entity.Pubkey
+import com.boshconnect.ui.LocalTerminalManager
+import com.boshconnect.ui.PreviewScreen
+import com.boshconnect.ui.components.rememberBiometricPromptState
+import com.boshconnect.ui.theme.ConnectBotTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

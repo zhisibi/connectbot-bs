@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.help
+package com.boshconnect.ui.screens.help
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -59,10 +59,10 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.sbssh.BuildConfig
-import com.sbssh.R
-import com.sbssh.ui.PreviewScreen
-import com.sbssh.ui.theme.ConnectBotTheme
+import com.boshconnect.BuildConfig
+import com.boshconnect.R
+import com.boshconnect.ui.PreviewScreen
+import com.boshconnect.ui.theme.ConnectBotTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

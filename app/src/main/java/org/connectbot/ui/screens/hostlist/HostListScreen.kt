@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.hostlist
+package com.boshconnect.ui.screens.hostlist
 
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -81,14 +81,14 @@ import androidx.compose.ui.unit.dp
 import androidx.core.graphics.toColorInt
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.launch
-import com.sbssh.R
-import com.sbssh.connectbot.data.entity.Host
-import com.sbssh.ui.LocalTerminalManager
-import com.sbssh.ui.PreviewScreen
-import com.sbssh.ui.components.DisconnectAllDialog
-import com.sbssh.ui.components.ShortcutCustomizationDialog
-import com.sbssh.ui.theme.ConnectBotTheme
-import com.sbssh.connectbot.util.IconStyle
+import com.boshconnect.R
+import com.boshconnect.connectbot.data.entity.Host
+import com.boshconnect.ui.LocalTerminalManager
+import com.boshconnect.ui.PreviewScreen
+import com.boshconnect.ui.components.DisconnectAllDialog
+import com.boshconnect.ui.components.ShortcutCustomizationDialog
+import com.boshconnect.ui.theme.ConnectBotTheme
+import com.boshconnect.connectbot.util.IconStyle
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

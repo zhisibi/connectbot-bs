@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.pubkeylist
+package com.boshconnect.ui.screens.pubkeylist
 
 import android.content.ClipData
 import android.content.ClipboardManager
@@ -37,12 +37,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.sbssh.connectbot.data.PubkeyRepository
-import com.sbssh.connectbot.data.entity.Pubkey
-import com.sbssh.di.CoroutineDispatchers
-import com.sbssh.service.TerminalManager
-import com.sbssh.connectbot.util.BiometricKeyManager
-import com.sbssh.connectbot.util.PubkeyUtils
+import com.boshconnect.connectbot.data.PubkeyRepository
+import com.boshconnect.connectbot.data.entity.Pubkey
+import com.boshconnect.di.CoroutineDispatchers
+import com.boshconnect.service.TerminalManager
+import com.boshconnect.connectbot.util.BiometricKeyManager
+import com.boshconnect.connectbot.util.PubkeyUtils
 import timber.log.Timber
 import java.io.BufferedReader
 import java.io.ByteArrayInputStream

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.transport
+package com.boshconnect.transport
 
 import android.content.Context
 import android.net.Uri
@@ -81,11 +81,11 @@ sealed class Transport {
         override val defaultPort = 23
         override val usesNetwork = true
 
-        override fun getFormatHint(context: Context): String = com.sbssh.transport.Telnet.getFormatHint(context)
+        override fun getFormatHint(context: Context): String = com.boshconnect.transport.Telnet.getFormatHint(context)
 
-        override fun createInstance(): AbsTransport = com.sbssh.transport.Telnet()
+        override fun createInstance(): AbsTransport = com.boshconnect.transport.Telnet()
 
-        override fun parseUri(input: String): Uri? = com.sbssh.transport.Telnet.getUri(input)
+        override fun parseUri(input: String): Uri? = com.boshconnect.transport.Telnet.getUri(input)
     }
 
     /**
@@ -96,11 +96,11 @@ sealed class Transport {
         override val defaultPort = 0
         override val usesNetwork = false
 
-        override fun getFormatHint(context: Context): String = com.sbssh.transport.Local.getFormatHint(context)
+        override fun getFormatHint(context: Context): String = com.boshconnect.transport.Local.getFormatHint(context)
 
-        override fun createInstance(): AbsTransport = com.sbssh.transport.Local()
+        override fun createInstance(): AbsTransport = com.boshconnect.transport.Local()
 
-        override fun parseUri(input: String): Uri? = com.sbssh.transport.Local.getUri(input)
+        override fun parseUri(input: String): Uri? = com.boshconnect.transport.Local.getUri(input)
     }
 
     companion object {

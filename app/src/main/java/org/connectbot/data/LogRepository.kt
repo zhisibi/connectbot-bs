@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-package com.sbssh.connectbot.data
+package com.boshconnect.connectbot.data
 
-import com.sbssh.logging.LocalTree
+import com.boshconnect.logging.LocalTree
 import javax.inject.Inject
 import javax.inject.Singleton
 

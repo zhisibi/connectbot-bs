@@ -15,18 +15,18 @@
  * limitations under the License.
  */
 
-package com.sbssh.transport
+package com.boshconnect.transport
 
 import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import androidx.core.net.toUri
 import de.mud.telnet.TelnetProtocolHandler
-import com.sbssh.R
-import com.sbssh.connectbot.data.entity.Host
-import com.sbssh.service.TerminalBridge
-import com.sbssh.service.TerminalManager
-import com.sbssh.connectbot.util.HostConstants
+import com.boshconnect.R
+import com.boshconnect.connectbot.data.entity.Host
+import com.boshconnect.service.TerminalBridge
+import com.boshconnect.service.TerminalManager
+import com.boshconnect.connectbot.util.HostConstants
 import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream

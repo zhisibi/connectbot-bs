@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.portforwardlist
+package com.boshconnect.ui.screens.portforwardlist
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -28,12 +28,12 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.sbssh.connectbot.data.HostRepository
-import com.sbssh.connectbot.data.entity.PortForward
-import com.sbssh.di.CoroutineDispatchers
-import com.sbssh.service.TerminalBridge
-import com.sbssh.service.TerminalManager
-import com.sbssh.connectbot.util.HostConstants
+import com.boshconnect.connectbot.data.HostRepository
+import com.boshconnect.connectbot.data.entity.PortForward
+import com.boshconnect.di.CoroutineDispatchers
+import com.boshconnect.service.TerminalBridge
+import com.boshconnect.service.TerminalManager
+import com.boshconnect.connectbot.util.HostConstants
 import timber.log.Timber
 import javax.inject.Inject
 

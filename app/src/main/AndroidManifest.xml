@@ -96,7 +96,7 @@
 		</activity>
 
 		<service
-			android:name="com.sbssh.service.TerminalManager"
+			android:name="com.boshconnect.service.TerminalManager"
 			android:configChanges="keyboardHidden|orientation|screenSize|screenLayout"
 			android:description="@string/service_desc"
 			android:foregroundServiceType="remoteMessaging"/>

@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.common
+package com.boshconnect.ui.common
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import com.sbssh.R
-import com.sbssh.connectbot.util.TerminalFont
+import com.boshconnect.R
+import com.boshconnect.connectbot.util.TerminalFont
 
 /**
  * Get the localized display name for a font family value.

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.components
+package com.boshconnect.ui.components
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
@@ -52,12 +52,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.sbssh.R
-import com.sbssh.connectbot.data.entity.Host
-import com.sbssh.ui.common.ColorOption
-import com.sbssh.ui.common.getIconColors
-import com.sbssh.connectbot.util.IconStyle
-import com.sbssh.connectbot.util.ShortcutIconGenerator
+import com.boshconnect.R
+import com.boshconnect.connectbot.data.entity.Host
+import com.boshconnect.ui.common.ColorOption
+import com.boshconnect.ui.common.getIconColors
+import com.boshconnect.connectbot.util.IconStyle
+import com.boshconnect.connectbot.util.ShortcutIconGenerator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

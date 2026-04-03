@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.di
+package com.boshconnect.di
 
 import android.content.Context
 import dagger.Module
@@ -23,8 +23,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import com.sbssh.connectbot.data.migration.LegacyHostDatabaseReader
-import com.sbssh.connectbot.data.migration.LegacyPubkeyDatabaseReader
+import com.boshconnect.connectbot.data.migration.LegacyHostDatabaseReader
+import com.boshconnect.connectbot.data.migration.LegacyPubkeyDatabaseReader
 import javax.inject.Singleton
 
 @Module

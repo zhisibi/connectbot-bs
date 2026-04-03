@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.components
+package com.boshconnect.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,8 +35,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.sbssh.R
-import com.sbssh.service.TerminalBridge
+import com.boshconnect.R
+import com.boshconnect.service.TerminalBridge
 
 @Composable
 fun ResizeDialog(

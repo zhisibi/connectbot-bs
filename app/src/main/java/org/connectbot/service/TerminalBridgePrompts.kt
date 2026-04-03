@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.service
+package com.boshconnect.service
 
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.runBlocking

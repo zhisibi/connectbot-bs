@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.console
+package com.boshconnect.ui.screens.console
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -30,9 +30,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.sbssh.di.CoroutineDispatchers
-import com.sbssh.service.TerminalBridge
-import com.sbssh.service.TerminalManager
+import com.boshconnect.di.CoroutineDispatchers
+import com.boshconnect.service.TerminalBridge
+import com.boshconnect.service.TerminalManager
 import org.connectbot.terminal.ProgressState
 import javax.inject.Inject
 

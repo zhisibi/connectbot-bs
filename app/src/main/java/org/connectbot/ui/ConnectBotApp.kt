@@ -17,7 +17,7 @@
 
 @file:Suppress("ktlint:compose:compositionlocal-allowlist")
 
-package com.sbssh.ui
+package com.boshconnect.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -28,10 +28,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
-import com.sbssh.service.TerminalManager
-import com.sbssh.ui.navigation.NavGraph
-import com.sbssh.ui.settings.SettingsManager
-import com.sbssh.ui.theme.SbsshTheme
+import com.boshconnect.service.TerminalManager
+import com.boshconnect.ui.navigation.NavGraph
+import com.boshconnect.ui.settings.SettingsManager
+import com.boshconnect.ui.theme.SbsshTheme
 
 val LocalTerminalManager = compositionLocalOf<TerminalManager?> {
     null

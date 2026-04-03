@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.console
+package com.boshconnect.ui.screens.console
 
 import android.app.Activity
 import android.content.ClipboardManager
@@ -123,24 +123,24 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.preference.PreferenceManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import com.sbssh.R
-import com.sbssh.connectbot.data.entity.Host
-import com.sbssh.service.PromptRequest
+import com.boshconnect.R
+import com.boshconnect.connectbot.data.entity.Host
+import com.boshconnect.service.PromptRequest
 import org.connectbot.terminal.ProgressState
 import org.connectbot.terminal.SelectionController
 import org.connectbot.terminal.VTermKey
-import com.sbssh.terminal.Terminal
-import com.sbssh.ui.LoadingScreen
-import com.sbssh.ui.LocalTerminalManager
-import com.sbssh.ui.components.FloatingTextInputDialog
-import com.sbssh.ui.components.InlinePrompt
-import com.sbssh.ui.components.ResizeDialog
-import com.sbssh.ui.components.TERMINAL_KEYBOARD_HEIGHT_DP
-import com.sbssh.ui.components.TerminalKeyboard
-import com.sbssh.ui.components.UrlScanDialog
-import com.sbssh.ui.theme.terminal
-import com.sbssh.connectbot.util.PreferenceConstants
-import com.sbssh.connectbot.util.rememberTerminalTypefaceResultFromStoredValue
+import com.boshconnect.terminal.Terminal
+import com.boshconnect.ui.LoadingScreen
+import com.boshconnect.ui.LocalTerminalManager
+import com.boshconnect.ui.components.FloatingTextInputDialog
+import com.boshconnect.ui.components.InlinePrompt
+import com.boshconnect.ui.components.ResizeDialog
+import com.boshconnect.ui.components.TERMINAL_KEYBOARD_HEIGHT_DP
+import com.boshconnect.ui.components.TerminalKeyboard
+import com.boshconnect.ui.components.UrlScanDialog
+import com.boshconnect.ui.theme.terminal
+import com.boshconnect.connectbot.util.PreferenceConstants
+import com.boshconnect.connectbot.util.rememberTerminalTypefaceResultFromStoredValue
 import timber.log.Timber
 
 /**
@@ -635,7 +635,7 @@ fun ConsoleScreen(
                                                     bridge.injectString(code.toChar().toString())
                                                 }
                                                 // Clear transient ctrl after use
-                                                if (keyHandler.getModifierState().ctrlState == com.sbssh.service.ModifierLevel.TRANSIENT) {
+                                                if (keyHandler.getModifierState().ctrlState == com.boshconnect.service.ModifierLevel.TRANSIENT) {
                                                     keyHandler.clearTransients()
                                                 }
                                             } else {

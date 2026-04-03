@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.common
+package com.boshconnect.ui.common
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import com.sbssh.R
+import com.boshconnect.R
 
 /**
  * Color data for visual identification of hosts/profiles.

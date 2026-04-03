@@ -1,7 +1,7 @@
-package com.sbssh
+package com.boshconnect
 
 import dagger.hilt.android.HiltAndroidApp
-import com.sbssh.logging.TimberInitializer
+import com.boshconnect.logging.TimberInitializer
 import javax.inject.Inject
 
 @HiltAndroidApp

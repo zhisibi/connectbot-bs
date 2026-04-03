@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.portforwardlist
+package com.boshconnect.ui.screens.portforwardlist
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -62,10 +62,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.sbssh.R
-import com.sbssh.connectbot.data.entity.PortForward
-import com.sbssh.ui.PreviewScreen
-import com.sbssh.ui.theme.ConnectBotTheme
+import com.boshconnect.R
+import com.boshconnect.connectbot.data.entity.PortForward
+import com.boshconnect.ui.PreviewScreen
+import com.boshconnect.ui.theme.ConnectBotTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -74,7 +74,7 @@ fun PortForwardListScreen(
     modifier: Modifier = Modifier,
     viewModel: PortForwardListViewModel = hiltViewModel()
 ) {
-    val terminalManager = com.sbssh.ui.LocalTerminalManager.current
+    val terminalManager = com.boshconnect.ui.LocalTerminalManager.current
 
     LaunchedEffect(terminalManager) {
         terminalManager?.let { viewModel.setTerminalManager(it) }

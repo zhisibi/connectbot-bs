@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.service
+package com.boshconnect.service
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -29,10 +29,10 @@ import android.graphics.Color
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
-import com.sbssh.R
-import com.sbssh.connectbot.data.entity.Host
-import com.sbssh.ui.MainActivity
-import com.sbssh.connectbot.util.HostConstants
+import com.boshconnect.R
+import com.boshconnect.connectbot.data.entity.Host
+import com.boshconnect.ui.MainActivity
+import com.boshconnect.connectbot.util.HostConstants
 import javax.inject.Inject
 import javax.inject.Singleton
 

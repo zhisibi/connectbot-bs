@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui
+package com.boshconnect.ui
 
 import android.content.ClipData
 import androidx.compose.foundation.layout.Arrangement
@@ -56,10 +56,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withLink
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
-import com.sbssh.R
-import com.sbssh.connectbot.data.migration.MigrationState
-import com.sbssh.connectbot.data.migration.MigrationStatus
-import com.sbssh.ui.theme.ConnectBotTheme
+import com.boshconnect.R
+import com.boshconnect.connectbot.data.migration.MigrationState
+import com.boshconnect.connectbot.data.migration.MigrationStatus
+import com.boshconnect.ui.theme.ConnectBotTheme
 
 /**
  * Full-screen UI shown during database migration.

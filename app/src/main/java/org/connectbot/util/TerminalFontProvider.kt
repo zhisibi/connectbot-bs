@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.connectbot.util
+package com.boshconnect.connectbot.util
 
 import android.content.Context
 import android.graphics.Typeface
@@ -30,7 +30,7 @@ import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
-import com.sbssh.R
+import com.boshconnect.R
 import timber.log.Timber
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.coroutines.resume

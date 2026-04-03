@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.connectbot.data
+package com.boshconnect.connectbot.data
 
 import android.content.Context
 import androidx.room.RoomDatabase

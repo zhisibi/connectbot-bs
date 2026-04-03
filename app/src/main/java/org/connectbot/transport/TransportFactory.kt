@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-package com.sbssh.transport
+package com.boshconnect.transport
 
 import android.content.Context
 import android.net.Uri
-import com.sbssh.connectbot.data.HostRepository
-import com.sbssh.connectbot.data.entity.Host
+import com.boshconnect.connectbot.data.HostRepository
+import com.boshconnect.connectbot.data.entity.Host
 import timber.log.Timber
 
 /**

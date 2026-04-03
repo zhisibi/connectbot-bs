@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.di
+package com.boshconnect.di
 
 import android.content.Context
 import android.content.SharedPreferences

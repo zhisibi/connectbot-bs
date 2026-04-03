@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-package com.sbssh.service
+package com.boshconnect.service
 
 import android.content.Context
 import androidx.room.Room
-import com.sbssh.connectbot.data.ColorSchemeRepository
-import com.sbssh.connectbot.data.ConnectBotDatabase
-import com.sbssh.connectbot.data.HostRepository
-import com.sbssh.connectbot.data.PubkeyRepository
-import com.sbssh.connectbot.data.entity.KeyStorageType
+import com.boshconnect.connectbot.data.ColorSchemeRepository
+import com.boshconnect.connectbot.data.ConnectBotDatabase
+import com.boshconnect.connectbot.data.HostRepository
+import com.boshconnect.connectbot.data.PubkeyRepository
+import com.boshconnect.connectbot.data.entity.KeyStorageType
 import timber.log.Timber
 import java.io.File
 
@@ -94,7 +94,7 @@ class BackupFilter(
                     val colors = colorSchemeRepository.getSchemeColors(scheme.id)
                     colors.forEachIndexed { index, color ->
                         tempDb.colorSchemeDao().insertColor(
-                            com.sbssh.connectbot.data.entity.ColorPalette(
+                            com.boshconnect.connectbot.data.entity.ColorPalette(
                                 schemeId = scheme.id,
                                 colorIndex = index,
                                 color = color
@@ -120,7 +120,7 @@ class BackupFilter(
      * @param pubkeys The list of pubkeys to filter
      * @return The list of backupable pubkeys
      */
-    fun filterBackupablePubkeys(pubkeys: List<com.sbssh.connectbot.data.entity.Pubkey>): List<com.sbssh.connectbot.data.entity.Pubkey> = pubkeys.filter { pubkey ->
+    fun filterBackupablePubkeys(pubkeys: List<com.boshconnect.connectbot.data.entity.Pubkey>): List<com.boshconnect.connectbot.data.entity.Pubkey> = pubkeys.filter { pubkey ->
         val isBackupable = pubkey.allowBackup && pubkey.storageType != KeyStorageType.ANDROID_KEYSTORE
 
         if (!isBackupable) {

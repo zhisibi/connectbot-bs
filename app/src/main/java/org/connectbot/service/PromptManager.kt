@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.service
+package com.boshconnect.service
 
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.flow.MutableStateFlow

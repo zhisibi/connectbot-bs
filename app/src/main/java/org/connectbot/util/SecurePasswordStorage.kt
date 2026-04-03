@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.connectbot.util
+package com.boshconnect.connectbot.util
 
 import android.content.Context
 import android.content.SharedPreferences

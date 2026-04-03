@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.service
+package com.boshconnect.service
 
 /**
  * Sealed class hierarchy representing errors that can occur in the TerminalManager service.

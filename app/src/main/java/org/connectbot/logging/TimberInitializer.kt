@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.logging
+package com.boshconnect.logging
 
 import timber.log.Timber
 import javax.inject.Inject

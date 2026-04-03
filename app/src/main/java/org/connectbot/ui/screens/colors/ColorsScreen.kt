@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.colors
+package com.boshconnect.ui.screens.colors
 
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -75,11 +75,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.launch
-import com.sbssh.R
-import com.sbssh.connectbot.data.entity.ColorScheme
-import com.sbssh.ui.PreviewScreen
-import com.sbssh.ui.common.getLocalizedColorSchemeDescription
-import com.sbssh.ui.theme.ConnectBotTheme
+import com.boshconnect.R
+import com.boshconnect.connectbot.data.entity.ColorScheme
+import com.boshconnect.ui.PreviewScreen
+import com.boshconnect.ui.common.getLocalizedColorSchemeDescription
+import com.boshconnect.ui.theme.ConnectBotTheme
 
 /**
  * Screen for managing color schemes (create, duplicate, delete).

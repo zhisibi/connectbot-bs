@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui
+package com.boshconnect.ui
 
 import android.Manifest
 import android.app.Activity
@@ -54,17 +54,17 @@ import androidx.navigation.compose.rememberNavController
 import androidx.preference.PreferenceManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import com.sbssh.R
-import com.sbssh.connectbot.data.entity.Host
-import com.sbssh.service.TerminalManager
-import com.sbssh.ui.components.DisconnectAllDialog
-import com.sbssh.ui.settings.SettingsManager
-import com.sbssh.ui.navigation.Routes
-import com.sbssh.ui.theme.ConnectBotTheme
-import com.sbssh.connectbot.util.IconStyle
-import com.sbssh.connectbot.util.NotificationPermissionHelper
-import com.sbssh.connectbot.util.PreferenceConstants
-import com.sbssh.connectbot.util.ShortcutIconGenerator
+import com.boshconnect.R
+import com.boshconnect.connectbot.data.entity.Host
+import com.boshconnect.service.TerminalManager
+import com.boshconnect.ui.components.DisconnectAllDialog
+import com.boshconnect.ui.settings.SettingsManager
+import com.boshconnect.ui.navigation.Routes
+import com.boshconnect.ui.theme.ConnectBotTheme
+import com.boshconnect.connectbot.util.IconStyle
+import com.boshconnect.connectbot.util.NotificationPermissionHelper
+import com.boshconnect.connectbot.util.PreferenceConstants
+import com.boshconnect.connectbot.util.ShortcutIconGenerator
 import timber.log.Timber
 
 // TODO: Move back to ComponentActivity when https://issuetracker.google.com/issues/178855209 is fixed.
@@ -74,7 +74,7 @@ import timber.log.Timber
 class MainActivity : AppCompatActivity() {
     companion object {
         private const val STATE_SELECTED_URI = "selectedUri"
-        const val DISCONNECT_ACTION = "com.sbssh.action.DISCONNECT"
+        const val DISCONNECT_ACTION = "com.boshconnect.action.DISCONNECT"
     }
 
     internal lateinit var appViewModel: AppViewModel

@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.sbssh"
+    namespace = "com.boshconnect"
     compileSdk = 36
 
     base {
@@ -15,13 +15,13 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.sbssh"
+        applicationId = "com.boshconnect"
         minSdk = 24
         targetSdk = 35
         versionCode = 2
         versionName = "1.0.0"
 
-        testInstrumentationRunner = "com.sbssh.HiltTestRunner"
+        testInstrumentationRunner = "com.boshconnect.HiltTestRunner"
         vectorDrawables.useSupportLibrary = true
 
         buildConfigField("boolean", "HAS_DOWNLOADABLE_FONTS", "false")

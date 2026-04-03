@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui
+package com.boshconnect.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -25,7 +25,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
-import com.sbssh.connectbot.util.NotificationPermissionHelper
+import com.boshconnect.connectbot.util.NotificationPermissionHelper
 
 /**
  * Observes lifecycle events and re-checks notification permission status when the screen resumes.

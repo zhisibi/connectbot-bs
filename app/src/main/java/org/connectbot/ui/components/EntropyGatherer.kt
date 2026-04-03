@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.components
+package com.boshconnect.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.border

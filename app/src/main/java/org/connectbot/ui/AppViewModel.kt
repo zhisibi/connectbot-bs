@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui
+package com.boshconnect.ui
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -34,12 +34,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import com.sbssh.connectbot.data.migration.DatabaseMigrator
-import com.sbssh.connectbot.data.migration.MigrationResult
-import com.sbssh.connectbot.data.migration.MigrationState
-import com.sbssh.di.CoroutineDispatchers
-import com.sbssh.service.TerminalManager
-import com.sbssh.connectbot.util.PreferenceConstants
+import com.boshconnect.connectbot.data.migration.DatabaseMigrator
+import com.boshconnect.connectbot.data.migration.MigrationResult
+import com.boshconnect.connectbot.data.migration.MigrationState
+import com.boshconnect.di.CoroutineDispatchers
+import com.boshconnect.service.TerminalManager
+import com.boshconnect.connectbot.util.PreferenceConstants
 import timber.log.Timber
 import javax.inject.Inject
 

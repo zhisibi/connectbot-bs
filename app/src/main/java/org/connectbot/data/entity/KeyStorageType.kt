@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.connectbot.data.entity
+package com.boshconnect.connectbot.data.entity
 
 /**
  * Defines how an SSH key is stored and managed.

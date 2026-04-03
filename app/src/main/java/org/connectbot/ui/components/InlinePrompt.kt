@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.components
+package com.boshconnect.ui.components
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
@@ -72,10 +72,10 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.sbssh.R
-import com.sbssh.service.PromptRequest
-import com.sbssh.service.PromptResponse
-import com.sbssh.ui.theme.terminal
+import com.boshconnect.R
+import com.boshconnect.service.PromptRequest
+import com.boshconnect.service.PromptResponse
+import com.boshconnect.ui.theme.terminal
 
 /**
  * Non-modal inline prompt that appears at the bottom of the screen,

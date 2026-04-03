@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.hosteditor
+package com.boshconnect.ui.screens.hosteditor
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -26,13 +26,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import com.sbssh.connectbot.data.HostRepository
-import com.sbssh.connectbot.data.ProfileRepository
-import com.sbssh.connectbot.data.PubkeyRepository
-import com.sbssh.connectbot.data.entity.Host
-import com.sbssh.connectbot.data.entity.Profile
-import com.sbssh.connectbot.data.entity.Pubkey
-import com.sbssh.connectbot.util.SecurePasswordStorage
+import com.boshconnect.connectbot.data.HostRepository
+import com.boshconnect.connectbot.data.ProfileRepository
+import com.boshconnect.connectbot.data.PubkeyRepository
+import com.boshconnect.connectbot.data.entity.Host
+import com.boshconnect.connectbot.data.entity.Profile
+import com.boshconnect.connectbot.data.entity.Pubkey
+import com.boshconnect.connectbot.util.SecurePasswordStorage
 import javax.inject.Inject
 
 data class HostEditorUiState(

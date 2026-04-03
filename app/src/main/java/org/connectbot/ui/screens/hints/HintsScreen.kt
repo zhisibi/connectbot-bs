@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.hints
+package com.boshconnect.ui.screens.hints
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
@@ -36,9 +36,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.sbssh.R
-import com.sbssh.ui.PreviewScreen
-import com.sbssh.ui.theme.ConnectBotTheme
+import com.boshconnect.R
+import com.boshconnect.ui.PreviewScreen
+import com.boshconnect.ui.theme.ConnectBotTheme
 
 data class Hint(
     val title: String,

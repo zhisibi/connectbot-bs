@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.colors
+package com.boshconnect.ui.screens.colors
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,8 +25,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import com.sbssh.connectbot.data.ColorSchemeRepository
-import com.sbssh.connectbot.data.entity.ColorScheme
+import com.boshconnect.connectbot.data.ColorSchemeRepository
+import com.boshconnect.connectbot.data.entity.ColorScheme
 import javax.inject.Inject
 
 data class SchemeManagerUiState(

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.theme
+package com.boshconnect.ui.theme
 
 import android.app.Activity
 import android.os.Build

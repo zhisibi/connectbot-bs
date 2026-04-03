@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.profiles
+package com.boshconnect.ui.screens.profiles
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,8 +25,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import com.sbssh.connectbot.data.ProfileRepository
-import com.sbssh.connectbot.data.entity.Profile
+import com.boshconnect.connectbot.data.ProfileRepository
+import com.boshconnect.connectbot.data.entity.Profile
 import javax.inject.Inject
 
 data class ProfileListUiState(

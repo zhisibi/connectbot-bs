@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.di
+package com.boshconnect.di
 
 import android.content.Context
 import androidx.room.Room
@@ -26,7 +26,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import com.sbssh.connectbot.data.ConnectBotDatabase
+import com.boshconnect.connectbot.data.ConnectBotDatabase
 import javax.inject.Singleton
 
 @Module

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.components
+package com.boshconnect.ui.components
 
 import android.view.ViewConfiguration
 import androidx.compose.animation.core.tween
@@ -64,11 +64,11 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import com.sbssh.R
-import com.sbssh.service.ModifierLevel
-import com.sbssh.service.ModifierState
-import com.sbssh.service.TerminalBridge
-import com.sbssh.service.TerminalKeyListener
+import com.boshconnect.R
+import com.boshconnect.service.ModifierLevel
+import com.boshconnect.service.ModifierState
+import com.boshconnect.service.TerminalBridge
+import com.boshconnect.service.TerminalKeyListener
 import org.connectbot.terminal.VTermKey
 
 private const val UI_OPACITY = 0.5f

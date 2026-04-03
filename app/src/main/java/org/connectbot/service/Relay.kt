@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-package com.sbssh.service
+package com.boshconnect.service
 
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import org.apache.harmony.niochar.charset.additional.IBM437
-import com.sbssh.di.CoroutineDispatchers
-import com.sbssh.transport.AbsTransport
+import com.boshconnect.di.CoroutineDispatchers
+import com.boshconnect.transport.AbsTransport
 import timber.log.Timber
 import java.io.IOException
 import java.nio.ByteBuffer

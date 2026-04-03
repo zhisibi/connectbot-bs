@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.hostlist
+package com.boshconnect.ui.screens.hostlist
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -33,13 +33,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.sbssh.R
-import com.sbssh.connectbot.data.HostRepository
-import com.sbssh.connectbot.data.entity.Host
-import com.sbssh.di.CoroutineDispatchers
-import com.sbssh.service.ServiceError
-import com.sbssh.service.TerminalManager
-import com.sbssh.connectbot.util.PreferenceConstants
+import com.boshconnect.R
+import com.boshconnect.connectbot.data.HostRepository
+import com.boshconnect.connectbot.data.entity.Host
+import com.boshconnect.di.CoroutineDispatchers
+import com.boshconnect.service.ServiceError
+import com.boshconnect.service.TerminalManager
+import com.boshconnect.connectbot.util.PreferenceConstants
 import javax.inject.Inject
 
 enum class ConnectionState {

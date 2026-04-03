@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.connectbot.data.dao
+package com.boshconnect.connectbot.data.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
@@ -23,7 +23,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
-import com.sbssh.connectbot.data.entity.Host
+import com.boshconnect.connectbot.data.entity.Host
 
 /**
  * Data Access Object for SSH/Telnet host configurations.

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.connectbot.util
+package com.boshconnect.connectbot.util
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -25,7 +25,7 @@ import android.graphics.Paint
 import androidx.annotation.DrawableRes
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.IconCompat
-import com.sbssh.R
+import com.boshconnect.R
 
 /**
  * Icon styles available for shortcut customization.

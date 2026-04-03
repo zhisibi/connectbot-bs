@@ -14,11 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sbssh.connectbot.util
+package com.boshconnect.connectbot.util
 
 import com.trilead.ssh2.crypto.PEMDecoder
 import com.trilead.ssh2.crypto.keys.Ed25519Provider
-import com.sbssh.connectbot.data.entity.Pubkey
+import com.boshconnect.connectbot.data.entity.Pubkey
 import timber.log.Timber
 import java.security.Key
 import java.security.KeyFactory

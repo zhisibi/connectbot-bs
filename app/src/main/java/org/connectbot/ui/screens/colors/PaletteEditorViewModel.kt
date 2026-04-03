@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.colors
+package com.boshconnect.ui.screens.colors
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -29,10 +29,10 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import com.sbssh.connectbot.data.ColorSchemePresets
-import com.sbssh.connectbot.data.ColorSchemeRepository
-import com.sbssh.di.CoroutineDispatchers
-import com.sbssh.connectbot.util.HostConstants
+import com.boshconnect.connectbot.data.ColorSchemePresets
+import com.boshconnect.connectbot.data.ColorSchemeRepository
+import com.boshconnect.di.CoroutineDispatchers
+import com.boshconnect.connectbot.util.HostConstants
 import javax.inject.Inject
 
 data class PaletteEditorUiState(

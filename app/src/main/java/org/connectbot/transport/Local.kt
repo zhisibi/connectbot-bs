@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-package com.sbssh.transport
+package com.boshconnect.transport
 
 import android.content.Context
 import android.net.Uri
 import androidx.annotation.VisibleForTesting
 import androidx.core.net.toUri
 import com.google.ase.Exec
-import com.sbssh.R
-import com.sbssh.connectbot.data.entity.Host
+import com.boshconnect.R
+import com.boshconnect.connectbot.data.entity.Host
 import timber.log.Timber
 import java.io.FileDescriptor
 import java.io.FileInputStream

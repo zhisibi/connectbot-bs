@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package com.sbssh.transport
+package com.boshconnect.transport
 
 import android.content.Context
 import android.net.Uri
-import com.sbssh.connectbot.data.entity.Host
-import com.sbssh.connectbot.data.entity.PortForward
-import com.sbssh.service.TerminalBridge
-import com.sbssh.service.TerminalManager
+import com.boshconnect.connectbot.data.entity.Host
+import com.boshconnect.connectbot.data.entity.PortForward
+import com.boshconnect.service.TerminalBridge
+import com.boshconnect.service.TerminalManager
 import java.io.IOException
 
 /**

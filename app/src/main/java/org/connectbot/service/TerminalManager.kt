@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.service
+package com.boshconnect.service
 
 import android.app.Service
 import android.content.Intent
@@ -49,19 +49,19 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import com.sbssh.R
-import com.sbssh.connectbot.data.ColorSchemeRepository
-import com.sbssh.connectbot.data.HostRepository
-import com.sbssh.connectbot.data.ProfileRepository
-import com.sbssh.connectbot.data.PubkeyRepository
-import com.sbssh.connectbot.data.entity.Host
-import com.sbssh.connectbot.data.entity.Pubkey
-import com.sbssh.di.CoroutineDispatchers
-import com.sbssh.transport.TransportFactory
-import com.sbssh.connectbot.util.PreferenceConstants
-import com.sbssh.connectbot.util.ProviderLoader
-import com.sbssh.connectbot.util.ProviderLoaderListener
-import com.sbssh.connectbot.util.PubkeyUtils
+import com.boshconnect.R
+import com.boshconnect.connectbot.data.ColorSchemeRepository
+import com.boshconnect.connectbot.data.HostRepository
+import com.boshconnect.connectbot.data.ProfileRepository
+import com.boshconnect.connectbot.data.PubkeyRepository
+import com.boshconnect.connectbot.data.entity.Host
+import com.boshconnect.connectbot.data.entity.Pubkey
+import com.boshconnect.di.CoroutineDispatchers
+import com.boshconnect.transport.TransportFactory
+import com.boshconnect.connectbot.util.PreferenceConstants
+import com.boshconnect.connectbot.util.ProviderLoader
+import com.boshconnect.connectbot.util.ProviderLoaderListener
+import com.boshconnect.connectbot.util.PubkeyUtils
 import timber.log.Timber
 import java.io.IOException
 import java.lang.ref.WeakReference
@@ -144,7 +144,7 @@ class TerminalManager :
     internal lateinit var dispatchers: CoroutineDispatchers
 
     @Inject
-    internal lateinit var securePasswordStorage: com.sbssh.connectbot.util.SecurePasswordStorage
+    internal lateinit var securePasswordStorage: com.boshconnect.connectbot.util.SecurePasswordStorage
 
     private val binder: IBinder = TerminalBinder()
 

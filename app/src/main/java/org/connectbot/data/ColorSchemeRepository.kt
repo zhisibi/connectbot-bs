@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-package com.sbssh.connectbot.data
+package com.boshconnect.connectbot.data
 
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import com.sbssh.connectbot.data.dao.ColorSchemeDao
-import com.sbssh.connectbot.data.entity.ColorPalette
-import com.sbssh.connectbot.data.entity.ColorScheme
-import com.sbssh.di.CoroutineDispatchers
-import com.sbssh.connectbot.util.HostConstants
+import com.boshconnect.connectbot.data.dao.ColorSchemeDao
+import com.boshconnect.connectbot.data.entity.ColorPalette
+import com.boshconnect.connectbot.data.entity.ColorScheme
+import com.boshconnect.di.CoroutineDispatchers
+import com.boshconnect.connectbot.util.HostConstants
 import javax.inject.Inject
 import javax.inject.Singleton
 

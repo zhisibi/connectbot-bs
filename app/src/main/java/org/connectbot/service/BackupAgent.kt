@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.service
+package com.boshconnect.service
 
 import android.app.backup.BackupAgentHelper
 import android.app.backup.BackupDataInput
@@ -25,12 +25,12 @@ import android.os.ParcelFileDescriptor
 import androidx.preference.PreferenceManager
 import androidx.room.Room
 import kotlinx.coroutines.Dispatchers
-import com.sbssh.connectbot.data.ColorSchemeRepository
-import com.sbssh.connectbot.data.ConnectBotDatabase
-import com.sbssh.connectbot.data.HostRepository
-import com.sbssh.connectbot.data.PubkeyRepository
-import com.sbssh.di.CoroutineDispatchers
-import com.sbssh.connectbot.util.PreferenceConstants
+import com.boshconnect.connectbot.data.ColorSchemeRepository
+import com.boshconnect.connectbot.data.ConnectBotDatabase
+import com.boshconnect.connectbot.data.HostRepository
+import com.boshconnect.connectbot.data.PubkeyRepository
+import com.boshconnect.di.CoroutineDispatchers
+import com.boshconnect.connectbot.util.PreferenceConstants
 import timber.log.Timber
 import java.io.File
 import java.io.FileInputStream
@@ -113,7 +113,7 @@ class BackupAgent : BackupAgentHelper() {
             DATABASE_NAME
         ).build()
         val dispatchers = CoroutineDispatchers(default = Dispatchers.Default, io = Dispatchers.IO, main = Dispatchers.Main)
-        val securePasswordStorage = com.sbssh.connectbot.util.SecurePasswordStorage(applicationContext)
+        val securePasswordStorage = com.boshconnect.connectbot.util.SecurePasswordStorage(applicationContext)
         val hostRepository = HostRepository(applicationContext, database, database.hostDao(), database.portForwardDao(), database.knownHostDao(), securePasswordStorage)
         val colorSchemeRepository = ColorSchemeRepository(database.colorSchemeDao(), dispatchers = dispatchers)
         val pubkeyRepository = PubkeyRepository(database.pubkeyDao())

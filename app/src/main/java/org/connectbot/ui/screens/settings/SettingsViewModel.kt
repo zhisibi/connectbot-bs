@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.settings
+package com.boshconnect.ui.screens.settings
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -38,12 +38,12 @@ import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.sbssh.connectbot.data.ProfileRepository
-import com.sbssh.connectbot.data.entity.Profile
-import com.sbssh.di.CoroutineDispatchers
-import com.sbssh.connectbot.util.LocalFontProvider
-import com.sbssh.connectbot.util.PreferenceConstants
-import com.sbssh.connectbot.util.TerminalFontProvider
+import com.boshconnect.connectbot.data.ProfileRepository
+import com.boshconnect.connectbot.data.entity.Profile
+import com.boshconnect.di.CoroutineDispatchers
+import com.boshconnect.connectbot.util.LocalFontProvider
+import com.boshconnect.connectbot.util.PreferenceConstants
+import com.boshconnect.connectbot.util.TerminalFontProvider
 import timber.log.Timber
 import javax.inject.Inject
 
@@ -364,7 +364,7 @@ class SettingsViewModel @Inject constructor(
 
     private fun preloadFont(storedValue: String) {
         if (LocalFontProvider.isLocalFont(storedValue)) return
-        val googleFontName = com.sbssh.connectbot.util.TerminalFont.getGoogleFontName(storedValue)
+        val googleFontName = com.boshconnect.connectbot.util.TerminalFont.getGoogleFontName(storedValue)
         if (googleFontName.isBlank()) return
 
         viewModelScope.launch {

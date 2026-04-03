@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.connectbot.util
+package com.boshconnect.connectbot.util
 
 /**
  * Available terminal fonts that can be downloaded via Google Fonts.

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.transport
+package com.boshconnect.transport
 
 import com.trilead.ssh2.Connection
 import com.trilead.ssh2.ProxyData

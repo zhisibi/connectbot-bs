@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.settings
+package com.boshconnect.ui.screens.settings
 
 import android.Manifest
 import android.content.Intent
@@ -63,16 +63,16 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.sbssh.BuildConfig
-import com.sbssh.R
-import com.sbssh.ui.ObservePermissionOnResume
-import com.sbssh.ui.PreviewScreen
-import com.sbssh.ui.common.getLocalizedFontDisplayName
-import com.sbssh.ui.components.FontDownloadProgressDialog
-import com.sbssh.ui.theme.ConnectBotTheme
-import com.sbssh.connectbot.util.LocalFontProvider
-import com.sbssh.connectbot.util.NotificationPermissionHelper
-import com.sbssh.connectbot.util.TerminalFont
+import com.boshconnect.BuildConfig
+import com.boshconnect.R
+import com.boshconnect.ui.ObservePermissionOnResume
+import com.boshconnect.ui.PreviewScreen
+import com.boshconnect.ui.common.getLocalizedFontDisplayName
+import com.boshconnect.ui.components.FontDownloadProgressDialog
+import com.boshconnect.ui.theme.ConnectBotTheme
+import com.boshconnect.connectbot.util.LocalFontProvider
+import com.boshconnect.connectbot.util.NotificationPermissionHelper
+import com.boshconnect.connectbot.util.TerminalFont
 import org.xmlpull.v1.XmlPullParser
 import java.util.Locale
 

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.theme
+package com.boshconnect.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

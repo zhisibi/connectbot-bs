@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package com.sbssh.di
+package com.boshconnect.di
 
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import com.sbssh.BuildConfig
-import com.sbssh.logging.LocalTree
+import com.boshconnect.BuildConfig
+import com.boshconnect.logging.LocalTree
 import timber.log.Timber
 import javax.inject.Singleton
 

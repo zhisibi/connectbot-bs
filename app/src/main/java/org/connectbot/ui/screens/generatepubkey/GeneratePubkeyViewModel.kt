@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.generatepubkey
+package com.boshconnect.ui.screens.generatepubkey
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -28,13 +28,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.sbssh.connectbot.data.PubkeyRepository
-import com.sbssh.connectbot.data.entity.KeyStorageType
-import com.sbssh.connectbot.data.entity.Pubkey
-import com.sbssh.di.CoroutineDispatchers
-import com.sbssh.connectbot.util.BiometricAvailability
-import com.sbssh.connectbot.util.BiometricKeyManager
-import com.sbssh.connectbot.util.PubkeyUtils
+import com.boshconnect.connectbot.data.PubkeyRepository
+import com.boshconnect.connectbot.data.entity.KeyStorageType
+import com.boshconnect.connectbot.data.entity.Pubkey
+import com.boshconnect.di.CoroutineDispatchers
+import com.boshconnect.connectbot.util.BiometricAvailability
+import com.boshconnect.connectbot.util.BiometricKeyManager
+import com.boshconnect.connectbot.util.PubkeyUtils
 import timber.log.Timber
 import java.security.KeyPair
 import java.security.KeyPairGenerator

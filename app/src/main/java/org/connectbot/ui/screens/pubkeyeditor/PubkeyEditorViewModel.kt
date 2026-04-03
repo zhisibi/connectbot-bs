@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.pubkeyeditor
+package com.boshconnect.ui.screens.pubkeyeditor
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
@@ -28,10 +28,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import com.sbssh.connectbot.data.PubkeyRepository
-import com.sbssh.connectbot.data.entity.Pubkey
-import com.sbssh.di.CoroutineDispatchers
-import com.sbssh.connectbot.util.PubkeyUtils
+import com.boshconnect.connectbot.data.PubkeyRepository
+import com.boshconnect.connectbot.data.entity.Pubkey
+import com.boshconnect.di.CoroutineDispatchers
+import com.boshconnect.connectbot.util.PubkeyUtils
 import timber.log.Timber
 import javax.inject.Inject
 

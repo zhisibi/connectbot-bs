@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.sbssh.service
+package com.boshconnect.service
 
 import android.content.SharedPreferences
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
@@ -30,7 +30,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.connectbot.terminal.ModifierManager
 import org.connectbot.terminal.VTermKey
-import com.sbssh.connectbot.util.PreferenceConstants
+import com.boshconnect.connectbot.util.PreferenceConstants
 import timber.log.Timber
 import java.io.IOException
 

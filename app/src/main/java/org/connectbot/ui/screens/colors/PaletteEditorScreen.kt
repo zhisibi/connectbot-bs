@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.colors
+package com.boshconnect.ui.screens.colors
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -72,10 +72,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.sbssh.R
-import com.sbssh.ui.PreviewScreen
-import com.sbssh.ui.components.ColorPickerDialog
-import com.sbssh.ui.components.RgbColorPickerDialog
+import com.boshconnect.R
+import com.boshconnect.ui.PreviewScreen
+import com.boshconnect.ui.components.ColorPickerDialog
+import com.boshconnect.ui.components.RgbColorPickerDialog
 
 /**
  * Screen for editing the full 256-color palette of a color scheme.

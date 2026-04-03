@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.transport
+package com.boshconnect.transport
 
 import android.content.Context
 import android.net.Uri
@@ -42,19 +42,19 @@ import com.trilead.ssh2.signature.DSASHA1Verify
 import com.trilead.ssh2.signature.ECDSASHA2Verify
 import com.trilead.ssh2.signature.Ed25519Verify
 import com.trilead.ssh2.signature.RSASHA1Verify
-import com.sbssh.R
-import com.sbssh.connectbot.data.entity.Host
-import com.sbssh.connectbot.data.entity.KeyStorageType
-import com.sbssh.connectbot.data.entity.PortForward
-import com.sbssh.connectbot.data.entity.Pubkey
-import com.sbssh.service.TerminalBridge
-import com.sbssh.service.TerminalManager
-import com.sbssh.service.requestBiometricAuth
-import com.sbssh.service.requestBooleanPrompt
-import com.sbssh.service.requestHostKeyFingerprintPrompt
-import com.sbssh.service.requestStringPrompt
-import com.sbssh.connectbot.util.HostConstants
-import com.sbssh.connectbot.util.PubkeyUtils
+import com.boshconnect.R
+import com.boshconnect.connectbot.data.entity.Host
+import com.boshconnect.connectbot.data.entity.KeyStorageType
+import com.boshconnect.connectbot.data.entity.PortForward
+import com.boshconnect.connectbot.data.entity.Pubkey
+import com.boshconnect.service.TerminalBridge
+import com.boshconnect.service.TerminalManager
+import com.boshconnect.service.requestBiometricAuth
+import com.boshconnect.service.requestBooleanPrompt
+import com.boshconnect.service.requestHostKeyFingerprintPrompt
+import com.boshconnect.service.requestStringPrompt
+import com.boshconnect.connectbot.util.HostConstants
+import com.boshconnect.connectbot.util.PubkeyUtils
 import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream

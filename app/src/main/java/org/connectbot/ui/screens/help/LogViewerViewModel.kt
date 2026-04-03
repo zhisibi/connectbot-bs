@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.help
+package com.boshconnect.ui.screens.help
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import com.sbssh.connectbot.data.LogRepository
+import com.boshconnect.connectbot.data.LogRepository
 import javax.inject.Inject
 
 data class LogViewerUiState(

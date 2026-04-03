@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.portforwardlist
+package com.boshconnect.ui.screens.portforwardlist
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -43,8 +43,8 @@ import androidx.compose.ui.res.stringArrayResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.sbssh.R
-import com.sbssh.connectbot.util.HostConstants
+import com.boshconnect.R
+import com.boshconnect.connectbot.util.HostConstants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

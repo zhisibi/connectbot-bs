@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.components
+package com.boshconnect.ui.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectDragGestures
@@ -69,8 +69,8 @@ import androidx.compose.ui.window.Popup
 import androidx.compose.ui.window.PopupProperties
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
-import com.sbssh.R
-import com.sbssh.service.TerminalBridge
+import com.boshconnect.R
+import com.boshconnect.service.TerminalBridge
 import kotlin.math.roundToInt
 
 private const val PREF_FLOATING_INPUT_X = "floating_input_x"

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.connectbot.data
+package com.boshconnect.connectbot.data
 
 import androidx.room.AutoMigration
 import androidx.room.Database
@@ -23,19 +23,19 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
-import com.sbssh.connectbot.data.dao.ColorSchemeDao
-import com.sbssh.connectbot.data.dao.HostDao
-import com.sbssh.connectbot.data.dao.KnownHostDao
-import com.sbssh.connectbot.data.dao.PortForwardDao
-import com.sbssh.connectbot.data.dao.ProfileDao
-import com.sbssh.connectbot.data.dao.PubkeyDao
-import com.sbssh.connectbot.data.entity.ColorPalette
-import com.sbssh.connectbot.data.entity.ColorScheme
-import com.sbssh.connectbot.data.entity.Host
-import com.sbssh.connectbot.data.entity.KnownHost
-import com.sbssh.connectbot.data.entity.PortForward
-import com.sbssh.connectbot.data.entity.Profile
-import com.sbssh.connectbot.data.entity.Pubkey
+import com.boshconnect.connectbot.data.dao.ColorSchemeDao
+import com.boshconnect.connectbot.data.dao.HostDao
+import com.boshconnect.connectbot.data.dao.KnownHostDao
+import com.boshconnect.connectbot.data.dao.PortForwardDao
+import com.boshconnect.connectbot.data.dao.ProfileDao
+import com.boshconnect.connectbot.data.dao.PubkeyDao
+import com.boshconnect.connectbot.data.entity.ColorPalette
+import com.boshconnect.connectbot.data.entity.ColorScheme
+import com.boshconnect.connectbot.data.entity.Host
+import com.boshconnect.connectbot.data.entity.KnownHost
+import com.boshconnect.connectbot.data.entity.PortForward
+import com.boshconnect.connectbot.data.entity.Profile
+import com.boshconnect.connectbot.data.entity.Pubkey
 
 /**
  * ConnectBot Room database.

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.profiles
+package com.boshconnect.ui.screens.profiles
 
 import android.content.Context
 import android.content.SharedPreferences
@@ -29,14 +29,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import com.sbssh.connectbot.data.ColorSchemeRepository
-import com.sbssh.connectbot.data.ProfileRepository
-import com.sbssh.connectbot.data.entity.ColorScheme
-import com.sbssh.connectbot.data.entity.Profile
-import com.sbssh.di.CoroutineDispatchers
-import com.sbssh.connectbot.util.LocalFontProvider
-import com.sbssh.connectbot.util.TerminalFont
-import com.sbssh.connectbot.util.TerminalFontProvider
+import com.boshconnect.connectbot.data.ColorSchemeRepository
+import com.boshconnect.connectbot.data.ProfileRepository
+import com.boshconnect.connectbot.data.entity.ColorScheme
+import com.boshconnect.connectbot.data.entity.Profile
+import com.boshconnect.di.CoroutineDispatchers
+import com.boshconnect.connectbot.util.LocalFontProvider
+import com.boshconnect.connectbot.util.TerminalFont
+import com.boshconnect.connectbot.util.TerminalFontProvider
 import javax.inject.Inject
 
 data class ProfileEditorUiState(

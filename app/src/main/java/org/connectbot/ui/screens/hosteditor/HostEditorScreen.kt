@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package com.sbssh.ui.screens.hosteditor
+package com.boshconnect.ui.screens.hosteditor
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -63,20 +63,20 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.sbssh.BuildConfig
-import com.sbssh.R
-import com.sbssh.connectbot.data.entity.ColorScheme
-import com.sbssh.connectbot.data.entity.Host
-import com.sbssh.connectbot.data.entity.Profile
-import com.sbssh.connectbot.data.entity.Pubkey
-import com.sbssh.ui.PreviewScreen
-import com.sbssh.ui.common.getIconColors
-import com.sbssh.ui.common.getLocalizedColorSchemeDescription
-import com.sbssh.ui.common.getLocalizedFontDisplayName
-import com.sbssh.ui.theme.ConnectBotTheme
-import com.sbssh.connectbot.util.HostConstants
-import com.sbssh.connectbot.util.LocalFontProvider
-import com.sbssh.connectbot.util.TerminalFont
+import com.boshconnect.BuildConfig
+import com.boshconnect.R
+import com.boshconnect.connectbot.data.entity.ColorScheme
+import com.boshconnect.connectbot.data.entity.Host
+import com.boshconnect.connectbot.data.entity.Profile
+import com.boshconnect.connectbot.data.entity.Pubkey
+import com.boshconnect.ui.PreviewScreen
+import com.boshconnect.ui.common.getIconColors
+import com.boshconnect.ui.common.getLocalizedColorSchemeDescription
+import com.boshconnect.ui.common.getLocalizedFontDisplayName
+import com.boshconnect.ui.theme.ConnectBotTheme
+import com.boshconnect.connectbot.util.HostConstants
+import com.boshconnect.connectbot.util.LocalFontProvider
+import com.boshconnect.connectbot.util.TerminalFont
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
