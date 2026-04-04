@@ -25,3 +25,14 @@
 -keep class org.connectbot.service.TerminalManager { *; }
 -keep class org.connectbot.service.TerminalBridge { *; }
 -keep class com.boshconnect.connectbot.data.ColorSchemePresets { *; }
+
+# Keep SSH/SFTP related libraries (JSch)
+-keep class com.jcraft.jsch.** { *; }
+
+# Keep App's transport layer
+-keep class com.boshconnect.transport.** { *; }
+
+# Keep Room entities and DAOs (data models)
+-keep class com.boshconnect.data.db.** { *; }
+-keep class com.boshconnect.connectbot.data.entity.** { *; }
+-keep class com.boshconnect.connectbot.data.dao.** { *; }
