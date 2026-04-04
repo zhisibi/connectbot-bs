@@ -18,3 +18,10 @@
 
 # Also keep SettingsViewModel nested/inner models if any get rewritten
 -keep class com.boshconnect.ui.settings.SettingsViewModel$* { *; }
+
+# Keep all classes and members from the terminal emulation library
+# R8 optimization might be breaking native/internal calls related to color schemes
+-keep class org.connectbot.terminal.** { *; }
+-keep class org.connectbot.service.TerminalManager { *; }
+-keep class org.connectbot.service.TerminalBridge { *; }
+-keep class com.boshconnect.connectbot.data.ColorSchemePresets { *; }
