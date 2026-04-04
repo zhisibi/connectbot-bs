@@ -36,3 +36,8 @@
 -keep class com.boshconnect.data.db.** { *; }
 -keep class com.boshconnect.connectbot.data.entity.** { *; }
 -keep class com.boshconnect.connectbot.data.dao.** { *; }
+
+# Keep JZlib and JASS classes (referenced by JSch)
+# R8 is aggressively removing these, causing build failures.
+-keep class com.jcraft.jzlib.** { *; }
+-keep class org.ietf.jgss.** { *; }
