@@ -57,6 +57,10 @@ android {
         buildConfig = true
     }
 
+    composeCompiler {
+        version = "1.5.8" // Explicitly set Compose compiler version for Kotlin 1.9.22 compatibility
+    }
+
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
