@@ -70,12 +70,15 @@ fun SettingsScreen(onBack: () -> Unit, onViewLog: () -> Unit = {}, onLogout: () 
                     }
                 },
                 actions = {
+                    /*
+                    // Disabled by user request due to various issues
                     IconButton(onClick = {
                         viewModel.logout()
                         onLogout()
                     }) {
                         Icon(Icons.Default.Logout, contentDescription = stringResource(R.string.action_logout))
                     }
+                    */
                 },
                 colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.primaryContainer)
             )
