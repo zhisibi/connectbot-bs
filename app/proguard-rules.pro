@@ -41,3 +41,8 @@
 # R8 is aggressively removing these, causing build failures.
 -keep class com.jcraft.jzlib.** { *; }
 -keep class org.ietf.jgss.** { *; }
+
+# Tell R8 to ignore missing classes from JZlib and JASS (JSch dependencies)
+# These may be optional or not fully supported on Android, and currently cause build failure.
+-dontwarn com.jcraft.jzlib.**
+-dontwarn org.ietf.jgss.**
