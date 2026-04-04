@@ -42,10 +42,9 @@ android {
             manifestPlaceholders["memtagMode"] = "sync"
         }
         release {
-            // Temporarily disable R8/resource shrinking because release-only crashes and
-            // build instability are coming from minification/optimization on this project.
-            isMinifyEnabled = false
-            isShrinkResources = false
+            // Re-enable R8/resource shrinking for production build.
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             // Use debug signing to allow GitHub Actions to build without keystore
             signingConfig = signingConfigs.getByName("debug")
